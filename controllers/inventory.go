@@ -35,6 +35,25 @@ func ReadInventory(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func UpdateInventory(c echo.Context) error {
+	kode_inventory := c.FormValue("kode_inventory")
+	nama_barang := c.FormValue("nama_barang")
+	jumlah_barang := c.FormValue("jumlah_barang")
+	harga_barang := c.FormValue("harga_barang")
+
+	jb, _ := strconv.Atoi(jumlah_barang)
+
+	hb, _ := strconv.Atoi(harga_barang)
+
+	result, err := models.Update_Stock(kode_inventory, nama_barang, jb, hb)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
 func Check_Nama_Inventory(c echo.Context) error {
 	kode_inventory := c.FormValue("kode_inventory")
 	nama_barang := c.FormValue("nama_barang")
