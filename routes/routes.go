@@ -13,30 +13,39 @@ func Init() *echo.Echo {
 	})
 
 	Sup := e.Group("/sup")
+	us := e.Group("/us")
+	invent := e.Group("/invent")
+	stk_m := e.Group("/stk-m")
 
 	//Login
-	e.GET("/login", controllers.Login)
+	us.GET("/login", controllers.Login)
 
 	//User_Profile
-	e.GET("/user-profile", controllers.User_Profile)
+	us.GET("/user-profile", controllers.User_Profile)
 
 	//Input_Inventory
-	e.POST("/input-inventory", controllers.InputInventory)
+	invent.POST("/input-stock", controllers.InputStock)
 
 	//Read_Inventory
-	e.GET("/inventory", controllers.ReadInventory)
+	invent.GET("/stock", controllers.ReadStock)
 
 	//Update_Inventory
-	e.PUT("/update-inventory", controllers.UpdateInventory)
+	invent.PUT("/update-stock", controllers.UpdateStock)
 
 	//Check_Nama_Inventory
-	e.GET("/check-nama", controllers.Check_Nama_Inventory)
+	invent.GET("/check-nama", controllers.CheckNamaStock)
 
 	//Input_Supplier
 	Sup.POST("/input-supplier", controllers.InputSupplier)
 
 	//Read_Supplier
 	Sup.GET("/supplier", controllers.ReadSupplier)
+
+	//Input_Stock_Masuk
+	stk_m.POST("/input-stock-masuk", controllers.InputStockMasuk)
+
+	//Read_Stock_Masuk
+	stk_m.GET("/stock-masuk", controllers.ReadStockMasuk)
 
 	return e
 }

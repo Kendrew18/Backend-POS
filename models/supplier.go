@@ -1,13 +1,14 @@
 package models
 
 import (
+	"fmt"
 	"net/http"
 	"project-1/db"
 	str "project-1/struct"
 	"strconv"
 )
 
-func Generate_id_role() int {
+func Generate_Id_Supplier() int {
 	var obj str.Generate_Id
 
 	con := db.CreateCon()
@@ -38,7 +39,7 @@ func Input_Supplier(nama_supplier string, nomor_telpon string, email_supplier st
 
 	con := db.CreateCon()
 
-	nm := Generate_id_role()
+	nm := Generate_Id_Supplier()
 
 	nm_str := strconv.Itoa(nm)
 
@@ -102,3 +103,72 @@ func Read_Supplier() (Response, error) {
 
 	return res, nil
 }
+
+func String_Separator_To_String(str string) []string {
+	str2 := str
+
+	var by = []byte{}
+
+	by = []byte(str)
+	by2 := byte(0)
+	by = append(by, by2)
+	str2 = string(by)
+	fmt.Println(str2)
+
+	var new string = ""
+	var i int = 0
+
+	var data = []string{}
+
+	for by[i] != 0 {
+		var co int = 0
+		new = ""
+		if by[i] == 124 {
+			co++
+			i++
+			for co < 2 {
+				if by[i] == 124 {
+					co++
+					i++
+					data = append(data, new)
+				} else {
+					new += string(by[i])
+					i++
+				}
+			}
+		} else {
+			i++
+		}
+	}
+	fmt.Println(data, i)
+
+	return data
+}
+
+/*
+func Delete_Supplier(kode_supplier string) (Response, error) {
+	var res Response
+	var arrobj []str.Read_Supplier
+	var obj str.Read_Supplier
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM inventory_stock WHERE "
+
+	rows, err := con.Query(sqlStatement)
+
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&invent.Kode_supplier, &invent.Nama_supplier, &invent.Nomor_telpon, &invent.Email_Supplier)
+		if err != nil {
+			return res, err
+		}
+		arr_invent = append(arr_invent, invent)
+	}
+
+}*/

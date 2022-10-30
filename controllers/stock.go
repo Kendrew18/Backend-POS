@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func InputInventory(c echo.Context) error {
+func InputStock(c echo.Context) error {
 	nama_barang := c.FormValue("nama_barang")
 	jumlah_barang := c.FormValue("jumlah_barang")
 	harga_barang := c.FormValue("harga_barang")
@@ -25,7 +25,7 @@ func InputInventory(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func ReadInventory(c echo.Context) error {
+func ReadStock(c echo.Context) error {
 	result, err := models.Read_Stock()
 
 	if err != nil {
@@ -35,8 +35,8 @@ func ReadInventory(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func UpdateInventory(c echo.Context) error {
-	kode_inventory := c.FormValue("kode_inventory")
+func UpdateStock(c echo.Context) error {
+	kode_stock := c.FormValue("kode_stock")
 	nama_barang := c.FormValue("nama_barang")
 	jumlah_barang := c.FormValue("jumlah_barang")
 	harga_barang := c.FormValue("harga_barang")
@@ -45,7 +45,7 @@ func UpdateInventory(c echo.Context) error {
 
 	hb, _ := strconv.Atoi(harga_barang)
 
-	result, err := models.Update_Stock(kode_inventory, nama_barang, jb, hb)
+	result, err := models.Update_Stock(kode_stock, nama_barang, jb, hb)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -54,11 +54,11 @@ func UpdateInventory(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func Check_Nama_Inventory(c echo.Context) error {
-	kode_inventory := c.FormValue("kode_inventory")
+func CheckNamaStock(c echo.Context) error {
+	kode_stock := c.FormValue("kode_stock")
 	nama_barang := c.FormValue("nama_barang")
 
-	result, err := models.Check_Nama_Stcok(kode_inventory, nama_barang)
+	result, err := models.Check_Nama_Stcok(kode_stock, nama_barang)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

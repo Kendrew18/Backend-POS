@@ -8,17 +8,17 @@ import (
 
 func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (Response, error) {
 	var res Response
-	var invent str.Insert_Inventory
+	var invent str.Insert_Stock
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT nama_barang FROM inventory_stock WHERE nama_barang=?"
+	sqlStatement := "SELECT nama_barang FROM stock WHERE nama_barang=?"
 
 	_ = con.QueryRow(sqlStatement, nama_barang).Scan(&invent.Nama_barang)
 
 	if invent.Nama_barang == "" {
 
-		sqlStatement := "INSERT INTO inventory_stock (nama_barang,jumlah_barang,harga_barang) values(?,?,?)"
+		sqlStatement := "INSERT INTO stock (nama_barang,jumlah_barang,harga_barang) values(?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -50,12 +50,12 @@ func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (R
 
 func Read_Stock() (Response, error) {
 	var res Response
-	var arr_invent []str.Read_Inventory
-	var invent str.Read_Inventory
+	var arr_invent []str.Read_Stock
+	var invent str.Read_Stock
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM inventory_stock"
+	sqlStatement := "SELECT * FROM stock"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -66,7 +66,7 @@ func Read_Stock() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&invent.Kode_inventory, &invent.Nama_barang, &invent.Jumlah_barang, &invent.Harga_barang)
+		err = rows.Scan(&invent.Kode_stock, &invent.Nama_barang, &invent.Jumlah_barang, &invent.Harga_barang)
 		if err != nil {
 			return res, err
 		}
@@ -90,7 +90,7 @@ func Update_Stock(kode_inventory string, nama_barang string, jumlah_barang int, 
 	var res Response
 	con := db.CreateCon()
 
-	sqlstatement := "UPDATE inventory_stock SET nama_barang=?,jumlah_barang=?,harga_barang=? WHERE kode_inventory=?"
+	sqlstatement := "UPDATE stock SET nama_barang=?,jumlah_barang=?,harga_barang=? WHERE kode_stock=?"
 
 	stmt, err := con.Prepare(sqlstatement)
 
@@ -125,7 +125,7 @@ func Check_Nama_Stcok(kode_inventory string, nama_barang string) (Response, erro
 
 	con := db.CreateCon()
 
-	sqlstatement := "SELECT kode_inventory FROM inventory_stock WHERE kode_inventory!=? && nama_barang==?"
+	sqlstatement := "SELECT kode_stock FROM stock WHERE kode_stock!=? && nama_barang==?"
 
 	_ = con.QueryRow(sqlstatement, kode_inventory, nama_barang).Scan(&check.Kode_inventory)
 
