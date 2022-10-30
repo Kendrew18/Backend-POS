@@ -32,7 +32,7 @@ func Generate_Id_Stock_Masuk() int {
 	return no
 }
 
-func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_supplier string, jumlah_barang int, harga_barang int) (Response, error) {
+func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_supplier string, jumlah_barang string, harga_barang string) (Response, error) {
 	var res Response
 	var SM str.Insert_Stock_Masuk
 
@@ -59,6 +59,35 @@ func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_supplier st
 	_ = con.QueryRow(sqlStatement, id).Scan(&SM.Id_stock_masuk, &SM.Kode_supplier, &SM.Kode_stock,
 		&SM.Tanggal_masuk, &SM.Nama_supplier, &SM.Jumlah_barang, &SM.Harga_barang)
 
+	k_stock := String_Separator_To_String(SM.Kode_stock)
+
+	j_barang := String_Separator_To_Int(SM.Jumlah_barang)
+
+	for i := 0; i < len(k_stock); i++ {
+		var obj str.Jumlah_Barang
+
+		sqlStatement = "SELECT jumlah_barang FROM stock WHERE kode_stock=?"
+		_ = con.QueryRow(sqlStatement, k_stock[i]).Scan(&obj.Jumlah_Barang)
+
+		total := obj.Jumlah_Barang + j_barang[i]
+
+		sqlstatement := "UPDATE stock SET jumlah_barang=? WHERE kode_stock=?"
+
+		stmt, err = con.Prepare(sqlstatement)
+
+		if err != nil {
+			return res, err
+		}
+
+		_, err := stmt.Exec(total, k_stock[i])
+
+		if err != nil {
+			return res, err
+		}
+	}
+
+	stmt.Close()
+
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
 	res.Data = SM
@@ -73,7 +102,7 @@ func Read_Stock_Masuk() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM inventory_stock"
+	sqlStatement := "SELECT * FROM stock_masuk"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -89,6 +118,48 @@ func Read_Stock_Masuk() (Response, error) {
 		if err != nil {
 			return res, err
 		}
+		arrobj = append(arrobj, obj)
+	}
+
+	if arrobj == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arrobj
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj
+	}
+
+	return res, nil
+}
+
+func Read_Detail_Stock_Masuk(id_stock_masuk string) (Response, error) {
+	var res Response
+	var obj_str str.Detail_Stock_Masuk_String
+	var obj str.Detail_Stock_Masuk
+	var arrobj []str.Detail_Stock_Masuk
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT kode_stock,jumlah_barang,harga_barang FROM stock_masuk WHERE id_stock_masuk=?"
+
+	err := con.QueryRow(sqlStatement, id_stock_masuk).Scan(&obj_str.Kode_stock, &obj_str.Jumlah_barang, &obj_str.Harga_barang)
+
+	if err != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = obj
+	}
+
+	k_stock := String_Separator_To_String(obj_str.Kode_stock)
+	j_barang := String_Separator_To_Int(obj_str.Jumlah_barang)
+	h_barang := String_Separator_To_Int(obj_str.Harga_barang)
+
+	for i := 0; i < len(k_stock); i++ {
+		obj.Kode_stock = k_stock[i]
+		obj.Jumlah_barang = j_barang[i]
+		obj.Harga_barang = h_barang[i]
 		arrobj = append(arrobj, obj)
 	}
 

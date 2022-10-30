@@ -4,7 +4,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"project-1/models"
-	"strconv"
 )
 
 func InputStockMasuk(c echo.Context) error {
@@ -14,11 +13,7 @@ func InputStockMasuk(c echo.Context) error {
 	jumlah_barang := c.FormValue("jumlah_barang")
 	harga_barang := c.FormValue("harga_barang")
 
-	jb, _ := strconv.Atoi(jumlah_barang)
-
-	hb, _ := strconv.Atoi(harga_barang)
-
-	result, err := models.Input_Stock_Masuk(kode_supplier, kode_stock, nama_supplier, jb, hb)
+	result, err := models.Input_Stock_Masuk(kode_supplier, kode_stock, nama_supplier, jumlah_barang, harga_barang)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -29,6 +24,18 @@ func InputStockMasuk(c echo.Context) error {
 
 func ReadStockMasuk(c echo.Context) error {
 	result, err := models.Read_Stock_Masuk()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func Read_Detail_Stock_Masuk(c echo.Context) error {
+	id_stock_masuk := c.FormValue("id_stock_masuk")
+
+	result, err := models.Read_Detail_Stock_Masuk(id_stock_masuk)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

@@ -32,6 +32,8 @@ func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (R
 		invent.Jumlah_barang = jumlah_barang
 		invent.Harga_barang = harga_barang
 
+		stmt.Close()
+
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
 		res.Data = invent
@@ -109,6 +111,8 @@ func Update_Stock(kode_inventory string, nama_barang string, jumlah_barang int, 
 	if err != nil {
 		return res, err
 	}
+
+	stmt.Close()
 
 	res.Status = http.StatusOK
 	res.Message = "Suksess"

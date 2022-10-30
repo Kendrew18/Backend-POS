@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"net/http"
 	"project-1/db"
 	str "project-1/struct"
@@ -59,6 +58,8 @@ func Input_Supplier(nama_supplier string, nomor_telpon string, email_supplier st
 	sup.Email_supplier = email_supplier
 	sup.Nomor_telpon = nomor_telpon
 
+	stmt.Close()
+
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
 	res.Data = sup
@@ -102,47 +103,6 @@ func Read_Supplier() (Response, error) {
 	}
 
 	return res, nil
-}
-
-func String_Separator_To_String(str string) []string {
-	str2 := str
-
-	var by = []byte{}
-
-	by = []byte(str)
-	by2 := byte(0)
-	by = append(by, by2)
-	str2 = string(by)
-	fmt.Println(str2)
-
-	var new string = ""
-	var i int = 0
-
-	var data = []string{}
-
-	for by[i] != 0 {
-		var co int = 0
-		new = ""
-		if by[i] == 124 {
-			co++
-			i++
-			for co < 2 {
-				if by[i] == 124 {
-					co++
-					i++
-					data = append(data, new)
-				} else {
-					new += string(by[i])
-					i++
-				}
-			}
-		} else {
-			i++
-		}
-	}
-	fmt.Println(data, i)
-
-	return data
 }
 
 /*

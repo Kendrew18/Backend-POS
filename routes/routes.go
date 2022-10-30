@@ -47,5 +47,8 @@ func Init() *echo.Echo {
 	//Read_Stock_Masuk
 	stk_m.GET("/stock-masuk", controllers.ReadStockMasuk)
 
+	//Read_Detail_Stock_Masuk
+	stk_m.GET("/detail-stock-masuk", controllers.Read_Detail_Stock_Masuk)
+
 	return e
 }
