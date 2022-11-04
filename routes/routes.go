@@ -16,6 +16,7 @@ func Init() *echo.Echo {
 	us := e.Group("/us")
 	invent := e.Group("/invent")
 	stk_m := e.Group("/stk-m")
+	tr := e.Group("/tr")
 
 	//Login
 	us.GET("/login", controllers.Login)
@@ -49,6 +50,18 @@ func Init() *echo.Echo {
 
 	//Read_Detail_Stock_Masuk
 	stk_m.GET("/detail-stock-masuk", controllers.Read_Detail_Stock_Masuk)
+
+	//Input-Transaksi
+	tr.POST("/input-transaksi", controllers.InputTransaksi)
+
+	//read-transaksi
+	tr.GET("/transaksi", controllers.ReadTransaksi)
+
+	//read-detail-transaksi
+	tr.GET("/read-detail-transaksi", controllers.ReadDetailTransaksi)
+
+	//update-status-transaksi
+	tr.PUT("/update-status", controllers.UpdateStatus)
 
 	return e
 }
