@@ -29,3 +29,15 @@ func ReadSupplier(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func DeleteSupplier(c echo.Context) error {
+	kode_supplier := c.FormValue("kode_supplier")
+
+	result, err := models.Delete_Supplier(kode_supplier)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}

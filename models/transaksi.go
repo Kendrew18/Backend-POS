@@ -5,6 +5,7 @@ import (
 	"project-1/db"
 	str "project-1/struct"
 	"strconv"
+	"time"
 )
 
 func Generate_Id_Transaksi() int {
@@ -32,7 +33,7 @@ func Generate_Id_Transaksi() int {
 	return no
 }
 
-func Input_Transaksi(kode_stock string, jumlah_barang string, harga_barang string, status_transaksi string, tanggal_pelunasan string) (Response, error) {
+func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string, harga_barang string, status_transaksi string, tanggal_pelunasan string, sub_total_harga int64) (Response, error) {
 	var res Response
 	var tr str.Input_Transaksi
 
@@ -42,7 +43,9 @@ func Input_Transaksi(kode_stock string, jumlah_barang string, harga_barang strin
 
 	nm_str := strconv.Itoa(nm)
 
-	id := "TR-" + nm_str
+	currentTime := time.Now()
+
+	id := "TR-" + currentTime.Format("20060102") + nm_str
 
 	ls := []string{}
 	str1 := ""
@@ -71,7 +74,7 @@ func Input_Transaksi(kode_stock string, jumlah_barang string, harga_barang strin
 
 	if status_transaksi == "0" {
 
-		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi) values(?,?,?,?,CURRENT_DATE,?,?)"
+		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,CURRENT_DATE,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -79,17 +82,44 @@ func Input_Transaksi(kode_stock string, jumlah_barang string, harga_barang strin
 			return res, err
 		}
 
-		_, err = stmt.Exec(id, kode_stock, jumlah_barang, harga_barang, bln_thn_sql, 0)
+		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 0, sub_total_harga)
 
 		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan FROM stock_masuk WHERE id_stock_masuk=? "
 
 		_ = con.QueryRow(sqlStatement, id).Scan(&tr.Kode_stock, &tr.Jumlah_barang, &tr.Harga_barang,
 			&tr.Tanggal_penjualan)
+
+		k_stock := String_Separator_To_String(kode_stock)
+
+		j_barang := String_Separator_To_Int(jumlah_barang)
+
+		for i := 0; i < len(k_stock); i++ {
+			var obj str.Jumlah_Barang
+
+			sqlStatement = "SELECT jumlah_barang FROM stock WHERE kode_stock=?"
+			_ = con.QueryRow(sqlStatement, k_stock[i]).Scan(&obj.Jumlah_Barang)
+
+			total := obj.Jumlah_Barang - j_barang[i]
+
+			sqlstatement := "UPDATE stock SET jumlah_barang=? WHERE kode_stock=?"
+
+			stmt, err = con.Prepare(sqlstatement)
+
+			if err != nil {
+				return res, err
+			}
+
+			_, err := stmt.Exec(total, k_stock[i])
+
+			if err != nil {
+				return res, err
+			}
+		}
 
 		stmt.Close()
 
 	} else if status_transaksi == "1" {
-		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi) values(?,?,?,?,CURRENT_DATE,?,?)"
+		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi) values(?,?,?,?,CURRENT_DATE,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -97,12 +127,39 @@ func Input_Transaksi(kode_stock string, jumlah_barang string, harga_barang strin
 			return res, err
 		}
 
-		_, err = stmt.Exec(id, kode_stock, jumlah_barang, harga_barang, bln_thn_sql, 1)
+		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 1)
 
 		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan FROM stock_masuk WHERE id_stock_masuk=? "
 
 		_ = con.QueryRow(sqlStatement, id).Scan(&tr.Kode_stock, &tr.Jumlah_barang, &tr.Harga_barang,
 			&tr.Tanggal_penjualan)
+
+		k_stock := String_Separator_To_String(kode_stock)
+
+		j_barang := String_Separator_To_Int(jumlah_barang)
+
+		for i := 0; i < len(k_stock); i++ {
+			var obj str.Jumlah_Barang
+
+			sqlStatement = "SELECT jumlah_barang FROM stock WHERE kode_stock=?"
+			_ = con.QueryRow(sqlStatement, k_stock[i]).Scan(&obj.Jumlah_Barang)
+
+			total := obj.Jumlah_Barang - j_barang[i]
+
+			sqlstatement := "UPDATE stock SET jumlah_barang=? WHERE kode_stock=?"
+
+			stmt, err = con.Prepare(sqlstatement)
+
+			if err != nil {
+				return res, err
+			}
+
+			_, err := stmt.Exec(total, k_stock[i])
+
+			if err != nil {
+				return res, err
+			}
+		}
 
 		stmt.Close()
 
@@ -123,7 +180,7 @@ func Read_Transaksi() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_transaksi, tanggal_penjualan, status_transaksi FROM transaksi"
+	sqlStatement := "SELECT kode_transaksi, tanggal_penjualan, tanggal_pelunasan,status_transaksi FROM transaksi"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -134,7 +191,7 @@ func Read_Transaksi() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.Kode_transaksi, &obj.Tanggal_penjualan, &obj.Status_transaksi)
+		err = rows.Scan(&obj.Kode_transaksi, &obj.Tanggal_penjualan, &obj.Tanggal_pelunasan, &obj.Status_transaksi)
 		if err != nil {
 			return res, err
 		}
@@ -162,7 +219,7 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_stock,jumlah_barang,harga_barang FROM transaksi WHERE kode_transaksi=?"
+	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang FROM transaksi WHERE kode_transaksi=?"
 
 	err := con.QueryRow(sqlStatement, kode_transaksi).Scan(&obj_str.Kode_stock, &obj_str.Jumlah_barang, &obj_str.Harga_barang)
 
@@ -170,27 +227,40 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
 		res.Data = obj
-	}
-
-	k_stock := String_Separator_To_String(obj_str.Kode_stock)
-	j_barang := String_Separator_To_Int(obj_str.Jumlah_barang)
-	h_barang := String_Separator_To_Int(obj_str.Harga_barang)
-
-	for i := 0; i < len(k_stock); i++ {
-		obj.Kode_stock = k_stock[i]
-		obj.Jumlah_barang = j_barang[i]
-		obj.Harga_barang = h_barang[i]
-		arrobj = append(arrobj, obj)
-	}
-
-	if arrobj == nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Not Found"
-		res.Data = arrobj
 	} else {
-		res.Status = http.StatusOK
-		res.Message = "Sukses"
-		res.Data = arrobj
+
+		k_stock := String_Separator_To_String(obj_str.Kode_stock)
+		j_barang := String_Separator_To_Int(obj_str.Jumlah_barang)
+		h_barang := String_Separator_To_Int(obj_str.Harga_barang)
+		n_barang := String_Separator_To_String(obj_str.Nama_barang)
+
+		for i := 0; i < len(k_stock); i++ {
+			obj.Kode_stock = k_stock[i]
+			obj.Nama_barang = n_barang[i]
+			obj.Jumlah_barang = j_barang[i]
+			obj.Harga_barang = h_barang[i]
+			arrobj = append(arrobj, obj)
+		}
+
+		if arrobj == nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Not Found"
+			res.Data = arrobj
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Sukses"
+			res.Data = arrobj
+		}
+
+		if arrobj == nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Not Found"
+			res.Data = arrobj
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Sukses"
+			res.Data = arrobj
+		}
 	}
 
 	return res, nil

@@ -42,6 +42,9 @@ func Init() *echo.Echo {
 	//Read_Supplier
 	Sup.GET("/supplier", controllers.ReadSupplier)
 
+	//Delete_Supplier
+	Sup.DELETE("/delete-supplier", controllers.DeleteSupplier)
+
 	//Input_Stock_Masuk
 	stk_m.POST("/input-stock-masuk", controllers.InputStockMasuk)
 

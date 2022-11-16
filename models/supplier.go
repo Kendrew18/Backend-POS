@@ -105,17 +105,16 @@ func Read_Supplier() (Response, error) {
 	return res, nil
 }
 
-/*
 func Delete_Supplier(kode_supplier string) (Response, error) {
 	var res Response
-	var arrobj []str.Read_Supplier
-	var obj str.Read_Supplier
+	var arrobj []str.Read_Kode_Stock_Masuk
+	var obj str.Read_Kode_Stock_Masuk
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM inventory_stock WHERE "
+	sqlStatement := "SELECT id_stock_masuk,kode_supplier FROM stock_masuk WHERE kode_supplier=? "
 
-	rows, err := con.Query(sqlStatement)
+	rows, err := con.Query(sqlStatement, kode_supplier)
 
 	defer rows.Close()
 
@@ -124,11 +123,46 @@ func Delete_Supplier(kode_supplier string) (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&invent.Kode_supplier, &invent.Nama_supplier, &invent.Nomor_telpon, &invent.Email_Supplier)
+		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier)
 		if err != nil {
 			return res, err
 		}
-		arr_invent = append(arr_invent, invent)
+		arrobj = append(arrobj, obj)
 	}
 
-}*/
+	if arrobj == nil {
+
+		sqlstatement := "DELETE FROM supplier WHERE kode_supplier=?"
+
+		stmt, err := con.Prepare(sqlstatement)
+
+		if err != nil {
+			return res, err
+		}
+
+		result, err := stmt.Exec(kode_supplier)
+
+		if err != nil {
+			return res, err
+		}
+
+		rowsAffected, err := result.RowsAffected()
+
+		if err != nil {
+			return res, err
+		}
+
+		res.Status = http.StatusOK
+		res.Message = "Suksess"
+		res.Data = map[string]int64{
+			"rows": rowsAffected,
+		}
+
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Tidak bisa di hapus"
+		res.Data = arrobj
+	}
+
+	return res, nil
+}

@@ -32,7 +32,7 @@ func Generate_Id_Stock_Masuk() int {
 	return no
 }
 
-func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_supplier string, jumlah_barang string, harga_barang string) (Response, error) {
+func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_penanggung_jawab string, jumlah_barang string, harga_barang string) (Response, error) {
 	var res Response
 	var SM str.Insert_Stock_Masuk
 
@@ -44,7 +44,7 @@ func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_supplier st
 
 	id := "SM-" + nm_str
 
-	sqlStatement := "INSERT INTO stock_masuk (id_stock_masuk,kode_supplier,kode_stock,tanggal_masuk,nama_supplier,jumlah_barang,harga_barang) values(?,?,?,CURRENT_DATE,?,?,?)"
+	sqlStatement := "INSERT INTO stock_masuk (id_stock_masuk,kode_supplier,kode_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,harga_barang) values(?,?,?,CURRENT_DATE,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -52,7 +52,7 @@ func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_supplier st
 		return res, err
 	}
 
-	_, err = stmt.Exec(id, kode_supplier, kode_stock, nama_supplier, jumlah_barang, harga_barang)
+	_, err = stmt.Exec(id, kode_supplier, kode_stock, nama_penanggung_jawab, jumlah_barang, harga_barang)
 
 	sqlStatement = "SELECT * FROM stock_masuk WHERE id_stock_masuk=? "
 
@@ -113,8 +113,8 @@ func Read_Stock_Masuk() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Kode_stock,
-			&obj.Tanggal_masuk, &obj.Nama_supplier, &obj.Jumlah_barang, &obj.Harga_barang)
+		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock,
+			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Harga_barang)
 		if err != nil {
 			return res, err
 		}
@@ -142,9 +142,9 @@ func Read_Detail_Stock_Masuk(id_stock_masuk string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_stock,jumlah_barang,harga_barang FROM stock_masuk WHERE id_stock_masuk=?"
+	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang FROM stock_masuk WHERE id_stock_masuk=?"
 
-	err := con.QueryRow(sqlStatement, id_stock_masuk).Scan(&obj_str.Kode_stock, &obj_str.Jumlah_barang, &obj_str.Harga_barang)
+	err := con.QueryRow(sqlStatement, id_stock_masuk).Scan(&obj_str.Kode_stock, &obj_str.Nama_barang, &obj_str.Jumlah_barang, &obj_str.Harga_barang)
 
 	if err != nil {
 		res.Status = http.StatusNotFound
@@ -155,9 +155,11 @@ func Read_Detail_Stock_Masuk(id_stock_masuk string) (Response, error) {
 	k_stock := String_Separator_To_String(obj_str.Kode_stock)
 	j_barang := String_Separator_To_Int(obj_str.Jumlah_barang)
 	h_barang := String_Separator_To_Int(obj_str.Harga_barang)
+	n_barang := String_Separator_To_String(obj_str.Nama_barang)
 
 	for i := 0; i < len(k_stock); i++ {
 		obj.Kode_stock = k_stock[i]
+		obj.Nama_barang = n_barang[i]
 		obj.Jumlah_barang = j_barang[i]
 		obj.Harga_barang = h_barang[i]
 		arrobj = append(arrobj, obj)
