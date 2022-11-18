@@ -147,3 +147,42 @@ func Penutupan_Pembukuan(tanggal string) (Response, error) {
 
 	return res, nil
 }
+
+func Read_Pembukuan(tanggal string) (Response, error) {
+	var res Response
+	var arrobj []_struct.Read_Pembukuan_Transaksi
+	var obj _struct.Read_Pembukuan_Transaksi
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM pembukuan_transaksi"
+
+	rows, err := con.Query(sqlStatement)
+
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
+			&obj.Harga_barang, &obj.Tanggal_penjualan, &obj.Total_harga_penjualan)
+		if err != nil {
+			return res, err
+		}
+		arrobj = append(arrobj, obj)
+	}
+
+	if arrobj == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arrobj
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj
+	}
+
+	return res, nil
+}
