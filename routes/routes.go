@@ -74,7 +74,7 @@ func Init() *echo.Echo {
 	pmb.GET("/penutupan-pembukuan", controllers.PenutupanPembukuan)
 
 	//read-pembukuan
-	pmb.GET("/read-pembukuan", controllers.PenutupanPembukuan)
+	pmb.GET("/read-pembukuan", controllers.ReadPembukuan)
 
 	//input_retur
 	rtr.POST("/input-retur", controllers.InputRetur)
