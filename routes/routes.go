@@ -20,6 +20,7 @@ func Init() *echo.Echo {
 	stk_m := e.Group("/stk-m")
 	tr := e.Group("/tr")
 	pmb := e.Group("/pmb")
+	rtr := e.Group("/rtr")
 
 	//Login
 	us.GET("/login", controllers.Login)
@@ -72,7 +73,14 @@ func Init() *echo.Echo {
 	//penutupan-pembukuan
 	pmb.GET("/penutupan-pembukuan", controllers.PenutupanPembukuan)
 
+	//read-pembukuan
 	pmb.GET("/read-pembukuan", controllers.PenutupanPembukuan)
+
+	//input_retur
+	rtr.POST("/input-retur", controllers.InputRetur)
+
+	//read-retur
+	rtr.GET("read-retur", controllers.ReadRetur)
 
 	return e
 }

@@ -32,7 +32,8 @@ func Generate_Id_Stock_Masuk() int {
 	return no
 }
 
-func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_penanggung_jawab string, jumlah_barang string, harga_barang string) (Response, error) {
+func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_penanggung_jawab string,
+	jumlah_barang string, harga_barang string) (Response, error) {
 	var res Response
 	var SM str.Insert_Stock_Masuk
 
@@ -122,6 +123,7 @@ func Read_Stock_Masuk() (Response, error) {
 	}
 
 	if arrobj == nil {
+		arrobj = append(arrobj, obj)
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
 		res.Data = arrobj
@@ -166,6 +168,7 @@ func Read_Detail_Stock_Masuk(id_stock_masuk string) (Response, error) {
 	}
 
 	if arrobj == nil {
+		arrobj = append(arrobj, obj)
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
 		res.Data = arrobj
