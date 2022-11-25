@@ -6,6 +6,6 @@ type Read_Pembukuan_Transaksi struct {
 	Nama_barang            string `json:"nama_barang"`
 	Jumlah_barang          string `json:"jumlah_barang"`
 	Harga_barang           string `json:"harga_barang"`
-	Tanggal_penjualan      string `json:"tanggal_penjualan"`
+	Tanggal_pelunasan      string `json:"tanggal_pelunasan"`
 	Total_harga_penjualan  int64  `json:"total_harga_penjualan"`
 }

@@ -2,12 +2,14 @@ package routes
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"net/http"
 	"project-1/controllers"
 )
 
 func Init() *echo.Echo {
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
@@ -17,6 +19,7 @@ func Init() *echo.Echo {
 	invent := e.Group("/invent")
 	stk_m := e.Group("/stk-m")
 	tr := e.Group("/tr")
+	pmb := e.Group("/pmb")
 
 	//Login
 	us.GET("/login", controllers.Login)
@@ -65,6 +68,11 @@ func Init() *echo.Echo {
 
 	//update-status-transaksi
 	tr.PUT("/update-status", controllers.UpdateStatus)
+
+	//penutupan-pembukuan
+	pmb.GET("/penutupan-pembukuan", controllers.PenutupanPembukuan)
+
+	pmb.GET("/read-pembukuan", controllers.PenutupanPembukuan)
 
 	return e
 }
