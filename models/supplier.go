@@ -74,7 +74,7 @@ func Read_Supplier() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM inventory_stock"
+	sqlStatement := "SELECT * FROM supplier"
 
 	rows, err := con.Query(sqlStatement)
 
