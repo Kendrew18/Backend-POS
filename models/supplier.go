@@ -44,7 +44,7 @@ func Input_Supplier(nama_supplier string, nomor_telpon string, email_supplier st
 
 	kode_suplier := "SUP-" + nm_str
 
-	sqlStatement := "INSERT INTO supplier (kode_supplier,nama_supplier,nomor_telpon,email_supplier) values(?,?,?)"
+	sqlStatement := "INSERT INTO supplier (kode_supplier,nama_supplier,nomor_telpon,email_supplier) values(?,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
