@@ -4,7 +4,32 @@ import (
 	"net/http"
 	"project-1/db"
 	str "project-1/struct"
+	"strconv"
 )
+
+func Generate_Id_Stock() int {
+	var obj str.Generate_Id
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT id_stock FROM generate_id"
+	_ = con.QueryRow(sqlStatement).Scan(&obj.Id)
+
+	no := obj.Id
+	no = no + 1
+
+	sqlstatement := "UPDATE generate_id SET id_stock=?"
+
+	stmt, err := con.Prepare(sqlstatement)
+
+	if err != nil {
+		return -1
+	}
+
+	stmt.Exec(no)
+
+	return no
+}
 
 func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (Response, error) {
 	var res Response
@@ -18,7 +43,13 @@ func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (R
 
 	if invent.Nama_barang == "" {
 
-		sqlStatement := "INSERT INTO stock (nama_barang,jumlah_barang,harga_barang) values(?,?,?)"
+		nm := Generate_Id_Stock()
+
+		nm_str := strconv.Itoa(nm)
+
+		id := "INVT-" + nm_str
+
+		sqlStatement := "INSERT INTO stock (kode_stock,nama_barang,jumlah_barang,harga_barang) values(?,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -26,7 +57,7 @@ func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (R
 			return res, err
 		}
 
-		_, err = stmt.Exec(nama_barang, jumlah_barang, harga_barang)
+		_, err = stmt.Exec(id, nama_barang, jumlah_barang, harga_barang)
 
 		invent.Nama_barang = nama_barang
 		invent.Jumlah_barang = jumlah_barang

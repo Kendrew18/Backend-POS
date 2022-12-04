@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"net/http"
 	"project-1/db"
 	str "project-1/struct"
@@ -32,7 +33,7 @@ func Generate_Id_Stock_Masuk() int {
 	return no
 }
 
-func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_penanggung_jawab string,
+func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_stock string, nama_stock string,
 	jumlah_barang string, harga_barang string) (Response, error) {
 	var res Response
 	var SM str.Insert_Stock_Masuk
@@ -45,7 +46,7 @@ func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_penanggung_
 
 	id := "SM-" + nm_str
 
-	sqlStatement := "INSERT INTO stock_masuk (id_stock_masuk,kode_supplier,kode_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,harga_barang) values(?,?,?,CURRENT_DATE,?,?,?)"
+	sqlStatement := "INSERT INTO stock_masuk (id_stock_masuk,kode_supplier,kode_stock,nama_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,harga_barang) values(?,?,?,?,CURRENT_DATE,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -53,12 +54,14 @@ func Input_Stock_Masuk(kode_supplier string, kode_stock string, nama_penanggung_
 		return res, err
 	}
 
-	_, err = stmt.Exec(id, kode_supplier, kode_stock, nama_penanggung_jawab, jumlah_barang, harga_barang)
+	_, err = stmt.Exec(id, kode_supplier, kode_stock, nama_stock, nama_penanggung_jawab, jumlah_barang, harga_barang)
 
-	sqlStatement = "SELECT * FROM stock_masuk WHERE id_stock_masuk=? "
+	sqlStatement = "SELECT * FROM stock_masuk WHERE id_stock_masuk=?"
 
-	_ = con.QueryRow(sqlStatement, id).Scan(&SM.Id_stock_masuk, &SM.Kode_supplier, &SM.Kode_stock,
-		&SM.Tanggal_masuk, &SM.Nama_supplier, &SM.Jumlah_barang, &SM.Harga_barang)
+	err = con.QueryRow(sqlStatement, id).Scan(&SM.Id_stock_masuk, &SM.Kode_supplier, &SM.Nama_penanggung_jawab,
+		&SM.Kode_stock, &SM.Nama_stock, &SM.Tanggal_masuk, &SM.Jumlah_barang, &SM.Harga_barang)
+
+	fmt.Println(SM.Nama_stock)
 
 	k_stock := String_Separator_To_String(SM.Kode_stock)
 
