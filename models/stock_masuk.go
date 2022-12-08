@@ -117,7 +117,7 @@ func Read_Stock_Masuk() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock,
+		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock, &obj.Nama_stock,
 			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Harga_barang)
 		if err != nil {
 			return res, err
