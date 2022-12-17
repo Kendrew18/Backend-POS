@@ -85,7 +85,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 0, sub_total_harga)
 
-		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan FROM transaksi WHERE kode_transaksi=? "
+		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan FROM transaksi WHERE kode_transaksi=?"
 
 		_ = con.QueryRow(sqlStatement, id).Scan(&tr.Kode_stock, &tr.Jumlah_barang, &tr.Harga_barang,
 			&tr.Tanggal_penjualan)
@@ -130,7 +130,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 1, sub_total_harga)
 
-		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan FROM stock_masuk WHERE id_stock_masuk=? "
+		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan FROM transaksi WHERE kode_transaksi=?"
 
 		_ = con.QueryRow(sqlStatement, id).Scan(&tr.Kode_stock, &tr.Jumlah_barang, &tr.Harga_barang,
 			&tr.Tanggal_penjualan)
