@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"net/http"
 	"project-1/db"
 	str "project-1/struct"
@@ -84,7 +85,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 0, sub_total_harga)
 
-		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan FROM stock_masuk WHERE id_stock_masuk=? "
+		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan FROM transaksi WHERE kode_transaksi=? "
 
 		_ = con.QueryRow(sqlStatement, id).Scan(&tr.Kode_stock, &tr.Jumlah_barang, &tr.Harga_barang,
 			&tr.Tanggal_penjualan)
@@ -221,7 +222,9 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 
 	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang FROM transaksi WHERE kode_transaksi=?"
 
-	err := con.QueryRow(sqlStatement, kode_transaksi).Scan(&obj_str.Kode_stock, &obj_str.Jumlah_barang, &obj_str.Harga_barang)
+	err := con.QueryRow(sqlStatement, kode_transaksi).Scan(&obj_str.Kode_stock, &obj_str.Nama_barang, &obj_str.Jumlah_barang, &obj_str.Harga_barang)
+
+	fmt.Println(obj_str)
 
 	if err != nil {
 		res.Status = http.StatusNotFound
