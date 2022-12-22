@@ -126,7 +126,7 @@ func Penutupan_Pembukuan(tanggal string) (Response, error) {
 		total += h_brg_all[i]
 	}
 
-	sqlStatement = "INSERT INTO pembukuan_transaksi (id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_pelunasan,total_harga_penjualan) values(?,?,?,?,?,current_date,?)"
+	sqlStatement = "INSERT INTO pembukuan_transaksi (id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_pelunasan,total_harga_penjualan) values(?,?,?,?,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -134,7 +134,7 @@ func Penutupan_Pembukuan(tanggal string) (Response, error) {
 		return res, err
 	}
 
-	_, err = stmt.Exec(id, k_stk_pmbk, n_brg_pmbk, j_brg_pmbk, h_brg_pmbk, total)
+	_, err = stmt.Exec(id, k_stk_pmbk, n_brg_pmbk, j_brg_pmbk, h_brg_pmbk, bln_thn_sql, total)
 
 	bln := ls[2] + "-" + ls[1]
 

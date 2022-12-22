@@ -48,7 +48,7 @@ func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, na
 
 	id := "TR-" + currentTime.Format("2006-01-02") + nm_str
 
-	sqlStatement := "INSERT INTO retur (id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retue) values(?,?,?,?,?,current_date,?,?)"
+	sqlStatement := "INSERT INTO retur (id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur) values(?,?,?,?,?,current_date,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
