@@ -437,6 +437,9 @@ func Read_Pembukuan(tanggal string) (Response, error) {
 	var arrobj []_struct.Read_Pembukuan_Transaksi
 	var obj _struct.Read_Pembukuan_Transaksi
 
+	var arrobj_fix []_struct.Read_Pembukuan_Transaksi_List
+	var obj_fix _struct.Read_Pembukuan_Transaksi_List
+
 	ls := []string{}
 	str1 := ""
 
@@ -485,14 +488,25 @@ func Read_Pembukuan(tanggal string) (Response, error) {
 		arrobj = append(arrobj, obj)
 	}
 
-	if arrobj == nil {
+	for i := 0; i < len(arrobj); i++ {
+		obj_fix.Id_pembukuan_transaksi = arrobj[i].Id_pembukuan_transaksi
+		obj_fix.Tanggal_pelunasan = arrobj[i].Tanggal_pelunasan
+		obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
+		obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
+		obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
+		obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
+		obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
+		arrobj_fix = append(arrobj_fix, obj_fix)
+	}
+
+	if arrobj_fix == nil {
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
-		res.Data = arrobj
+		res.Data = arrobj_fix
 	} else {
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
-		res.Data = arrobj
+		res.Data = arrobj_fix
 	}
 
 	return res, nil
