@@ -181,7 +181,7 @@ func Read_Transaksi() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi FROM transaksi"
+	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi,sub_total_harga,jumlah_barang FROM transaksi"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -192,7 +192,13 @@ func Read_Transaksi() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.Kode_transaksi, &obj.Tanggal_penjualan, &obj.Tanggal_pelunasan, &obj.Status_transaksi)
+		err = rows.Scan(&obj.Kode_transaksi, &obj.Tanggal_penjualan, &obj.Tanggal_pelunasan, &obj.Status_transaksi, &obj.Sub_total_harga, &obj.Jumlah_barang)
+		total := String_Separator_To_Int(obj.Jumlah_barang)
+		sub_total := 0
+		for i := 0; i < len(total); i++ {
+			sub_total += total[i]
+		}
+		obj.Total_jumlah_barang = sub_total
 		if err != nil {
 			return res, err
 		}
