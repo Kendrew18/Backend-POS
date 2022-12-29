@@ -21,6 +21,7 @@ func Init() *echo.Echo {
 	tr := e.Group("/tr")
 	pmb := e.Group("/pmb")
 	rtr := e.Group("/rtr")
+	flt := e.Group("/flt")
 
 	//Login
 	us.GET("/login", controllers.Login)
@@ -80,7 +81,19 @@ func Init() *echo.Echo {
 	rtr.POST("/input-retur", controllers.InputRetur)
 
 	//read-retur
-	rtr.GET("read-retur", controllers.ReadRetur)
+	rtr.GET("/read-retur", controllers.ReadRetur)
+
+	//filter_transaksi
+	flt.GET("/fil-transaksi", controllers.FilterTransaksi)
+
+	//filter_stock
+	flt.GET("/fil-stock", controllers.FilterStock)
+
+	//filter_stock_masuk
+	flt.GET("/fil-stock-masuk", controllers.FilterStockMasuk)
+
+	//filter_pembukuan
+	flt.GET("/fil-pembukuan", controllers.FilterReadPembukuan)
 
 	return e
 }

@@ -436,237 +436,82 @@ func Penutupan_Pembukuan(tanggal string) (Response, error) {
 	return res, nil
 }
 
-func Read_Pembukuan(tanggal string, tipe int) (Response, error) {
+func Read_Pembukuan(tanggal string) (Response, error) {
 	var res Response
-	if tipe == 1 {
-		var arrobj []_struct.Read_Pembukuan_Transaksi
-		var obj _struct.Read_Pembukuan_Transaksi
+	var arrobj []_struct.Read_Pembukuan_Transaksi
+	var obj _struct.Read_Pembukuan_Transaksi
 
-		var arrobj_fix []_struct.Read_Pembukuan_Transaksi_List
-		var obj_fix _struct.Read_Pembukuan_Transaksi_List
+	var arrobj_fix []_struct.Read_Pembukuan_Transaksi_List
+	var obj_fix _struct.Read_Pembukuan_Transaksi_List
 
-		ls := []string{}
-		str1 := ""
+	ls := []string{}
+	str1 := ""
 
-		for i := 0; i < len(tanggal); i++ {
-			if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
-				str1 += string(tanggal[i])
-				if i == len(tanggal)-1 {
-					ls = append(ls, str1)
-				}
-			} else if tanggal[i] == '-' {
+	for i := 0; i < len(tanggal); i++ {
+		if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
+			str1 += string(tanggal[i])
+			if i == len(tanggal)-1 {
 				ls = append(ls, str1)
-				str1 = ""
 			}
+		} else if tanggal[i] == '-' {
+			ls = append(ls, str1)
+			str1 = ""
 		}
-
-		j := len(ls)
-		bln_thn_sql := ""
-
-		for x := j - 1; x >= 0; x-- {
-			bln_thn_sql += ls[x]
-			if x != 0 {
-				bln_thn_sql += "-"
-			}
-		}
-
-		awal := ls[2] + "-" + ls[1] + "-" + "01"
-
-		con := db.CreateCon()
-
-		sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi WHERE tanggal_pelunasan<=?&&tanggal_pelunasan>=?"
-
-		rows, err := con.Query(sqlStatement, bln_thn_sql, awal)
-
-		defer rows.Close()
-
-		if err != nil {
-			return res, err
-		}
-
-		for rows.Next() {
-			err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
-				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
-			if err != nil {
-				return res, err
-			}
-			arrobj = append(arrobj, obj)
-		}
-
-		for i := 0; i < len(arrobj); i++ {
-			obj_fix.Id_pembukuan_transaksi = arrobj[i].Id_pembukuan_transaksi
-			obj_fix.Tanggal_pelunasan = arrobj[i].Tanggal_pelunasan
-			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
-			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
-			obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
-			obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
-			obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
-			arrobj_fix = append(arrobj_fix, obj_fix)
-		}
-
-		if arrobj_fix == nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Not Found"
-			res.Data = arrobj_fix
-		} else {
-			res.Status = http.StatusOK
-			res.Message = "Sukses"
-			res.Data = arrobj_fix
-		}
-	} else if tipe == 2 {
-
-		var arrobj []_struct.Read_Pembukuan_Transaksi_Bulanan
-		var obj _struct.Read_Pembukuan_Transaksi_Bulanan
-
-		var arrobj_fix []_struct.Read_Pembukuan_Transaksi_Bulanan_List
-		var obj_fix _struct.Read_Pembukuan_Transaksi_Bulanan_List
-
-		ls := []string{}
-		str1 := ""
-
-		for i := 0; i < len(tanggal); i++ {
-			if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
-				str1 += string(tanggal[i])
-				if i == len(tanggal)-1 {
-					ls = append(ls, str1)
-				}
-			} else if tanggal[i] == '-' {
-				ls = append(ls, str1)
-				str1 = ""
-			}
-		}
-
-		j := len(ls)
-		bln_thn_sql := ""
-
-		for x := j - 1; x >= 0; x-- {
-			bln_thn_sql += ls[x]
-			if x != 0 {
-				bln_thn_sql += "-"
-			}
-		}
-
-		awal := ls[2] + "-" + ls[1] + "-" + "01"
-
-		con := db.CreateCon()
-
-		sqlStatement := "SELECT id_pembukuan_transaksi_bulanan,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi_bulanan WHERE tanggal_pelunasan<=?&&tanggal_pelunasan>=?"
-
-		rows, err := con.Query(sqlStatement, bln_thn_sql, awal)
-
-		defer rows.Close()
-
-		if err != nil {
-			return res, err
-		}
-
-		for rows.Next() {
-			err = rows.Scan(&obj.Id_pembukuann_transaksi_bulanan, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
-				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
-			if err != nil {
-				return res, err
-			}
-			arrobj = append(arrobj, obj)
-		}
-
-		for i := 0; i < len(arrobj); i++ {
-			obj_fix.Id_pembukuann_transaksi_bulanan = arrobj[i].Id_pembukuann_transaksi_bulanan
-			obj_fix.Tanggal_pelunasan = arrobj[i].Tanggal_pelunasan
-			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
-			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
-			obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
-			obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
-			obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
-			arrobj_fix = append(arrobj_fix, obj_fix)
-		}
-
-		if arrobj_fix == nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Not Found"
-			res.Data = arrobj_fix
-		} else {
-			res.Status = http.StatusOK
-			res.Message = "Sukses"
-			res.Data = arrobj_fix
-		}
-
-	} else if tipe == 3 {
-
-		var arrobj []_struct.Read_Pembukuan_Transaksi_Tahunan
-		var obj _struct.Read_Pembukuan_Transaksi_Tahunan
-
-		var arrobj_fix []_struct.Read_Pembukuan_Transaksi_Tahunan_List
-		var obj_fix _struct.Read_Pembukuan_Transaksi_Tahunan_List
-
-		ls := []string{}
-		str1 := ""
-
-		for i := 0; i < len(tanggal); i++ {
-			if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
-				str1 += string(tanggal[i])
-				if i == len(tanggal)-1 {
-					ls = append(ls, str1)
-				}
-			} else if tanggal[i] == '-' {
-				ls = append(ls, str1)
-				str1 = ""
-			}
-		}
-
-		j := len(ls)
-		bln_thn_sql := ""
-
-		for x := j - 1; x >= 0; x-- {
-			bln_thn_sql += ls[x]
-			if x != 0 {
-				bln_thn_sql += "-"
-			}
-		}
-
-		awal := ls[2] + "-" + ls[1] + "-" + "01"
-
-		con := db.CreateCon()
-
-		sqlStatement := "SELECT id_pembukuan_transaksi_tahunan,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi_tahunan WHERE tanggal_pelunasan<=?&&tanggal_pelunasan>=?"
-
-		rows, err := con.Query(sqlStatement, bln_thn_sql, awal)
-
-		defer rows.Close()
-
-		if err != nil {
-			return res, err
-		}
-
-		for rows.Next() {
-			err = rows.Scan(&obj.Id_pembukuann_transaksi_Tahunan, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
-				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
-			if err != nil {
-				return res, err
-			}
-			arrobj = append(arrobj, obj)
-		}
-
-		for i := 0; i < len(arrobj); i++ {
-			obj_fix.Id_pembukuann_transaksi_Tahunan = arrobj[i].Id_pembukuann_transaksi_Tahunan
-			obj_fix.Tanggal_pelunasan = arrobj[i].Tanggal_pelunasan
-			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
-			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
-			obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
-			obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
-			obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
-			arrobj_fix = append(arrobj_fix, obj_fix)
-		}
-
-		if arrobj_fix == nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Not Found"
-			res.Data = arrobj_fix
-		} else {
-			res.Status = http.StatusOK
-			res.Message = "Sukses"
-			res.Data = arrobj_fix
-		}
-
 	}
+
+	j := len(ls)
+	bln_thn_sql := ""
+
+	for x := j - 1; x >= 0; x-- {
+		bln_thn_sql += ls[x]
+		if x != 0 {
+			bln_thn_sql += "-"
+		}
+	}
+
+	awal := ls[2] + "-" + ls[1] + "-" + "01"
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi WHERE tanggal_pelunasan<=?&&tanggal_pelunasan>=? ORDER BY id_pembukuan_transaksi DESC "
+
+	rows, err := con.Query(sqlStatement, bln_thn_sql, awal)
+
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
+			&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
+		if err != nil {
+			return res, err
+		}
+		arrobj = append(arrobj, obj)
+	}
+
+	for i := 0; i < len(arrobj); i++ {
+		obj_fix.Id_pembukuan_transaksi = arrobj[i].Id_pembukuan_transaksi
+		obj_fix.Tanggal_pelunasan = arrobj[i].Tanggal_pelunasan
+		obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
+		obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
+		obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
+		obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
+		obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
+		arrobj_fix = append(arrobj_fix, obj_fix)
+	}
+
+	if arrobj_fix == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arrobj_fix
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj_fix
+	}
+
 	return res, nil
 }
