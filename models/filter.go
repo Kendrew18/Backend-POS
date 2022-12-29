@@ -346,9 +346,9 @@ func Filter_Read_Pembukuan(tanggal string, tipe int) (Response, error) {
 		j := len(ls)
 		bln_thn_sql := ""
 
-		for x := j - 0; x >= 0; x-- {
+		for x := j - 1; x >= 0; x-- {
 			bln_thn_sql += ls[x]
-			if x != 1 {
+			if x != 0 {
 				bln_thn_sql += "-"
 			}
 		}
