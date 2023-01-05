@@ -232,7 +232,7 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 	return res, nil
 }
 
-func Filter_Read_Pembukuan(tanggal string, tipe int) (Response, error) {
+func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response, error) {
 	var res Response
 	if tipe == 1 {
 		var arrobj []str.Read_Pembukuan_Transaksi
@@ -242,35 +242,44 @@ func Filter_Read_Pembukuan(tanggal string, tipe int) (Response, error) {
 		var obj_fix str.Read_Pembukuan_Transaksi_List
 
 		ls := []string{}
+		ls2 := []string{}
 		str1 := ""
+		str2 := ""
 
 		for i := 0; i < len(tanggal); i++ {
 			if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
 				str1 += string(tanggal[i])
+				str2 += string(tanggal2[i])
 				if i == len(tanggal)-1 {
 					ls = append(ls, str1)
+					ls2 = append(ls2, str2)
 				}
 			} else if tanggal[i] == '-' {
 				ls = append(ls, str1)
+				ls2 = append(ls2, str2)
 				str1 = ""
+				str2 = ""
 			}
 		}
 
 		j := len(ls)
 		bln_thn_sql := ""
+		bln_thn_sql2 := ""
 
 		for x := j - 1; x >= 0; x-- {
 			bln_thn_sql += ls[x]
+			bln_thn_sql2 += ls2[x]
 			if x != 0 {
 				bln_thn_sql += "-"
+				bln_thn_sql2 += "-"
 			}
 		}
 
 		con := db.CreateCon()
 
-		sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi WHERE tanggal_pelunasan=?"
+		sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi WHERE tanggal_pelunasan>=? && tanggal_pelunasan<=? "
 
-		rows, err := con.Query(sqlStatement, bln_thn_sql)
+		rows, err := con.Query(sqlStatement, bln_thn_sql, bln_thn_sql2)
 
 		defer rows.Close()
 

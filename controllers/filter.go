@@ -55,11 +55,12 @@ func FilterStockMasuk(c echo.Context) error {
 
 func FilterReadPembukuan(c echo.Context) error {
 	tanggal := c.FormValue("tanggal")
+	tanggal2 := c.FormValue("tanggal2")
 	tipe_tanggal := c.FormValue("tipe_tanggal")
 
 	tt, _ := strconv.Atoi(tipe_tanggal)
 
-	result, err := models.Filter_Read_Pembukuan(tanggal, tt)
+	result, err := models.Filter_Read_Pembukuan(tanggal, tanggal2, tt)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
