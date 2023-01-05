@@ -28,7 +28,9 @@ func InputTransaksi(c echo.Context) error {
 }
 
 func ReadTransaksi(c echo.Context) error {
-	result, err := models.Read_Transaksi()
+	tanggal_transaksi := c.FormValue("tanggal_transaksi")
+
+	result, err := models.Read_Transaksi(tanggal_transaksi)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -54,6 +56,17 @@ func UpdateStatus(c echo.Context) error {
 	tanggal_pelunasan := c.FormValue("tanggal_peliunasan")
 
 	result, err := models.Update_Status(kode_transaksi, tanggal_pelunasan)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DateTransaksi(c echo.Context) error {
+
+	result, err := models.Date_Transaksi()
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

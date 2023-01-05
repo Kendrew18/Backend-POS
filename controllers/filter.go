@@ -9,15 +9,11 @@ import (
 
 func FilterTransaksi(c echo.Context) error {
 	tanggal := c.FormValue("tanggal")
-	tipe_urutan := c.FormValue("tipe_urutan")
 	tipe_status := c.FormValue("tipe_status")
-	tipe_tanggal := c.FormValue("tipe_tanggal")
 
-	tu, _ := strconv.Atoi(tipe_urutan)
 	ts, _ := strconv.Atoi(tipe_status)
-	tt, _ := strconv.Atoi(tipe_tanggal)
 
-	result, err := models.Filter_Transaksi(tanggal, tt, tu, ts)
+	result, err := models.Filter_Transaksi(tanggal, ts)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

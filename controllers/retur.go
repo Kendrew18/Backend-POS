@@ -10,10 +10,10 @@ import (
 func InputRetur(c echo.Context) error {
 
 	id_supplier := c.FormValue("id_supplier")
-	nama_supplier := c.FormValue("id_supplier")
-	kode_stock := c.FormValue("id_supplier")
-	nama_barang := c.FormValue("id_supplier")
-	jumlah_barang := c.FormValue("id_supplier")
+	nama_supplier := c.FormValue("nama_supplier")
+	kode_stock := c.FormValue("kode_stock")
+	nama_barang := c.FormValue("nama_barang")
+	jumlah_barang := c.FormValue("jumlah_barang")
 
 	jb, _ := strconv.Atoi(jumlah_barang)
 

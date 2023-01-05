@@ -6,7 +6,7 @@ import (
 	str "project-1/struct"
 )
 
-func Filter_Transaksi(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan int, tipe_status int) (Response, error) {
+func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, error) {
 	var res Response
 	var arrobj []str.Read_Transaksi
 	var obj str.Read_Transaksi
@@ -39,14 +39,7 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan in
 			}
 		}
 
-		if tipe_tanggal == 0 {
-			tgl = "WHERE tanggal_pelunasan=?"
-		} else if tipe_tanggal == 1 {
-			tgl = "WHERE tanggal_pelunasan like ?"
-		} else if tipe_tanggal == 2 {
-			tgl = "WHERE tanggal_pelunasan line ?"
-		}
-
+		tgl += "WHERE tanggal_penjualan=" + bln_thn_sql
 	}
 
 	if tipe_status != 2 {
@@ -62,14 +55,6 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan in
 			} else if tipe_status == 1 {
 				tgl += "&& status_transaksi=1"
 			}
-		}
-	}
-
-	if tipe_urutan != 2 {
-		if tipe_urutan == 0 {
-			tgl += " ORDER BY kode_transaksi ASC"
-		} else if tipe_urutan == 1 {
-			tgl += " ORDER BY kode_transaksi DESC"
 		}
 	}
 
@@ -193,11 +178,13 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 		}
 
 		if tipe_tanggal == 0 {
-			tgl = "WHERE tanggal_pelunasan=?"
+			tgl += "WHERE tanggal_pelunasan=" + bln_thn_sql
 		} else if tipe_tanggal == 1 {
-			tgl = "WHERE tanggal_pelunasan like ?"
+			tmp := "%" + bln_thn_sql + "%"
+			tgl += "WHERE tanggal_pelunasan like " + tmp
 		} else if tipe_tanggal == 2 {
-			tgl = "WHERE tanggal_pelunasan line ?"
+			tmp := "%" + bln_thn_sql + "%"
+			tgl += "WHERE tanggal_pelunasan like " + tmp
 		}
 
 	}

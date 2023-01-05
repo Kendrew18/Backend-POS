@@ -174,10 +174,35 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 }
 
-func Read_Transaksi() (Response, error) {
+func Read_Transaksi(tanggal_transaksi string) (Response, error) {
 	var res Response
 	var arrobj []str.Read_Transaksi
 	var obj str.Read_Transaksi
+
+	ls := []string{}
+	str1 := ""
+
+	for i := 0; i < len(tanggal_transaksi); i++ {
+		if byte(tanggal_transaksi[i]) >= 48 && byte(tanggal_transaksi[i]) <= 57 {
+			str1 += string(tanggal_transaksi[i])
+			if i == len(tanggal_transaksi)-1 {
+				ls = append(ls, str1)
+			}
+		} else if tanggal_transaksi[i] == '/' {
+			ls = append(ls, str1)
+			str1 = ""
+		}
+	}
+
+	j := len(ls)
+	bln_thn_sql := ""
+
+	for x := j - 1; x >= 0; x-- {
+		bln_thn_sql += ls[x]
+		if x != 0 {
+			bln_thn_sql += "-"
+		}
+	}
 
 	con := db.CreateCon()
 
@@ -331,6 +356,70 @@ func Update_Status(kode_transaksi string, tanggal_pelunasan string) (Response, e
 	res.Message = "Suksess"
 	res.Data = map[string]int64{
 		"rows": rowschanged,
+	}
+
+	return res, nil
+}
+
+func Date_Transaksi() (Response, error) {
+	var res Response
+	var arrobj []str.Tanggal_Transaksi
+	var obj str.Tanggal_Transaksi
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT DISTINCT(tanggal_penjualan) FROM `transaksi` ORDER BY tanggal_penjualan DESC"
+
+	rows, err := con.Query(sqlStatement)
+
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Tanggal_transaksi)
+		if err != nil {
+			return res, err
+		}
+
+		ls := []string{}
+		str1 := ""
+
+		for i := 0; i < len(obj.Tanggal_transaksi); i++ {
+			if byte(obj.Tanggal_transaksi[i]) >= 48 && byte(obj.Tanggal_transaksi[i]) <= 57 {
+				str1 += string(obj.Tanggal_transaksi[i])
+				if i == len(obj.Tanggal_transaksi)-1 {
+					ls = append(ls, str1)
+				}
+			} else if obj.Tanggal_transaksi[i] == '-' {
+				ls = append(ls, str1)
+				str1 = ""
+			}
+		}
+
+		j := len(ls)
+		bln_thn_sql := ""
+
+		for x := j - 1; x >= 0; x-- {
+			bln_thn_sql += ls[x]
+			if x != 0 {
+				bln_thn_sql += "/"
+			}
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+
+	if arrobj == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arrobj
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj
 	}
 
 	return res, nil
