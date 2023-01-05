@@ -206,9 +206,9 @@ func Read_Transaksi(tanggal_transaksi string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi,sub_total_harga,jumlah_barang FROM transaksi"
+	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi,sub_total_harga,jumlah_barang FROM transaksi WHERE tanggal_penjualan=?"
 
-	rows, err := con.Query(sqlStatement)
+	rows, err := con.Query(sqlStatement, bln_thn_sql)
 
 	defer rows.Close()
 
