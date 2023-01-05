@@ -71,6 +71,9 @@ func Init() *echo.Echo {
 	//update-status-transaksi
 	tr.PUT("/update-status", controllers.UpdateStatus)
 
+	//tanggal-penjualan
+	tr.GET("/tgl-penjualan", controllers.DateTransaksi)
+
 	//penutupan-pembukuan
 	pmb.GET("/penutupan-pembukuan", controllers.PenutupanPembukuan)
 
