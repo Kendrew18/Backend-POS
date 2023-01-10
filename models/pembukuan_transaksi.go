@@ -140,13 +140,13 @@ func Penutupan_Pembukuan(tanggal string) (Response, error) {
 
 	sqlStatement = "SELECT * FROM pembukuan_transaksi_bulanan WHERE DATE_FORMAT(tanggal_pelunasan, \"%Y-%m\")=?"
 
-	_ = con.QueryRow(sqlStatement, bln).Scan(&obj_bln.Id_pembukuann_transaksi_bulanan, &obj_bln.Kode_stock,
+	_ = con.QueryRow(sqlStatement, bln).Scan(&obj_bln.Id_pembukuann_transaksi, &obj_bln.Kode_stock,
 		&obj_bln.Nama_barang, &obj_bln.Jumlah_barang, &obj_bln.Harga_barang, &obj_bln.Tanggal_pelunasan,
 		&obj_bln.Total_harga_penjualan)
 
 	if obj_bln.Tanggal_pelunasan != bln_thn_sql {
 
-		if obj_bln.Id_pembukuann_transaksi_bulanan == "" {
+		if obj_bln.Id_pembukuann_transaksi == "" {
 
 			sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang FROM pembukuan_transaksi WHERE tanggal_pelunasan=?"
 
@@ -284,12 +284,12 @@ func Penutupan_Pembukuan(tanggal string) (Response, error) {
 
 	sqlStatement = "SELECT * FROM pembukuan_transaksi_tahunan WHERE DATE_FORMAT(tanggal_pelunasan, \"%Y\")=?"
 
-	_ = con.QueryRow(sqlStatement, thn).Scan(&obj_thn.Id_pembukuann_transaksi_Tahunan, &obj_thn.Kode_stock,
+	_ = con.QueryRow(sqlStatement, thn).Scan(&obj_thn.Id_pembukuann_transaksi, &obj_thn.Kode_stock,
 		&obj_thn.Nama_barang, &obj_thn.Jumlah_barang, &obj_thn.Harga_barang, &obj_thn.Tanggal_pelunasan,
 		&obj_thn.Total_harga_penjualan)
 
 	if bln_thn_sql != obj_thn.Tanggal_pelunasan {
-		if obj_thn.Id_pembukuann_transaksi_Tahunan == "" {
+		if obj_thn.Id_pembukuann_transaksi == "" {
 
 			sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang FROM pembukuan_transaksi_tahunan WHERE tanggal_pelunasan=?"
 
