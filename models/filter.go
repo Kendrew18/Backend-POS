@@ -51,9 +51,9 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, erro
 			}
 		} else {
 			if tipe_status == 0 {
-				tgl += "&& status_transaksi=0"
+				tgl += " && status_transaksi=0"
 			} else if tipe_status == 1 {
-				tgl += "&& status_transaksi=1"
+				tgl += " && status_transaksi=1"
 			}
 		}
 	}
