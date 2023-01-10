@@ -39,7 +39,7 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, erro
 			}
 		}
 
-		tgl += "WHERE tanggal_penjualan=" + bln_thn_sql
+		tgl += "WHERE tanggal_penjualan=\"" + bln_thn_sql + "\""
 	}
 
 	if tipe_status != 2 {
@@ -60,7 +60,7 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, erro
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi,sub_total_harga,jumlah_barang FROM transaksi" + tgl
+	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi,sub_total_harga,jumlah_barang FROM transaksi " + tgl
 
 	rows, err := con.Query(sqlStatement)
 
@@ -178,13 +178,13 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 		}
 
 		if tipe_tanggal == 0 {
-			tgl += "WHERE tanggal_pelunasan=" + bln_thn_sql
+			tgl += " WHERE tanggal_pelunasan=" + bln_thn_sql
 		} else if tipe_tanggal == 1 {
 			tmp := "%" + bln_thn_sql + "%"
-			tgl += "WHERE tanggal_pelunasan like " + tmp
+			tgl += " WHERE tanggal_pelunasan like " + tmp
 		} else if tipe_tanggal == 2 {
 			tmp := "%" + bln_thn_sql + "%"
-			tgl += "WHERE tanggal_pelunasan like " + tmp
+			tgl += " WHERE tanggal_pelunasan like " + tmp
 		}
 
 	}
