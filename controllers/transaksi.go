@@ -65,8 +65,12 @@ func UpdateStatus(c echo.Context) error {
 }
 
 func DateTransaksi(c echo.Context) error {
+	tanggal := c.FormValue("tanggal")
+	status := c.FormValue("status")
 
-	result, err := models.Date_Transaksi()
+	st, _ := strconv.Atoi(status)
+
+	result, err := models.Date_Transaksi(tanggal, st)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

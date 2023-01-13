@@ -361,14 +361,62 @@ func Update_Status(kode_transaksi string, tanggal_pelunasan string) (Response, e
 	return res, nil
 }
 
-func Date_Transaksi() (Response, error) {
+func Date_Transaksi(tanggal string, tipe_status int) (Response, error) {
 	var res Response
 	var arrobj []str.Tanggal_Transaksi
 	var obj str.Tanggal_Transaksi
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT DISTINCT(tanggal_penjualan) FROM `transaksi` ORDER BY tanggal_penjualan DESC"
+	tgl := ""
+
+	if tanggal != "" {
+
+		ls := []string{}
+		str1 := ""
+
+		for i := 0; i < len(tanggal); i++ {
+			if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
+				str1 += string(tanggal[i])
+				if i == len(tanggal)-1 {
+					ls = append(ls, str1)
+				}
+			} else if tanggal[i] == '-' {
+				ls = append(ls, str1)
+				str1 = ""
+			}
+		}
+
+		j := len(ls)
+		bln_thn_sql := ""
+
+		for x := j - 1; x >= 0; x-- {
+			bln_thn_sql += ls[x]
+			if x != 0 {
+				bln_thn_sql += "-"
+			}
+		}
+
+		tgl += "WHERE tanggal_penjualan=\"" + bln_thn_sql + "\""
+	}
+
+	if tipe_status != 2 {
+		if tgl == "" {
+			if tipe_status == 0 {
+				tgl += "WHERE status_transaksi=0"
+			} else if tipe_status == 1 {
+				tgl += "WHERE status_transaksi=1"
+			}
+		} else {
+			if tipe_status == 0 {
+				tgl += " && status_transaksi=0"
+			} else if tipe_status == 1 {
+				tgl += " && status_transaksi=1"
+			}
+		}
+	}
+
+	sqlStatement := "SELECT DISTINCT(tanggal_penjualan) FROM `transaksi` " + tgl + " ORDER BY tanggal_penjualan DESC"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -405,9 +453,11 @@ func Date_Transaksi() (Response, error) {
 		for x := j - 1; x >= 0; x-- {
 			bln_thn_sql += ls[x]
 			if x != 0 {
-				bln_thn_sql += "/"
+				bln_thn_sql += "-"
 			}
 		}
+
+		obj.Tanggal_transaksi = bln_thn_sql
 
 		arrobj = append(arrobj, obj)
 	}
