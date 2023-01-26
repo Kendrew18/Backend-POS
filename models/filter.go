@@ -362,7 +362,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.Id_pembukuann_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
+			err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
 				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
 			if err != nil {
 				return res, err
@@ -371,7 +371,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		for i := 0; i < len(arrobj); i++ {
-			obj_fix.Id_pembukuann_transaksi = arrobj[i].Id_pembukuann_transaksi
+			obj_fix.Id_pembukuan_transaksi = arrobj[i].Id_pembukuan_transaksi
 			obj_fix.Tanggal_pelunasan = arrobj[i].Tanggal_pelunasan
 			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
 			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
@@ -437,7 +437,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.Id_pembukuann_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
+			err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
 				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
 			if err != nil {
 				return res, err
@@ -446,7 +446,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		for i := 0; i < len(arrobj); i++ {
-			obj_fix.Id_pembukuann_transaksi = arrobj[i].Id_pembukuann_transaksi
+			obj_fix.Id_pembukuan_transaksi = arrobj[i].Id_pembukuan_transaksi
 			obj_fix.Tanggal_pelunasan = arrobj[i].Tanggal_pelunasan
 			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
 			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
