@@ -1,7 +1,7 @@
 package _struct
 
 type Read_Pembukuan_Transaksi_Bulanan struct {
-	Id_pembukuan_transaksi string `json:"id_pembukuann_transaksi"`
+	Id_pembukuan_transaksi string `json:"id_pembukuan_transaksi"`
 	Kode_stock             string `json:"kode_stock"`
 	Nama_barang            string `json:"nama_barang"`
 	Jumlah_barang          string `json:"jumlah_barang"`
@@ -11,7 +11,7 @@ type Read_Pembukuan_Transaksi_Bulanan struct {
 }
 
 type Read_Pembukuan_Transaksi_Bulanan_List struct {
-	Id_pembukuan_transaksi string   `json:"id_pembukuann_transaksi"`
+	Id_pembukuan_transaksi string   `json:"id_pembukuan_transaksi"`
 	Kode_stock             []string `json:"kode_stock"`
 	Nama_barang            []string `json:"nama_barang"`
 	Jumlah_barang          []int    `json:"jumlah_barang"`
