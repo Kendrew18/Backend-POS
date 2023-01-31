@@ -20,4 +20,6 @@ type Read_Stock_Masuk_fix struct {
 	Harga_barang          []int    `json:"harga_barang"`
 	Tanggal_masuk         string   `json:"tanggal_masuk"`
 	Nama_penanggung_jawab string   `json:"nama_penanggung_jawab"`
+	Total_harga_barang    int      `json:"total_harga_barang"`
+	Total_Jumlah_barang   int      `json:"total_jumlah_barang"`
 }
