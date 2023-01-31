@@ -103,6 +103,8 @@ func Read_Stock_Masuk() (Response, error) {
 	var res Response
 	var arrobj []str.Read_Stock_Masuk
 	var obj str.Read_Stock_Masuk
+	var obj_fix str.Read_Stock_Masuk_fix
+	var arrobj_fix []str.Read_Stock_Masuk_fix
 
 	con := db.CreateCon()
 
@@ -125,15 +127,31 @@ func Read_Stock_Masuk() (Response, error) {
 		arrobj = append(arrobj, obj)
 	}
 
-	if arrobj == nil {
-		arrobj = append(arrobj, obj)
+	for i := 0; i < len(arrobj); i++ {
+		k_stock := String_Separator_To_String(arrobj[i].Kode_stock)
+		j_barang := String_Separator_To_Int(arrobj[i].Jumlah_barang)
+		h_barang := String_Separator_To_Int(arrobj[i].Harga_barang)
+		n_barang := String_Separator_To_String(arrobj[i].Nama_stock)
+		obj_fix.Id_stock_masuk = arrobj[i].Id_stock_masuk
+		obj_fix.Kode_supplier = arrobj[i].Kode_supplier
+		obj_fix.Nama_penanggung_jawab = arrobj[i].Nama_penanggung_jawab
+		obj_fix.Tanggal_masuk = arrobj[i].Tanggal_masuk
+		obj_fix.Kode_stock = k_stock
+		obj_fix.Jumlah_barang = j_barang
+		obj_fix.Nama_barang = n_barang
+		obj_fix.Harga_barang = h_barang
+		arrobj_fix = append(arrobj_fix, obj_fix)
+	}
+
+	if arrobj_fix == nil {
+		arrobj_fix = append(arrobj_fix, obj_fix)
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
-		res.Data = arrobj
+		res.Data = arrobj_fix
 	} else {
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
-		res.Data = arrobj
+		res.Data = arrobj_fix
 	}
 
 	return res, nil
