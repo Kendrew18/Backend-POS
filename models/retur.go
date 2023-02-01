@@ -114,3 +114,100 @@ func Read_Retur() (Response, error) {
 
 	return res, nil
 }
+
+func Read_Kode_Nama_Barang(id_supplier string) (Response, error) {
+	var res Response
+	var arrobj []str.Kode_nama_sup
+	var obj str.Kode_nama_sup
+	var obj_text str.Kode_nama_sup_text
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT kode_stock,nama_barang FROM supplier WHERE kode_supplier"
+
+	err := con.QueryRow(sqlStatement).Scan(obj_text.Kode_stock, obj_text.Nama_barang)
+
+	k_stock := String_Separator_To_String(obj_text.Kode_stock)
+	n_barang := String_Separator_To_String(obj.Nama_barang)
+
+	if len(k_stock) > 0 {
+		for i := 0; i < len(k_stock); i++ {
+			obj.Kode_stock = k_stock[i]
+			obj.Nama_barang = n_barang[i]
+			arrobj = append(arrobj, obj)
+		}
+	}
+
+	if err != nil {
+		return res, err
+	}
+
+	if arrobj == nil {
+		arrobj = append(arrobj, obj)
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arrobj
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj
+	}
+
+	return res, nil
+}
+
+func Read_Max_Jumlah(id_supplier string, kode_stock string) (Response, error) {
+	var res Response
+	var arrobj []str.Read_Stock_Masuk
+	var obj str.Read_Stock_Masuk
+
+	var arrobj_max []str.Read_max_reture
+	var obj_max str.Read_max_reture
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM stock_masuk WHERE kode_supplier=? ORDER BY `stock_masuk`.`tanggal_masuk` DESC"
+
+	rows, err := con.Query(sqlStatement)
+
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock, &obj.Nama_stock,
+			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Harga_barang)
+		if err != nil {
+			return res, err
+		}
+		arrobj = append(arrobj, obj)
+	}
+
+	k_stock := String_Separator_To_String(obj.Kode_stock)
+	j_barang := String_Separator_To_Int(obj.Jumlah_barang)
+
+	for i := 0; i < len(k_stock); i++ {
+		if k_stock[i] == kode_stock {
+			obj_max.Kode_supplier = id_supplier
+			obj_max.Max_barang = j_barang[i]
+			obj_max.Kode_stock = kode_stock
+			i = len(k_stock)
+		}
+	}
+	arrobj_max = append(arrobj_max, obj_max)
+
+	if arrobj_max == nil {
+		arrobj_max = append(arrobj_max, obj_max)
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arrobj_max
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj_max
+	}
+
+	return res, nil
+}

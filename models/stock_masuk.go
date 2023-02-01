@@ -37,6 +37,9 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 	jumlah_barang string, harga_barang string) (Response, error) {
 	var res Response
 	var SM str.Insert_Stock_Masuk
+	var sup str.Kode_nama_sup
+	var k_sup = []string{}
+	var n_sup = []string{}
 
 	con := db.CreateCon()
 
@@ -67,10 +70,26 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 
 	j_barang := String_Separator_To_Int(SM.Jumlah_barang)
 
+	n_barang := String_Separator_To_String(SM.Nama_stock)
+
+	sqlStatement = "SELECT kode_stock,nama_barang FROM supplier WHERE kode_supplier=?"
+
+	_ = con.QueryRow(sqlStatement, SM.Kode_supplier).Scan(&sup.Kode_stock, &sup.Nama_barang)
+
+	kd := 0
+	if sup.Kode_stock == "" {
+		kd = 0
+	} else {
+		kd = 1
+		k_sup = String_Separator_To_String(sup.Kode_stock)
+		n_sup = String_Separator_To_String(sup.Nama_barang)
+	}
+
 	for i := 0; i < len(k_stock); i++ {
 		var obj str.Jumlah_Barang
 
 		sqlStatement = "SELECT jumlah_barang FROM stock WHERE kode_stock=?"
+
 		_ = con.QueryRow(sqlStatement, k_stock[i]).Scan(&obj.Jumlah_Barang)
 
 		total := obj.Jumlah_Barang + j_barang[i]
@@ -88,6 +107,44 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 		if err != nil {
 			return res, err
 		}
+
+		tt := 0
+		if kd == 1 {
+			for j := 0; j < len(k_sup); j++ {
+				if k_sup[j] != k_stock[i] && n_sup[j] != n_barang[i] {
+					tt++
+				} else if k_sup[j] == k_stock[i] && n_sup[j] != n_barang[i] {
+					n_sup[j] = n_barang[i]
+				}
+			}
+			if tt == len(k_sup) {
+				k_sup = append(k_sup, k_stock[i])
+				n_sup = append(n_sup, n_barang[i])
+			}
+		} else {
+			k_sup = append(k_sup, k_stock[i])
+			n_sup = append(n_sup, n_barang[i])
+		}
+	}
+	k_sup_str := ""
+	n_sup_str := ""
+	for i := 0; i < len(k_sup); i++ {
+		k_sup_str += "|" + k_sup[i] + "|"
+		n_sup_str += "|" + n_sup[i] + "|"
+	}
+
+	sqlstatement := "UPDATE supplier SET kode_stock=?,nama_barang=? WHERE kode_supplier=?"
+
+	stmt, err = con.Prepare(sqlstatement)
+
+	if err != nil {
+		return res, err
+	}
+
+	_, err = stmt.Exec(k_sup_str, n_sup_str, SM.Kode_supplier)
+
+	if err != nil {
+		return res, err
 	}
 
 	stmt.Close()

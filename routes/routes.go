@@ -86,6 +86,12 @@ func Init() *echo.Echo {
 	//read-retur
 	rtr.GET("/read-retur", controllers.ReadRetur)
 
+	//Read-Kode-Nama-Barang
+	rtr.GET("/read-kode-nama-barang", controllers.ReadKodeNamaBarang)
+
+	//Read-Max-Jumlah
+	rtr.GET("/read-max-jumlah", controllers.ReadMaxJumlah)
+
 	//filter_transaksi
 	flt.GET("/fil-transaksi", controllers.FilterTransaksi)
 
