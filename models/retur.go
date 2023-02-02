@@ -123,12 +123,12 @@ func Read_Kode_Nama_Barang(id_supplier string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_stock,nama_barang FROM supplier WHERE kode_supplier"
+	sqlStatement := "SELECT kode_stock,nama_barang FROM supplier WHERE kode_supplier=?"
 
-	err := con.QueryRow(sqlStatement).Scan(obj_text.Kode_stock, obj_text.Nama_barang)
+	_ = con.QueryRow(sqlStatement, id_supplier).Scan(&obj_text.Kode_stock, &obj_text.Nama_barang)
 
 	k_stock := String_Separator_To_String(obj_text.Kode_stock)
-	n_barang := String_Separator_To_String(obj.Nama_barang)
+	n_barang := String_Separator_To_String(obj_text.Nama_barang)
 
 	if len(k_stock) > 0 {
 		for i := 0; i < len(k_stock); i++ {
@@ -136,10 +136,6 @@ func Read_Kode_Nama_Barang(id_supplier string) (Response, error) {
 			obj.Nama_barang = n_barang[i]
 			arrobj = append(arrobj, obj)
 		}
-	}
-
-	if err != nil {
-		return res, err
 	}
 
 	if arrobj == nil {
@@ -168,16 +164,12 @@ func Read_Max_Jumlah(id_supplier string, kode_stock string) (Response, error) {
 
 	sqlStatement := "SELECT * FROM stock_masuk WHERE kode_supplier=? ORDER BY `stock_masuk`.`tanggal_masuk` DESC"
 
-	rows, err := con.Query(sqlStatement)
+	rows, _ := con.Query(sqlStatement, id_supplier)
 
 	defer rows.Close()
 
-	if err != nil {
-		return res, err
-	}
-
 	for rows.Next() {
-		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock, &obj.Nama_stock,
+		err := rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock, &obj.Nama_stock,
 			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Harga_barang)
 		if err != nil {
 			return res, err
