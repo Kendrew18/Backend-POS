@@ -15,7 +15,7 @@ func InputRetur(c echo.Context) error {
 	nama_barang := c.FormValue("nama_barang")
 	jumlah_barang := c.FormValue("jumlah_barang")
 
-	jb, _ := strconv.Atoi(jumlah_barang)
+	jb, _ := strconv.ParseFloat(jumlah_barang, 64)
 
 	result, err := models.Input_Retur(id_supplier, nama_supplier, kode_stock, nama_barang, jb)
 

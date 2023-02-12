@@ -72,8 +72,8 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, erro
 
 	for rows.Next() {
 		err = rows.Scan(&obj.Kode_transaksi, &obj.Tanggal_penjualan, &obj.Tanggal_pelunasan, &obj.Status_transaksi, &obj.Sub_total_harga, &obj.Jumlah_barang)
-		total := String_Separator_To_Int(obj.Jumlah_barang)
-		sub_total := 0
+		total := String_Separator_To_float64(obj.Jumlah_barang)
+		sub_total := 0.0
 		for i := 0; i < len(total); i++ {
 			sub_total += total[i]
 		}
@@ -124,7 +124,7 @@ func Filter_Stock(tipe_urutan int) (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&invent.Kode_stock, &invent.Nama_barang, &invent.Jumlah_barang, &invent.Harga_barang)
+		err = rows.Scan(&invent.Kode_stock, &invent.Nama_barang, &invent.Jumlah_barang, &invent.Satuan_barang, &invent.Harga_barang)
 		if err != nil {
 			return res, err
 		}
@@ -211,7 +211,7 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 
 	for rows.Next() {
 		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock, &obj.Nama_stock,
-			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Harga_barang)
+			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Satuan_barang, &obj.Harga_barang)
 		if err != nil {
 			return res, err
 		}
@@ -277,7 +277,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 
 		con := db.CreateCon()
 
-		sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi WHERE tanggal_pelunasan>=? && tanggal_pelunasan<=? "
+		sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan,satuan_barang FROM pembukuan_transaksi WHERE tanggal_pelunasan>=? && tanggal_pelunasan<=? "
 
 		rows, err := con.Query(sqlStatement, bln_thn_sql, bln_thn_sql2)
 
@@ -302,8 +302,9 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
 			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
 			obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
-			obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
+			obj_fix.Jumlah_barang = String_Separator_To_float64(arrobj[i].Jumlah_barang)
 			obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
+			obj_fix.Satuan_barang = String_Separator_To_String(arrobj[i].Satuan_barang)
 			arrobj_fix = append(arrobj_fix, obj_fix)
 		}
 
@@ -351,7 +352,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 
 		con := db.CreateCon()
 
-		sqlStatement := "SELECT id_pembukuan_transaksi_bulanan,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi_bulanan WHERE Date_Format(tanggal_pelunasan,\"%Y-%m\")=?"
+		sqlStatement := "SELECT id_pembukuan_transaksi_bulanan,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan,satuan_barang FROM pembukuan_transaksi_bulanan WHERE Date_Format(tanggal_pelunasan,\"%Y-%m\")=?"
 
 		rows, err := con.Query(sqlStatement, bln_thn_sql)
 
@@ -363,7 +364,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 
 		for rows.Next() {
 			err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
-				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
+				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan, &obj.Satuan_barang)
 			if err != nil {
 				return res, err
 			}
@@ -376,8 +377,9 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
 			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
 			obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
-			obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
+			obj_fix.Jumlah_barang = String_Separator_To_float64(arrobj[i].Jumlah_barang)
 			obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
+			obj_fix.Satuan_barang = String_Separator_To_String(arrobj[i].Satuan_barang)
 			arrobj_fix = append(arrobj_fix, obj_fix)
 		}
 
@@ -426,7 +428,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 
 		con := db.CreateCon()
 
-		sqlStatement := "SELECT id_pembukuan_transaksi_tahunan,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi_tahunan WHERE Date_Format(tanggal_pelunasan,\"%Y\")=?"
+		sqlStatement := "SELECT id_pembukuan_transaksi_tahunan,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan,satuan_barang FROM pembukuan_transaksi_tahunan WHERE Date_Format(tanggal_pelunasan,\"%Y\")=?"
 
 		rows, err := con.Query(sqlStatement, bln_thn_sql)
 
@@ -438,7 +440,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 
 		for rows.Next() {
 			err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
-				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
+				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan, &obj.Satuan_barang)
 			if err != nil {
 				return res, err
 			}
@@ -451,8 +453,9 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 			obj_fix.Total_harga_penjualan = arrobj[i].Total_harga_penjualan
 			obj_fix.Nama_barang = String_Separator_To_String(arrobj[i].Nama_barang)
 			obj_fix.Kode_stock = String_Separator_To_String(arrobj[i].Kode_stock)
-			obj_fix.Jumlah_barang = String_Separator_To_Int(arrobj[i].Jumlah_barang)
+			obj_fix.Jumlah_barang = String_Separator_To_float64(arrobj[i].Jumlah_barang)
 			obj_fix.Harga_barang = String_Separator_To_Int(arrobj[i].Harga_barang)
+			obj_fix.Satuan_barang = String_Separator_To_String(arrobj[i].Satuan_barang)
 			arrobj_fix = append(arrobj_fix, obj_fix)
 		}
 

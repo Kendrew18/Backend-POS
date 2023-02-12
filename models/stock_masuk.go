@@ -34,7 +34,7 @@ func Generate_Id_Stock_Masuk() int {
 }
 
 func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_stock string, nama_stock string,
-	jumlah_barang string, harga_barang string) (Response, error) {
+	jumlah_barang string, satuan_barang string, harga_barang string) (Response, error) {
 	var res Response
 	var SM str.Insert_Stock_Masuk
 	var sup str.Kode_nama_sup
@@ -49,7 +49,7 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 
 	id := "SM-" + nm_str
 
-	sqlStatement := "INSERT INTO stock_masuk (id_stock_masuk,kode_supplier,kode_stock,nama_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,harga_barang) values(?,?,?,?,CURRENT_DATE,?,?,?)"
+	sqlStatement := "INSERT INTO stock_masuk (id_stock_masuk,kode_supplier,kode_stock,nama_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,satuan_barang,harga_barang) values(?,?,?,?,CURRENT_DATE,?,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -57,7 +57,7 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 		return res, err
 	}
 
-	_, err = stmt.Exec(id, kode_supplier, kode_stock, nama_stock, nama_penanggung_jawab, jumlah_barang, harga_barang)
+	_, err = stmt.Exec(id, kode_supplier, kode_stock, nama_stock, nama_penanggung_jawab, jumlah_barang, satuan_barang, harga_barang)
 
 	sqlStatement = "SELECT * FROM stock_masuk WHERE id_stock_masuk=?"
 
@@ -68,7 +68,7 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 
 	k_stock := String_Separator_To_String(SM.Kode_stock)
 
-	j_barang := String_Separator_To_Int(SM.Jumlah_barang)
+	j_barang := String_Separator_To_float64(SM.Jumlah_barang)
 
 	n_barang := String_Separator_To_String(SM.Nama_stock)
 
@@ -177,7 +177,7 @@ func Read_Stock_Masuk() (Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier, &obj.Nama_penanggung_jawab, &obj.Kode_stock, &obj.Nama_stock,
-			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Harga_barang)
+			&obj.Tanggal_masuk, &obj.Jumlah_barang, &obj.Satuan_barang, &obj.Harga_barang)
 		if err != nil {
 			return res, err
 		}
@@ -185,10 +185,10 @@ func Read_Stock_Masuk() (Response, error) {
 	}
 
 	for i := 0; i < len(arrobj); i++ {
-		tj := 0
+		tj := 0.0
 		hb := 0
 		k_stock := String_Separator_To_String(arrobj[i].Kode_stock)
-		j_barang := String_Separator_To_Int(arrobj[i].Jumlah_barang)
+		j_barang := String_Separator_To_float64(arrobj[i].Jumlah_barang)
 		h_barang := String_Separator_To_Int(arrobj[i].Harga_barang)
 		n_barang := String_Separator_To_String(arrobj[i].Nama_stock)
 		for j := 0; j < len(j_barang); j++ {
@@ -241,7 +241,7 @@ func Read_Detail_Stock_Masuk(id_stock_masuk string) (Response, error) {
 	}
 
 	k_stock := String_Separator_To_String(obj_str.Kode_stock)
-	j_barang := String_Separator_To_Int(obj_str.Jumlah_barang)
+	j_barang := String_Separator_To_float64(obj_str.Jumlah_barang)
 	h_barang := String_Separator_To_Int(obj_str.Harga_barang)
 	n_barang := String_Separator_To_String(obj_str.Nama_barang)
 

@@ -34,7 +34,8 @@ func Generate_Id_Transaksi() int {
 	return no
 }
 
-func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string, harga_barang string, status_transaksi string, tanggal_pelunasan string, sub_total_harga int64) (Response, error) {
+func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string, satuan_barang string, harga_barang string,
+	status_transaksi string, tanggal_pelunasan string, sub_total_harga int64) (Response, error) {
 	var res Response
 	var tr str.Input_Transaksi
 
@@ -75,7 +76,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 	if status_transaksi == "0" {
 
-		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
+		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -83,7 +84,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 			return res, err
 		}
 
-		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 0, sub_total_harga)
+		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, satuan_barang, harga_barang, bln_thn_sql, 0, sub_total_harga)
 
 		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan FROM transaksi WHERE kode_transaksi=?"
 
@@ -92,7 +93,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 		k_stock := String_Separator_To_String(kode_stock)
 
-		j_barang := String_Separator_To_Int(jumlah_barang)
+		j_barang := String_Separator_To_float64(jumlah_barang)
 
 		for i := 0; i < len(k_stock); i++ {
 			var obj str.Jumlah_Barang
@@ -137,7 +138,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 		k_stock := String_Separator_To_String(kode_stock)
 
-		j_barang := String_Separator_To_Int(jumlah_barang)
+		j_barang := String_Separator_To_float64(jumlah_barang)
 
 		for i := 0; i < len(k_stock); i++ {
 			var obj str.Jumlah_Barang
@@ -218,8 +219,8 @@ func Read_Transaksi(tanggal_transaksi string) (Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&obj.Kode_transaksi, &obj.Tanggal_penjualan, &obj.Tanggal_pelunasan, &obj.Status_transaksi, &obj.Sub_total_harga, &obj.Jumlah_barang)
-		total := String_Separator_To_Int(obj.Jumlah_barang)
-		sub_total := 0
+		total := String_Separator_To_float64(obj.Jumlah_barang)
+		sub_total := 0.0
 		for i := 0; i < len(total); i++ {
 			sub_total += total[i]
 		}
@@ -251,9 +252,9 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang FROM transaksi WHERE kode_transaksi=?"
+	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang FROM transaksi WHERE kode_transaksi=?"
 
-	err := con.QueryRow(sqlStatement, kode_transaksi).Scan(&obj_str.Kode_stock, &obj_str.Nama_barang, &obj_str.Jumlah_barang, &obj_str.Harga_barang)
+	err := con.QueryRow(sqlStatement, kode_transaksi).Scan(&obj_str.Kode_stock, &obj_str.Nama_barang, &obj_str.Jumlah_barang, &obj_str.Harga_barang, &obj.Satuan_barang)
 
 	fmt.Println(obj_str)
 
@@ -264,8 +265,9 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 	} else {
 
 		k_stock := String_Separator_To_String(obj_str.Kode_stock)
-		j_barang := String_Separator_To_Int(obj_str.Jumlah_barang)
+		j_barang := String_Separator_To_float64(obj_str.Jumlah_barang)
 		h_barang := String_Separator_To_Int(obj_str.Harga_barang)
+		s_barang := String_Separator_To_String(obj_str.Satuan_barang)
 		n_barang := String_Separator_To_String(obj_str.Nama_barang)
 
 		for i := 0; i < len(k_stock); i++ {
@@ -273,6 +275,7 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 			obj.Nama_barang = n_barang[i]
 			obj.Jumlah_barang = j_barang[i]
 			obj.Harga_barang = h_barang[i]
+			obj.Satuan_barang = s_barang[i]
 			arrobj = append(arrobj, obj)
 		}
 

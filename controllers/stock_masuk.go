@@ -13,8 +13,9 @@ func InputStockMasuk(c echo.Context) error {
 	nama_supplier := c.FormValue("nama_supplier")
 	jumlah_barang := c.FormValue("jumlah_barang")
 	harga_barang := c.FormValue("harga_barang")
+	satuan_barang := c.FormValue("satuan_barang")
 
-	result, err := models.Input_Stock_Masuk(kode_supplier, nama_supplier, kode_stock, nama_stock, jumlah_barang, harga_barang)
+	result, err := models.Input_Stock_Masuk(kode_supplier, nama_supplier, kode_stock, nama_stock, jumlah_barang, satuan_barang, harga_barang)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

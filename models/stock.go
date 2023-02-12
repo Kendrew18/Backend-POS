@@ -31,7 +31,7 @@ func Generate_Id_Stock() int {
 	return no
 }
 
-func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (Response, error) {
+func Input_Inventory(nama_barang string, jumlah_barang float64, harga_barang int, satuan_barang string) (Response, error) {
 	var res Response
 	var invent str.Insert_Stock
 
@@ -49,7 +49,7 @@ func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (R
 
 		id := "INVT-" + nm_str
 
-		sqlStatement := "INSERT INTO stock (kode_stock,nama_barang,jumlah_barang,harga_barang) values(?,?,?,?)"
+		sqlStatement := "INSERT INTO stock (kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang) values(?,?,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -57,7 +57,7 @@ func Input_Inventory(nama_barang string, jumlah_barang int, harga_barang int) (R
 			return res, err
 		}
 
-		_, err = stmt.Exec(id, nama_barang, jumlah_barang, harga_barang)
+		_, err = stmt.Exec(id, nama_barang, jumlah_barang, harga_barang, satuan_barang)
 
 		invent.Nama_barang = nama_barang
 		invent.Jumlah_barang = jumlah_barang
@@ -99,7 +99,7 @@ func Read_Stock() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&invent.Kode_stock, &invent.Nama_barang, &invent.Jumlah_barang, &invent.Harga_barang)
+		err = rows.Scan(&invent.Kode_stock, &invent.Nama_barang, &invent.Jumlah_barang, &invent.Satuan_barang, &invent.Harga_barang)
 		if err != nil {
 			return res, err
 		}
@@ -119,11 +119,11 @@ func Read_Stock() (Response, error) {
 	return res, nil
 }
 
-func Update_Stock(kode_inventory string, nama_barang string, jumlah_barang int, harga_barang int) (Response, error) {
+func Update_Stock(kode_inventory string, nama_barang string, jumlah_barang float64, harga_barang int, satuan_barang string) (Response, error) {
 	var res Response
 	con := db.CreateCon()
 
-	sqlstatement := "UPDATE stock SET nama_barang=?,jumlah_barang=?,harga_barang=? WHERE kode_stock=?"
+	sqlstatement := "UPDATE stock SET nama_barang=?,jumlah_barang=?,harga_barang=?,satuan_barang=? WHERE kode_stock=?"
 
 	stmt, err := con.Prepare(sqlstatement)
 
@@ -131,7 +131,7 @@ func Update_Stock(kode_inventory string, nama_barang string, jumlah_barang int, 
 		return res, err
 	}
 
-	result, err := stmt.Exec(nama_barang, jumlah_barang, harga_barang, kode_inventory)
+	result, err := stmt.Exec(nama_barang, jumlah_barang, harga_barang, satuan_barang, kode_inventory)
 
 	if err != nil {
 		return res, err

@@ -15,10 +15,11 @@ func InputTransaksi(c echo.Context) error {
 	tanggal_pelunasan := c.FormValue("tanggal_pelunasan")
 	status_transaksi := c.FormValue("status_transaksi")
 	sub_total_harga := c.FormValue("sub_total_harga")
+	satuan_barang := c.FormValue("satuan_barang")
 
 	sth, _ := strconv.ParseInt(sub_total_harga, 10, 64)
 
-	result, err := models.Input_Transaksi(kode_stock, nama_barang, jumlah_barang, harga_barang, status_transaksi, tanggal_pelunasan, sth)
+	result, err := models.Input_Transaksi(kode_stock, nama_barang, jumlah_barang, satuan_barang, harga_barang, status_transaksi, tanggal_pelunasan, sth)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

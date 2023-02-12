@@ -33,9 +33,8 @@ func Generate_Id_Retur() int {
 	return no
 }
 
-func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, nama_barang string, jumlah_barang int) (Response, error) {
+func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, nama_barang string, jumlah_barang float64) (Response, error) {
 	var res Response
-
 	var obj str.Insert_Retur
 
 	con := db.CreateCon()
@@ -178,7 +177,7 @@ func Read_Max_Jumlah(id_supplier string, kode_stock string) (Response, error) {
 	}
 
 	k_stock := String_Separator_To_String(obj.Kode_stock)
-	j_barang := String_Separator_To_Int(obj.Jumlah_barang)
+	j_barang := String_Separator_To_float64(obj.Jumlah_barang)
 
 	for i := 0; i < len(k_stock); i++ {
 		if k_stock[i] == kode_stock {

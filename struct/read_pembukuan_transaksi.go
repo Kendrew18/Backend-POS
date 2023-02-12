@@ -5,17 +5,19 @@ type Read_Pembukuan_Transaksi struct {
 	Kode_stock             string `json:"kode_stock"`
 	Nama_barang            string `json:"nama_barang"`
 	Jumlah_barang          string `json:"jumlah_barang"`
+	Satuan_barang          string `json:"satuan_barang"`
 	Harga_barang           string `json:"harga_barang"`
 	Tanggal_pelunasan      string `json:"tanggal_pelunasan"`
 	Total_harga_penjualan  int64  `json:"total_harga_penjualan"`
 }
 
 type Read_Pembukuan_Transaksi_List struct {
-	Id_pembukuan_transaksi string   `json:"id_pembukuan_transaksi"`
-	Kode_stock             []string `json:"kode_stock"`
-	Nama_barang            []string `json:"nama_barang"`
-	Jumlah_barang          []int    `json:"jumlah_barang"`
-	Harga_barang           []int    `json:"harga_barang"`
-	Tanggal_pelunasan      string   `json:"tanggal_pelunasan"`
-	Total_harga_penjualan  int64    `json:"total_harga_penjualan"`
+	Id_pembukuan_transaksi string    `json:"id_pembukuan_transaksi"`
+	Kode_stock             []string  `json:"kode_stock"`
+	Nama_barang            []string  `json:"nama_barang"`
+	Jumlah_barang          []float64 `json:"jumlah_barang"`
+	Satuan_barang          []string  `json:"satuan_barang"`
+	Harga_barang           []int     `json:"harga_barang"`
+	Tanggal_pelunasan      string    `json:"tanggal_pelunasan"`
+	Total_harga_penjualan  int64     `json:"total_harga_penjualan"`
 }

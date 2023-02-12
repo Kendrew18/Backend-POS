@@ -133,3 +133,47 @@ func String_Separator_To_Int64(str string) []int64 {
 
 	return data
 }
+
+func String_Separator_To_float64(str string) []float64 {
+	str2 := str
+
+	var by = []byte{}
+
+	by = []byte(str)
+	by2 := byte(0)
+	by = append(by, by2)
+	str2 = string(by)
+	fmt.Println(str2)
+
+	var new string = ""
+	var i int = 0
+
+	var data = []float64{}
+
+	for by[i] != 0 {
+		var co int = 0
+		new = ""
+		if by[i] == 124 {
+			co++
+			i++
+			for co < 2 {
+				if by[i] == 124 {
+					co++
+					i++
+					tempint, _ := strconv.ParseFloat(new, 64)
+					fmt.Println("temp:", tempint)
+					data = append(data, tempint)
+				} else {
+					new += string(by[i])
+					i++
+					fmt.Println(new)
+				}
+			}
+		} else {
+			i++
+		}
+	}
+	fmt.Println(data, i)
+
+	return data
+}
