@@ -148,6 +148,8 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 	var res Response
 	var arrobj []str.Read_Stock_Masuk
 	var obj str.Read_Stock_Masuk
+	var obj_fix str.Read_Stock_Masuk_fix
+	var arrobj_fix []str.Read_Stock_Masuk_fix
 
 	tgl := ""
 	if tanggal_pelunasan != "" {
@@ -218,15 +220,39 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 		arrobj = append(arrobj, obj)
 	}
 
-	if arrobj == nil {
-		arrobj = append(arrobj, obj)
+	for i := 0; i < len(arrobj); i++ {
+		tj := 0.0
+		hb := 0
+		k_stock := String_Separator_To_String(arrobj[i].Kode_stock)
+		j_barang := String_Separator_To_float64(arrobj[i].Jumlah_barang)
+		h_barang := String_Separator_To_Int(arrobj[i].Harga_barang)
+		n_barang := String_Separator_To_String(arrobj[i].Nama_stock)
+		for j := 0; j < len(j_barang); j++ {
+			tj += j_barang[j]
+			hb += h_barang[j]
+		}
+		obj_fix.Id_stock_masuk = arrobj[i].Id_stock_masuk
+		obj_fix.Kode_supplier = arrobj[i].Kode_supplier
+		obj_fix.Nama_penanggung_jawab = arrobj[i].Nama_penanggung_jawab
+		obj_fix.Tanggal_masuk = arrobj[i].Tanggal_masuk
+		obj_fix.Kode_stock = k_stock
+		obj_fix.Jumlah_barang = j_barang
+		obj_fix.Nama_barang = n_barang
+		obj_fix.Harga_barang = h_barang
+		obj_fix.Total_harga_barang = hb
+		obj_fix.Total_Jumlah_barang = tj
+		arrobj_fix = append(arrobj_fix, obj_fix)
+	}
+
+	if arrobj_fix == nil {
+		arrobj_fix = append(arrobj_fix, obj_fix)
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
-		res.Data = arrobj
+		res.Data = arrobj_fix
 	} else {
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
-		res.Data = arrobj
+		res.Data = arrobj_fix
 	}
 
 	return res, nil
