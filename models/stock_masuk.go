@@ -191,6 +191,7 @@ func Read_Stock_Masuk() (Response, error) {
 		j_barang := String_Separator_To_float64(arrobj[i].Jumlah_barang)
 		h_barang := String_Separator_To_Int(arrobj[i].Harga_barang)
 		n_barang := String_Separator_To_String(arrobj[i].Nama_stock)
+		s_barang := String_Separator_To_String(arrobj[i].Satuan_barang)
 		for j := 0; j < len(j_barang); j++ {
 			tj += j_barang[j]
 			hb += h_barang[j]
@@ -205,6 +206,7 @@ func Read_Stock_Masuk() (Response, error) {
 		obj_fix.Harga_barang = h_barang
 		obj_fix.Total_harga_barang = hb
 		obj_fix.Total_Jumlah_barang = tj
+		obj_fix.Satuan_barang = s_barang
 		arrobj_fix = append(arrobj_fix, obj_fix)
 	}
 

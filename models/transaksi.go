@@ -254,7 +254,7 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 
 	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang FROM transaksi WHERE kode_transaksi=?"
 
-	err := con.QueryRow(sqlStatement, kode_transaksi).Scan(&obj_str.Kode_stock, &obj_str.Nama_barang, &obj_str.Jumlah_barang, &obj_str.Harga_barang, &obj.Satuan_barang)
+	err := con.QueryRow(sqlStatement, kode_transaksi).Scan(&obj_str.Kode_stock, &obj_str.Nama_barang, &obj_str.Jumlah_barang, &obj_str.Harga_barang, &obj_str.Satuan_barang)
 
 	fmt.Println(obj_str)
 
@@ -277,16 +277,6 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 			obj.Harga_barang = h_barang[i]
 			obj.Satuan_barang = s_barang[i]
 			arrobj = append(arrobj, obj)
-		}
-
-		if arrobj == nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Not Found"
-			res.Data = arrobj
-		} else {
-			res.Status = http.StatusOK
-			res.Message = "Sukses"
-			res.Data = arrobj
 		}
 
 		if arrobj == nil {
