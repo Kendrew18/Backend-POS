@@ -201,7 +201,7 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM stock_masuk"
+	sqlStatement := "SELECT * FROM stock_masuk" + tgl
 
 	rows, err := con.Query(sqlStatement)
 
