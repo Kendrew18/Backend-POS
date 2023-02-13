@@ -193,9 +193,9 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 
 	if tipe_urutan != 2 {
 		if tipe_urutan == 0 {
-			tgl += " ORDER BY kode_transaksi ASC"
+			tgl += " ORDER BY id_stock_masuk ASC"
 		} else if tipe_urutan == 1 {
-			tgl += " ORDER BY kode_transaksi DESC"
+			tgl += " ORDER BY id_stock_masuk DESC"
 		}
 	}
 
@@ -208,6 +208,7 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 	defer rows.Close()
 
 	if err != nil {
+
 		return res, err
 	}
 
