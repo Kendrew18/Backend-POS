@@ -181,7 +181,7 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 		}
 
 		if tipe_tanggal == 0 {
-			tgl += " WHERE tanggal_masuk=" + bln_thn_sql
+			tgl += " WHERE tanggal_masuk=" + "\"" + bln_thn_sql + "\""
 		} else if tipe_tanggal == 1 {
 			tmp := "%" + bln_thn_sql + "%"
 			tgl += " WHERE tanggal_masuk like " + "\"" + tmp + "\""
