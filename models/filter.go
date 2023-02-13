@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"net/http"
 	"project-1/db"
 	str "project-1/struct"
@@ -180,13 +181,13 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 		}
 
 		if tipe_tanggal == 0 {
-			tgl += " WHERE tanggal_pelunasan=" + bln_thn_sql
+			tgl += " WHERE tanggal_masuk=" + bln_thn_sql
 		} else if tipe_tanggal == 1 {
 			tmp := "%" + bln_thn_sql + "%"
-			tgl += " WHERE tanggal_pelunasan like " + tmp
+			tgl += " WHERE tanggal_masuk like " + "\"" + tmp + "\""
 		} else if tipe_tanggal == 2 {
 			tmp := "%" + bln_thn_sql + "%"
-			tgl += " WHERE tanggal_pelunasan like " + tmp
+			tgl += " WHERE tanggal_masuk like " + "\"" + tmp + "\""
 		}
 
 	}
@@ -202,6 +203,8 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 	con := db.CreateCon()
 
 	sqlStatement := "SELECT * FROM stock_masuk" + tgl
+
+	fmt.Println(sqlStatement)
 
 	rows, err := con.Query(sqlStatement)
 
