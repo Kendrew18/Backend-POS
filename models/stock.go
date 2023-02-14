@@ -49,7 +49,7 @@ func Input_Inventory(nama_barang string, jumlah_barang float64, harga_barang int
 
 		id := "INVT-" + nm_str
 
-		sqlStatement := "INSERT INTO stock (kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang) values(?,?,?,?,?)"
+		sqlStatement := "INSERT INTO stock (co,kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang) values(?,?,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -57,7 +57,7 @@ func Input_Inventory(nama_barang string, jumlah_barang float64, harga_barang int
 			return res, err
 		}
 
-		_, err = stmt.Exec(id, nama_barang, jumlah_barang, harga_barang, satuan_barang)
+		_, err = stmt.Exec(nm, id, nama_barang, jumlah_barang, harga_barang, satuan_barang)
 
 		invent.Nama_barang = nama_barang
 		invent.Jumlah_barang = jumlah_barang
@@ -88,7 +88,7 @@ func Read_Stock() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM stock"
+	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang FROM stock ORDER BY co ASC"
 
 	rows, err := con.Query(sqlStatement)
 

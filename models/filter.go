@@ -108,13 +108,13 @@ func Filter_Stock(tipe_urutan int) (Response, error) {
 	if tipe_urutan != 2 {
 
 		if tipe_urutan == 0 {
-			tgl += " ORDER BY kode_stock ASC"
+			tgl += " ORDER BY co ASC"
 		} else if tipe_urutan == 1 {
-			tgl += " ORDER BY kode_stock DESC"
+			tgl += " ORDER BY co DESC"
 		}
 	}
 
-	sqlStatement := "SELECT * FROM stock" + tgl
+	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang FROM stock" + tgl
 
 	rows, err := con.Query(sqlStatement)
 
@@ -194,15 +194,15 @@ func Filter_Stock_Masuk(tanggal_pelunasan string, tipe_tanggal int, tipe_urutan 
 
 	if tipe_urutan != 2 {
 		if tipe_urutan == 0 {
-			tgl += " ORDER BY id_stock_masuk ASC"
+			tgl += " ORDER BY co ASC"
 		} else if tipe_urutan == 1 {
-			tgl += " ORDER BY id_stock_masuk DESC"
+			tgl += " ORDER BY co DESC"
 		}
 	}
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM stock_masuk" + tgl
+	sqlStatement := "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab,kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk" + tgl
 
 	fmt.Println(sqlStatement)
 

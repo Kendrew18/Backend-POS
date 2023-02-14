@@ -45,9 +45,9 @@ func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, na
 
 	currentTime := time.Now()
 
-	id := "TR-" + currentTime.Format("2006-01-02") + nm_str
+	id := "TR-" + currentTime.Format("2006-01-02") + "-" + nm_str
 
-	sqlStatement := "INSERT INTO retur (id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur) values(?,?,?,?,?,current_date,?,?)"
+	sqlStatement := "INSERT INTO retur (co,id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur) values(?,?,?,?,?,current_date,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -55,7 +55,7 @@ func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, na
 		return res, err
 	}
 
-	_, err = stmt.Exec(id, id_supplier, nama_supplier, kode_stock, nama_barang, jumlah_barang, 0)
+	_, err = stmt.Exec(nm, id, id_supplier, nama_supplier, kode_stock, nama_barang, jumlah_barang, 0)
 
 	obj.Id_supplier = id_supplier
 	obj.Nama_supplier = nama_supplier
@@ -81,7 +81,7 @@ func Read_Retur() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM retur"
+	sqlStatement := "SELECT id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur FROM retur ORDER BY co ASC "
 
 	rows, err := con.Query(sqlStatement)
 
@@ -161,7 +161,7 @@ func Read_Max_Jumlah(id_supplier string, kode_stock string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM stock_masuk WHERE kode_supplier=? ORDER BY `stock_masuk`.`tanggal_masuk` DESC"
+	sqlStatement := "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab,kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk WHERE kode_supplier=? ORDER BY `stock_masuk`.`tanggal_masuk` DESC"
 
 	rows, _ := con.Query(sqlStatement, id_supplier)
 

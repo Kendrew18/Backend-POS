@@ -76,7 +76,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 	if status_transaksi == "0" {
 
-		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
+		sqlStatement := "INSERT INTO transaksi (co,kode_transaksi,kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -84,7 +84,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 			return res, err
 		}
 
-		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, satuan_barang, harga_barang, bln_thn_sql, 0, sub_total_harga)
+		_, err = stmt.Exec(nm, id, kode_stock, nama_barang, jumlah_barang, satuan_barang, harga_barang, bln_thn_sql, 0, sub_total_harga)
 
 		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan FROM transaksi WHERE kode_transaksi=?"
 
@@ -121,7 +121,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 		stmt.Close()
 
 	} else if status_transaksi == "1" {
-		sqlStatement := "INSERT INTO transaksi (kode_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
+		sqlStatement := "INSERT INTO transaksi (co,kode_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -129,7 +129,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 			return res, err
 		}
 
-		_, err = stmt.Exec(id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 1, sub_total_harga)
+		_, err = stmt.Exec(nm, id, kode_stock, nama_barang, jumlah_barang, harga_barang, bln_thn_sql, 1, sub_total_harga)
 
 		sqlStatement = "SELECT kode_stock,jumlah_barang,harga_barang,tanggal_penjualan FROM transaksi WHERE kode_transaksi=?"
 
@@ -207,7 +207,7 @@ func Read_Transaksi(tanggal_transaksi string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi,sub_total_harga,jumlah_barang FROM transaksi WHERE tanggal_penjualan=?"
+	sqlStatement := "SELECT kode_transaksi, DATE_FORMAT(tanggal_penjualan, \"%d/%m/%Y\"), DATE_FORMAT(tanggal_pelunasan, \"%d/%m/%Y\"),status_transaksi,sub_total_harga,jumlah_barang FROM transaksi WHERE tanggal_penjualan=? ORDER BY co ASC"
 
 	rows, err := con.Query(sqlStatement, bln_thn_sql)
 

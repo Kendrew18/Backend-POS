@@ -44,7 +44,7 @@ func Input_Supplier(nama_supplier string, nomor_telpon string, email_supplier st
 
 	kode_suplier := "SUP-" + nm_str
 
-	sqlStatement := "INSERT INTO supplier (kode_supplier,nama_supplier,nomor_telpon,email_supplier) values(?,?,?,?)"
+	sqlStatement := "INSERT INTO supplier (co,kode_supplier,nama_supplier,nomor_telpon,email_supplier) values(?,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -52,7 +52,7 @@ func Input_Supplier(nama_supplier string, nomor_telpon string, email_supplier st
 		return res, err
 	}
 
-	_, err = stmt.Exec(kode_suplier, nama_supplier, nomor_telpon, email_supplier)
+	_, err = stmt.Exec(nm, kode_suplier, nama_supplier, nomor_telpon, email_supplier)
 
 	sup.Nama_supplier = nama_supplier
 	sup.Email_supplier = email_supplier
@@ -74,7 +74,7 @@ func Read_Supplier() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT kode_supplier,nama_supplier,nomor_telpon,email_supplier FROM supplier"
+	sqlStatement := "SELECT kode_supplier,nama_supplier,nomor_telpon,email_supplier FROM supplier ORDER BY co ASC "
 
 	rows, err := con.Query(sqlStatement)
 

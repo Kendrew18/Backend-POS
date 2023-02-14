@@ -49,7 +49,7 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 
 	id := "SM-" + nm_str
 
-	sqlStatement := "INSERT INTO stock_masuk (id_stock_masuk,kode_supplier,kode_stock,nama_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,satuan_barang,harga_barang) values(?,?,?,?,CURRENT_DATE,?,?,?,?)"
+	sqlStatement := "INSERT INTO stock_masuk (co,id_stock_masuk,kode_supplier,kode_stock,nama_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,satuan_barang,harga_barang) values(?,?,?,?,CURRENT_DATE,?,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -57,9 +57,9 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 		return res, err
 	}
 
-	_, err = stmt.Exec(id, kode_supplier, kode_stock, nama_stock, nama_penanggung_jawab, jumlah_barang, satuan_barang, harga_barang)
+	_, err = stmt.Exec(nm, id, kode_supplier, kode_stock, nama_stock, nama_penanggung_jawab, jumlah_barang, satuan_barang, harga_barang)
 
-	sqlStatement = "SELECT * FROM stock_masuk WHERE id_stock_masuk=?"
+	sqlStatement = "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab, kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk WHERE id_stock_masuk=?"
 
 	err = con.QueryRow(sqlStatement, id).Scan(&SM.Id_stock_masuk, &SM.Kode_supplier, &SM.Nama_penanggung_jawab,
 		&SM.Kode_stock, &SM.Nama_stock, &SM.Tanggal_masuk, &SM.Jumlah_barang, &SM.Harga_barang)
@@ -165,7 +165,7 @@ func Read_Stock_Masuk() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM stock_masuk"
+	sqlStatement := "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab,kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk order co by desc "
 
 	rows, err := con.Query(sqlStatement)
 
