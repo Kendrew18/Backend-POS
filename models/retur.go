@@ -36,6 +36,7 @@ func Generate_Id_Retur() int {
 func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, nama_barang string, jumlah_barang float64) (Response, error) {
 	var res Response
 	var obj str.Insert_Retur
+	var jmlh_brg str.Jumlah_Barang
 
 	con := db.CreateCon()
 
@@ -66,6 +67,26 @@ func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, na
 	obj.Status_retur = 0
 
 	stmt.Close()
+
+	sqlStatement = "SELECT jumlah_barang FROM stock WHERE kode_stock=?"
+
+	_ = con.QueryRow(sqlStatement).Scan(&jmlh_brg.Jumlah_Barang)
+
+	total := jmlh_brg.Jumlah_Barang - obj.Jumlah_barang
+
+	sqlStatement = "UPDATE stock SET jumlah_barang=? WHERE kode_stock=?"
+
+	stmt, err = con.Prepare(sqlStatement)
+
+	if err != nil {
+		return res, err
+	}
+
+	_, err = stmt.Exec(total, obj.Kode_stock)
+
+	if err != nil {
+		return res, err
+	}
 
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
