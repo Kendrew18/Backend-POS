@@ -49,7 +49,7 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 
 	id := "SM-" + nm_str
 
-	sqlStatement := "INSERT INTO stock_masuk (co,id_stock_masuk,kode_supplier,kode_stock,nama_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,satuan_barang,harga_barang) values(?,?,?,?,CURRENT_DATE,?,?,?,?)"
+	sqlStatement := "INSERT INTO stock_masuk (co,id_stock_masuk,kode_supplier,kode_stock,nama_stock,tanggal_masuk,nama_penanggung_jawab,jumlah_barang,satuan_barang,harga_barang) values(?,?,?,?,?,CURRENT_DATE,?,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 

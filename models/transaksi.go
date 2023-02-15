@@ -76,7 +76,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 
 	if status_transaksi == "0" {
 
-		sqlStatement := "INSERT INTO transaksi (co,kode_transaksi,kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
+		sqlStatement := "INSERT INTO transaksi (co,kode_transaksi,kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,?,?,CURRENT_DATE,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -121,7 +121,7 @@ func Input_Transaksi(kode_stock string, nama_barang string, jumlah_barang string
 		stmt.Close()
 
 	} else if status_transaksi == "1" {
-		sqlStatement := "INSERT INTO transaksi (co,kode_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,CURRENT_DATE,?,?,?)"
+		sqlStatement := "INSERT INTO transaksi (co,kode_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,tanggal_penjualan,tanggal_pelunasan,status_transaksi,sub_total_harga) values(?,?,?,?,?,?,?,CURRENT_DATE,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 

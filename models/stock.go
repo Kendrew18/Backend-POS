@@ -49,7 +49,7 @@ func Input_Inventory(nama_barang string, jumlah_barang float64, harga_barang int
 
 		id := "INVT-" + nm_str
 
-		sqlStatement := "INSERT INTO stock (co,kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang) values(?,?,?,?,?)"
+		sqlStatement := "INSERT INTO stock (co,kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang) values(?,?,?,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
