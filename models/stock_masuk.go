@@ -165,7 +165,7 @@ func Read_Stock_Masuk() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab,kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk order co by desc "
+	sqlStatement := "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab,kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk order by co desc "
 
 	rows, err := con.Query(sqlStatement)
 
