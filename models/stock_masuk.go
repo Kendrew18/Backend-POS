@@ -59,7 +59,7 @@ func Input_Stock_Masuk(kode_supplier string, nama_penanggung_jawab string, kode_
 
 	_, err = stmt.Exec(nm, id, kode_supplier, kode_stock, nama_stock, nama_penanggung_jawab, jumlah_barang, satuan_barang, harga_barang)
 
-	sqlStatement = "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab, kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk WHERE id_stock_masuk=?"
+	sqlStatement = "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab, kode_stock,nama_stock,tanggal_masuk,jumlah_barang,harga_barang FROM stock_masuk WHERE id_stock_masuk=?"
 
 	err = con.QueryRow(sqlStatement, id).Scan(&SM.Id_stock_masuk, &SM.Kode_supplier, &SM.Nama_penanggung_jawab,
 		&SM.Kode_stock, &SM.Nama_stock, &SM.Tanggal_masuk, &SM.Jumlah_barang, &SM.Harga_barang)
