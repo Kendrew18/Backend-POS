@@ -33,7 +33,7 @@ func Generate_Id_Retur() int {
 	return no
 }
 
-func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, nama_barang string, jumlah_barang float64) (Response, error) {
+func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, nama_barang string, jumlah_barang float64, keterangan string) (Response, error) {
 	var res Response
 	var obj str.Insert_Retur
 	var jmlh_brg str.Jumlah_Barang
@@ -46,9 +46,9 @@ func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, na
 
 	currentTime := time.Now()
 
-	id := "TR-" + currentTime.Format("2006-01-02") + "-" + nm_str
+	id := "TR-" + currentTime.Format("20060102") + nm_str
 
-	sqlStatement := "INSERT INTO retur (co,id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur) values(?,?,?,?,?,?,current_date,?,?)"
+	sqlStatement := "INSERT INTO retur (co,id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur,keterangan) values(?,?,?,?,?,?,current_date,?,?,?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -56,7 +56,7 @@ func Input_Retur(id_supplier string, nama_supplier string, kode_stock string, na
 		return res, err
 	}
 
-	_, err = stmt.Exec(nm, id, id_supplier, nama_supplier, kode_stock, nama_barang, jumlah_barang, 0)
+	_, err = stmt.Exec(nm, id, id_supplier, nama_supplier, kode_stock, nama_barang, jumlah_barang, 0, keterangan)
 
 	obj.Id_supplier = id_supplier
 	obj.Nama_supplier = nama_supplier
@@ -102,7 +102,7 @@ func Read_Retur() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur FROM retur ORDER BY co ASC "
+	sqlStatement := "SELECT id_retur,id_supplier,nama_supplier,kode_stock,nama_barang,tanggal_retur,jumlah_barang,status_retur,keterangan FROM retur ORDER BY co DESC "
 
 	rows, err := con.Query(sqlStatement)
 
@@ -114,7 +114,7 @@ func Read_Retur() (Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&obj.Id_retur, &obj.Id_supplier, &obj.Nama_supplier, &obj.Kode_stock,
-			&obj.Nama_barang, &obj.Tanggal_retur, &obj.Jumlah_barang, &obj.Status_retur)
+			&obj.Nama_barang, &obj.Tanggal_retur, &obj.Jumlah_barang, &obj.Status_retur, &obj.Keterangan)
 		if err != nil {
 			return res, err
 		}

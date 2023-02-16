@@ -9,4 +9,5 @@ type Read_Retur struct {
 	Tanggal_retur string  `json:"tanggal_retur"`
 	Jumlah_barang float64 `json:"jumlah_barang"`
 	Status_retur  int     `json:"status_retur"`
+	Keterangan    string  `json:"keterangan"`
 }
