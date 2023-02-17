@@ -307,7 +307,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 
 		con := db.CreateCon()
 
-		sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan,satuan_barang FROM pembukuan_transaksi WHERE tanggal_pelunasan>=? && tanggal_pelunasan<=? "
+		sqlStatement := "SELECT id_pembukuan_transaksi,kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang,Date_Format(tanggal_pelunasan,\"%d-%m-%Y\"),total_harga_penjualan FROM pembukuan_transaksi WHERE tanggal_pelunasan>=? && tanggal_pelunasan<=? "
 
 		rows, err := con.Query(sqlStatement, bln_thn_sql, bln_thn_sql2)
 
@@ -318,7 +318,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang,
+			err = rows.Scan(&obj.Id_pembukuan_transaksi, &obj.Kode_stock, &obj.Nama_barang, &obj.Jumlah_barang, &obj.Satuan_barang,
 				&obj.Harga_barang, &obj.Tanggal_pelunasan, &obj.Total_harga_penjualan)
 			if err != nil {
 				return res, err
