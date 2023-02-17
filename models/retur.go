@@ -182,7 +182,7 @@ func Read_Max_Jumlah(id_supplier string, kode_stock string) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab,kode_stock,nama_stock,tanggal_masuk,jumlah_barang,satuan_barang,harga_barang FROM stock_masuk WHERE kode_supplier=? ORDER BY `stock_masuk`.`tanggal_masuk` DESC"
+	sqlStatement := "SELECT id_stock_masuk,kode_supplier,nama_penanggung_jawab,kode_stock,nama_stock,tanggal_masuk,jumlah_barang,harga_barang FROM stock_masuk WHERE kode_supplier=? ORDER BY `stock_masuk`.`tanggal_masuk` DESC"
 
 	rows, _ := con.Query(sqlStatement, id_supplier)
 
@@ -197,17 +197,21 @@ func Read_Max_Jumlah(id_supplier string, kode_stock string) (Response, error) {
 		arrobj = append(arrobj, obj)
 	}
 
-	k_stock := String_Separator_To_String(obj.Kode_stock)
-	j_barang := String_Separator_To_float64(obj.Jumlah_barang)
+	for j := 0; j < len(arrobj); j++ {
+		k_stock := String_Separator_To_String(arrobj[j].Kode_stock)
+		j_barang := String_Separator_To_float64(arrobj[j].Jumlah_barang)
 
-	for i := 0; i < len(k_stock); i++ {
-		if k_stock[i] == kode_stock {
-			obj_max.Kode_supplier = id_supplier
-			obj_max.Max_barang = j_barang[i]
-			obj_max.Kode_stock = kode_stock
-			i = len(k_stock)
+		for i := 0; i < len(k_stock); i++ {
+			if k_stock[i] == kode_stock {
+				obj_max.Kode_supplier = id_supplier
+				obj_max.Max_barang = j_barang[i]
+				obj_max.Kode_stock = kode_stock
+				i = len(k_stock)
+				j = len(arrobj)
+			}
 		}
 	}
+
 	arrobj_max = append(arrobj_max, obj_max)
 
 	if arrobj_max == nil {
