@@ -23,11 +23,9 @@ func FilterTransaksi(c echo.Context) error {
 }
 
 func FilterStock(c echo.Context) error {
-	tipe_urutan := c.FormValue("tipe_urutan")
+	nama_barang := c.FormValue("nama_barang")
 
-	tu, _ := strconv.Atoi(tipe_urutan)
-
-	result, err := models.Filter_Stock(tu)
+	result, err := models.Filter_Stock(nama_barang)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -61,6 +59,16 @@ func FilterReadPembukuan(c echo.Context) error {
 	tt, _ := strconv.Atoi(tipe_tanggal)
 
 	result, err := models.Filter_Read_Pembukuan(tanggal, tanggal2, tt)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func ReadFilterStock(c echo.Context) error {
+	result, err := models.Read_Filter_Stock()
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

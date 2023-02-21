@@ -5,6 +5,7 @@ import (
 	"project-1/db"
 	str "project-1/struct"
 	"strconv"
+	"strings"
 )
 
 func Generate_Id_Stock() int {
@@ -49,7 +50,9 @@ func Input_Inventory(nama_barang string, jumlah_barang float64, harga_barang int
 
 		id := "INVT-" + nm_str
 
-		sqlStatement := "INSERT INTO stock (co,kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang) values(?,?,?,?,?,?)"
+		flt_brg := strings.Split(nama_barang, " ")
+
+		sqlStatement := "INSERT INTO stock (co,kode_stock,nama_barang,jumlah_barang,harga_barang,satuan_barang,fil_barang) values(?,?,?,?,?,?,?)"
 
 		stmt, err := con.Prepare(sqlStatement)
 
@@ -57,7 +60,7 @@ func Input_Inventory(nama_barang string, jumlah_barang float64, harga_barang int
 			return res, err
 		}
 
-		_, err = stmt.Exec(nm, id, nama_barang, jumlah_barang, harga_barang, satuan_barang)
+		_, err = stmt.Exec(nm, id, nama_barang, jumlah_barang, harga_barang, satuan_barang, flt_brg[0])
 
 		invent.Nama_barang = nama_barang
 		invent.Jumlah_barang = jumlah_barang

@@ -98,23 +98,54 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, erro
 	return res, nil
 }
 
-func Filter_Stock(tipe_urutan int) (Response, error) {
+func Read_Filter_Stock() (Response, error) {
+	var res Response
+	var arr_invent []str.Fil_brg
+	var invent str.Fil_brg
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT DISTINCT(fil_barang) FROM stock ORDER BY co ASC"
+
+	rows, err := con.Query(sqlStatement)
+
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&invent.Nama_barang)
+		if err != nil {
+			return res, err
+		}
+		arr_invent = append(arr_invent, invent)
+	}
+
+	if arr_invent == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arr_invent
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arr_invent
+	}
+
+	return res, nil
+}
+
+func Filter_Stock(nama_barang string) (Response, error) {
 	var res Response
 	var arr_invent []str.Read_Stock
 	var invent str.Read_Stock
 
 	con := db.CreateCon()
-	tgl := ""
-	if tipe_urutan != 2 {
 
-		if tipe_urutan == 0 {
-			tgl += " ORDER BY co ASC"
-		} else if tipe_urutan == 1 {
-			tgl += " ORDER BY co DESC"
-		}
-	}
+	condition := "\"%" + nama_barang + "%\""
 
-	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang FROM stock" + tgl
+	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang FROM stock WHERE nama_barang like" + condition
 
 	rows, err := con.Query(sqlStatement)
 

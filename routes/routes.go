@@ -104,5 +104,8 @@ func Init() *echo.Echo {
 	//filter_pembukuan
 	flt.GET("/fil-pembukuan", controllers.FilterReadPembukuan)
 
+	//read_filter_stock
+	flt.GET("/read-fil-stock", controllers.ReadFilterStock)
+
 	return e
 }
