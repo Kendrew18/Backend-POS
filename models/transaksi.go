@@ -390,7 +390,7 @@ func Date_Transaksi(tanggal string, tipe_status int) (Response, error) {
 			}
 		}
 
-		tgl += "WHERE tanggal_penjualan=\"" + bln_thn_sql + "\""
+		tgl += "WHERE tanggal_penjualan<=\"" + bln_thn_sql + "\""
 	}
 
 	if tipe_status != 2 {
