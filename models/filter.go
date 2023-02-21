@@ -5,57 +5,42 @@ import (
 	"net/http"
 	"project-1/db"
 	str "project-1/struct"
-	"time"
 )
 
-func Filter_Transaksi(tanggal_pelunasan string, tanggal_pelunasan_2 string, tipe_status int) (Response, error) {
+func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, error) {
 	var res Response
 	var arrobj []str.Read_Transaksi
 	var obj str.Read_Transaksi
 
 	tgl := ""
-	if tanggal_pelunasan != "" || tanggal_pelunasan_2 != "" {
+	if tanggal_pelunasan != "" {
 
 		ls := []string{}
 		str1 := ""
 
-		ls2 := []string{}
-		str2 := ""
-
 		for i := 0; i < len(tanggal_pelunasan); i++ {
 			if byte(tanggal_pelunasan[i]) >= 48 && byte(tanggal_pelunasan[i]) <= 57 {
 				str1 += string(tanggal_pelunasan[i])
-				str2 += string(tanggal_pelunasan_2[i])
 				if i == len(tanggal_pelunasan)-1 {
 					ls = append(ls, str1)
-					ls2 = append(ls2, str2)
 				}
 			} else if tanggal_pelunasan[i] == '-' {
 				ls = append(ls, str1)
-				ls2 = append(ls2, str2)
 				str1 = ""
-				str2 = ""
 			}
 		}
 
 		j := len(ls)
 		bln_thn_sql := ""
-		bln_thn_sql2 := ""
 
 		for x := j - 1; x >= 0; x-- {
 			bln_thn_sql += ls[x]
-			bln_thn_sql2 += ls2[x]
 			if x != 0 {
 				bln_thn_sql += "-"
-				bln_thn_sql2 += "-"
 			}
 		}
 
-		tgl += "WHERE tanggal_penjualan>=\"" + bln_thn_sql + "\"" + "&&" + " tanggal_penjualan>=\"" + bln_thn_sql2 + "\""
-	} else {
-		currentTime := time.Now()
-		tm := currentTime.Format("2006-01-02")
-		tgl += "WHERE tanggal_penjualan<=\"" + tm + "\""
+		tgl += "WHERE tanggal_penjualan=\"" + bln_thn_sql + "\""
 	}
 
 	if tipe_status != 2 {
