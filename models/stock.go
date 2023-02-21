@@ -6,7 +6,6 @@ import (
 	str "project-1/struct"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func Generate_Id_Stock() int {
@@ -92,11 +91,7 @@ func Read_Stock() (Response, error) {
 
 	con := db.CreateCon()
 
-	currentTime := time.Now()
-	tm := currentTime.Format("2006-01-02")
-	tgl := "WHERE tanggal_penjualan=\"" + tm + "\""
-
-	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang FROM stock WHERE " + tgl + " ORDER BY co ASC"
+	sqlStatement := "SELECT kode_stock,nama_barang,jumlah_barang,satuan_barang,harga_barang FROM stock ORDER BY co ASC"
 
 	rows, err := con.Query(sqlStatement)
 
