@@ -14,7 +14,7 @@ func Filter_Transaksi(tanggal_pelunasan string, tanggal_pelunasan_2 string, tipe
 	var obj str.Read_Transaksi
 
 	tgl := ""
-	if tanggal_pelunasan != "" {
+	if tanggal_pelunasan != "" || tanggal_pelunasan_2 != "" {
 
 		ls := []string{}
 		str1 := ""
@@ -55,7 +55,7 @@ func Filter_Transaksi(tanggal_pelunasan string, tanggal_pelunasan_2 string, tipe
 	} else {
 		currentTime := time.Now()
 		tm := currentTime.Format("2006-01-02")
-		tgl += "WHERE tanggal_penjualan=\"" + tm + "\""
+		tgl += "WHERE tanggal_penjualan<=\"" + tm + "\""
 	}
 
 	if tipe_status != 2 {

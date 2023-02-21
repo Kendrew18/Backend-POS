@@ -189,7 +189,7 @@ func Read_Transaksi(tanggal_transaksi string) (Response, error) {
 			if i == len(tanggal_transaksi)-1 {
 				ls = append(ls, str1)
 			}
-		} else if tanggal_transaksi[i] == '-' {
+		} else if tanggal_transaksi[i] == '/' {
 			ls = append(ls, str1)
 			str1 = ""
 		}
@@ -204,8 +204,6 @@ func Read_Transaksi(tanggal_transaksi string) (Response, error) {
 			bln_thn_sql += "-"
 		}
 	}
-
-	fmt.Println(bln_thn_sql)
 
 	con := db.CreateCon()
 
