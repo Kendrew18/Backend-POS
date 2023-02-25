@@ -246,9 +246,9 @@ func Read_Transaksi(tanggal_transaksi string) (Response, error) {
 
 func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 	var res Response
-	var obj_str str.Detail_Stock_Masuk_String
-	var obj str.Detail_Stock_Masuk
-	var arrobj []str.Detail_Stock_Masuk
+	var obj_str str.Read_Detail_Transaksi_String
+	var obj str.Read_Detail_Transaksi
+	var arrobj []str.Read_Detail_Transaksi
 
 	con := db.CreateCon()
 
@@ -271,6 +271,11 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 		n_barang := String_Separator_To_String(obj_str.Nama_barang)
 
 		for i := 0; i < len(k_stock); i++ {
+
+			sqlStatement := "SELECT harga_barang FROM stock WHERE kode_stock=?"
+
+			_ = con.QueryRow(sqlStatement, obj.Kode_stock[i]).Scan(&obj.Harga_satuan)
+
 			obj.Kode_stock = k_stock[i]
 			obj.Nama_barang = n_barang[i]
 			obj.Jumlah_barang = j_barang[i]
@@ -354,7 +359,7 @@ func Update_Status(kode_transaksi string, tanggal_pelunasan string) (Response, e
 	return res, nil
 }
 
-func Date_Transaksi(tanggal string, tipe_status int) (Response, error) {
+func Date_Transaksi(tanggal string, tanggal2 string, tipe_status int) (Response, error) {
 	var res Response
 	var arrobj []str.Tanggal_Transaksi
 	var obj str.Tanggal_Transaksi
@@ -363,7 +368,45 @@ func Date_Transaksi(tanggal string, tipe_status int) (Response, error) {
 
 	tgl := ""
 
-	if tanggal != "" {
+	if tanggal != "" && tanggal2 != "" {
+
+		ls := []string{}
+		ls2 := []string{}
+		str1 := ""
+		str2 := ""
+
+		for i := 0; i < len(tanggal); i++ {
+			if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
+				str1 += string(tanggal[i])
+				str2 += string(tanggal2[i])
+				if i == len(tanggal)-1 {
+					ls = append(ls, str1)
+					ls2 = append(ls2, str2)
+				}
+			} else if tanggal[i] == '-' {
+				ls = append(ls, str1)
+				ls2 = append(ls2, str2)
+				str1 = ""
+				str2 = ""
+			}
+		}
+
+		j := len(ls)
+		bln_thn_sql := ""
+		bln_thn_sql2 := ""
+
+		for x := j - 1; x >= 0; x-- {
+			bln_thn_sql += ls[x]
+			bln_thn_sql2 += ls2[x]
+			if x != 0 {
+				bln_thn_sql += "-"
+				bln_thn_sql2 += "-"
+			}
+		}
+
+		tgl += "WHERE tanggal_penjualan>=\"" + bln_thn_sql + "\"" + " && tanggal_penjualan<=\"" + bln_thn_sql2 + "\""
+
+	} else if tanggal2 != "" {
 
 		ls := []string{}
 		str1 := ""
