@@ -274,7 +274,7 @@ func Read_Detail_transaksi(kode_transaksi string) (Response, error) {
 
 			sqlStatement := "SELECT harga_barang FROM stock WHERE kode_stock=?"
 
-			_ = con.QueryRow(sqlStatement, obj.Kode_stock[i]).Scan(&obj.Harga_satuan)
+			_ = con.QueryRow(sqlStatement, k_stock[i]).Scan(&obj.Harga_satuan)
 
 			obj.Kode_stock = k_stock[i]
 			obj.Nama_barang = n_barang[i]
