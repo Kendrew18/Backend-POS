@@ -86,6 +86,7 @@ func Filter_Transaksi(tanggal_pelunasan string, tipe_status int) (Response, erro
 	}
 
 	if arrobj == nil {
+		arrobj = append(arrobj, obj)
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
 		res.Data = arrobj
@@ -124,6 +125,7 @@ func Read_Filter_Stock() (Response, error) {
 	}
 
 	if arr_invent == nil {
+		arr_invent = append(arr_invent, invent)
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
 		res.Data = arr_invent
@@ -164,6 +166,7 @@ func Filter_Stock(nama_barang string) (Response, error) {
 	}
 
 	if arr_invent == nil {
+		arr_invent = append(arr_invent, invent)
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
 		res.Data = arr_invent
@@ -370,6 +373,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		if arrobj_fix == nil {
+			arrobj_fix = append(arrobj_fix, obj_fix)
 			res.Status = http.StatusNotFound
 			res.Message = "Not Found"
 			res.Data = arrobj_fix
@@ -445,6 +449,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		if arrobj_fix == nil {
+			arrobj_fix = append(arrobj_fix, obj_fix)
 			res.Status = http.StatusNotFound
 			res.Message = "Not Found"
 			res.Data = arrobj_fix
@@ -521,6 +526,7 @@ func Filter_Read_Pembukuan(tanggal string, tanggal2 string, tipe int) (Response,
 		}
 
 		if arrobj_fix == nil {
+			arrobj_fix = append(arrobj_fix, obj_fix)
 			res.Status = http.StatusNotFound
 			res.Message = "Not Found"
 			res.Data = arrobj_fix

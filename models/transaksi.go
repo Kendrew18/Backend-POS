@@ -368,6 +368,8 @@ func Date_Transaksi(tanggal string, tanggal2 string, tipe_status int) (Response,
 
 	tgl := ""
 
+	tipe := 0
+
 	if tanggal != "" && tanggal2 != "" {
 
 		ls := []string{}
@@ -405,8 +407,8 @@ func Date_Transaksi(tanggal string, tanggal2 string, tipe_status int) (Response,
 		}
 
 		tgl += "WHERE tanggal_penjualan>=\"" + bln_thn_sql + "\"" + " && tanggal_penjualan<=\"" + bln_thn_sql2 + "\""
-
-	} else if tanggal2 != "" {
+		tipe = 2
+	} else if tanggal2 == "" {
 
 		ls := []string{}
 		str1 := ""
@@ -434,6 +436,8 @@ func Date_Transaksi(tanggal string, tanggal2 string, tipe_status int) (Response,
 		}
 
 		tgl += "WHERE tanggal_penjualan=\"" + bln_thn_sql + "\""
+		tipe = 1
+		fmt.Println(tipe)
 	}
 
 	if tipe_status != 2 {
@@ -452,7 +456,7 @@ func Date_Transaksi(tanggal string, tanggal2 string, tipe_status int) (Response,
 		}
 	}
 
-	sqlStatement := "SELECT DISTINCT(tanggal_penjualan) FROM `transaksi` " + tgl + " ORDER BY tanggal_penjualan DESC"
+	sqlStatement := "SELECT DISTINCT(tanggal_penjualan) FROM `transaksi` " + tgl + " ORDER BY tanggal_penjualan ASC"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -499,6 +503,98 @@ func Date_Transaksi(tanggal string, tanggal2 string, tipe_status int) (Response,
 	}
 
 	if arrobj == nil {
+		if tipe == 1 {
+
+			ls := []string{}
+			str1 := ""
+
+			for i := 0; i < len(tanggal); i++ {
+				if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
+					str1 += string(tanggal[i])
+					if i == len(tanggal)-1 {
+						ls = append(ls, str1)
+					}
+				} else if tanggal[i] == '-' {
+					ls = append(ls, str1)
+					str1 = ""
+				}
+			}
+
+			j := len(ls)
+			bln_thn_sql := ""
+
+			for x := j - 1; x >= 0; x-- {
+				bln_thn_sql += ls[x]
+				if x != 0 {
+					bln_thn_sql += "-"
+				}
+			}
+
+			obj.Tanggal_transaksi = bln_thn_sql
+			arrobj = append(arrobj, obj)
+
+		} else if tipe == 2 {
+
+			ls := []string{}
+			ls2 := []string{}
+			str1 := ""
+			str2 := ""
+
+			for i := 0; i < len(tanggal); i++ {
+				if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
+					str1 += string(tanggal[i])
+					str2 += string(tanggal2[i])
+					if i == len(tanggal)-1 {
+						ls = append(ls, str1)
+						ls2 = append(ls2, str2)
+					}
+				} else if tanggal[i] == '-' {
+					ls = append(ls, str1)
+					ls2 = append(ls2, str2)
+					str1 = ""
+					str2 = ""
+				}
+			}
+
+			j := len(ls)
+			bln_thn_sql := ""
+			bln_thn_sql2 := ""
+
+			for x := j - 1; x >= 0; x-- {
+				bln_thn_sql += ls[x]
+				bln_thn_sql2 += ls2[x]
+				if x != 0 {
+					bln_thn_sql += "-"
+					bln_thn_sql2 += "-"
+				}
+			}
+
+			fmt.Println(bln_thn_sql)
+			fmt.Println(bln_thn_sql2)
+
+			date_start, _ := time.Parse("2006-01-02", bln_thn_sql)
+			date_end, _ := time.Parse("2006-01-02", bln_thn_sql2)
+
+			fmt.Println(date_start)
+			fmt.Println(date_end)
+
+			obj.Tanggal_transaksi = date_start.Format("02-01-2006")
+			arrobj = append(arrobj, obj)
+
+			co := 0
+			date := date_start.Format("2006-01-02")
+
+			for date != date_end.Format("2006-01-02") {
+				co++
+				date_t := date_start.AddDate(0, 0, co)
+				obj.Tanggal_transaksi = date_t.Format("02-01-2006")
+				date = date_t.Format("2006-01-02")
+				arrobj = append(arrobj, obj)
+				fmt.Println(co, " : ", date)
+			}
+
+		}
+
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
 		res.Data = arrobj
