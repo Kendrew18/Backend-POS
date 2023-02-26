@@ -505,33 +505,10 @@ func Date_Transaksi(tanggal string, tanggal2 string, tipe_status int) (Response,
 	if arrobj == nil {
 		if tipe == 1 {
 
-			ls := []string{}
-			str1 := ""
-
-			for i := 0; i < len(tanggal); i++ {
-				if byte(tanggal[i]) >= 48 && byte(tanggal[i]) <= 57 {
-					str1 += string(tanggal[i])
-					if i == len(tanggal)-1 {
-						ls = append(ls, str1)
-					}
-				} else if tanggal[i] == '-' {
-					ls = append(ls, str1)
-					str1 = ""
-				}
-			}
-
-			j := len(ls)
-			bln_thn_sql := ""
-
-			for x := j - 1; x >= 0; x-- {
-				bln_thn_sql += ls[x]
-				if x != 0 {
-					bln_thn_sql += "-"
-				}
-			}
-
-			obj.Tanggal_transaksi = bln_thn_sql
+			obj.Tanggal_transaksi = tanggal
 			arrobj = append(arrobj, obj)
+
+			fmt.Println(obj.Tanggal_transaksi)
 
 		} else if tipe == 2 {
 
