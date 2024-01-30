@@ -157,7 +157,7 @@ func Update_Stock(kode_inventory string, nama_barang string, jumlah_barang float
 	return res, nil
 }
 
-func Check_Nama_Stcok(kode_inventory string, nama_barang string) (Response, error) {
+func Check_Nama_Stock(kode_inventory string, nama_barang string) (Response, error) {
 	var res Response
 	var check str.Check_Nama_Stock
 
