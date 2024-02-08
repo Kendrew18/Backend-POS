@@ -1,10 +1,14 @@
 package routes
 
 import (
+	"Bakend-POS/controllers/stock"
+	"Bakend-POS/controllers/stock_masuk"
+	"Bakend-POS/controllers/supplier"
+	"Bakend-POS/controllers/user"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"net/http"
-	"project-1/controllers"
 )
 
 func Init() *echo.Echo {
@@ -14,98 +18,82 @@ func Init() *echo.Echo {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	Sup := e.Group("/sup")
-	us := e.Group("/us")
-	invent := e.Group("/invent")
-	stk_m := e.Group("/stk-m")
-	tr := e.Group("/tr")
-	pmb := e.Group("/pmb")
-	rtr := e.Group("/rtr")
-	flt := e.Group("/flt")
+	US := e.Group("/US")
+	SUP := e.Group("/SUP")
+	STK := e.Group("/STK")
+	STM := e.Group("/STM")
+	// tr := e.Group("/tr")
+	// pmb := e.Group("/pmb")
+	// rtr := e.Group("/rtr")
+	// flt := e.Group("/flt")
 
-	//Login
-	us.GET("/login", controllers.Login)
+	//User
+	US.GET("/login", user.LoginUser)
+	US.GET("/user-profile", user.UserProfile)
+	US.POST("/sign-up", user.SignUp)
 
-	//User_Profile
-	us.GET("/user-profile", controllers.User_Profile)
+	//Supplier
+	SUP.POST("/supplier", supplier.InputSupplier)
+	SUP.GET("/supplier", supplier.ReadSupplier)
 
-	//Input_Inventory
-	invent.POST("/input-stock", controllers.InputStock)
+	//Stock
+	STK.POST("/stock", stock.InputStock)
+	STK.GET("/stock", stock.ReadStock)
+	STK.PUT("/stock", stock.UpdateStock)
 
-	//Read_Inventory
-	invent.GET("/stock", controllers.ReadStock)
+	//Stock Masuk
+	STM.POST("/stock-masuk", stock_masuk.InputStockMasuk)
+	STM.GET("/stock-masuk", stock_masuk.ReadStockMasuk)
+	//STM.PUT("/stock-masuk", stock_masuk.UpdateBarangStockMasuk)
+	//STM.DELETE("/stock-masuk", stock_masuk.DeleteBarangStockMasuk)
 
-	//Update_Inventory
-	invent.PUT("/update-stock", controllers.UpdateStock)
+	// //Input-Transaksi
+	// tr.POST("/input-transaksi", controllers.InputTransaksi)
 
-	//Check_Nama_Inventory
-	invent.GET("/check-nama", controllers.CheckNamaStock)
+	// //read-transaksi
+	// tr.GET("/transaksi", controllers.ReadTransaksi)
 
-	//Input_Supplier
-	Sup.POST("/input-supplier", controllers.InputSupplier)
+	// //read-detail-transaksi
+	// tr.GET("/read-detail-transaksi", controllers.ReadDetailTransaksi)
 
-	//Read_Supplier
-	Sup.GET("/supplier", controllers.ReadSupplier)
+	// //update-status-transaksi
+	// tr.PUT("/update-status", controllers.UpdateStatus)
 
-	//Delete_Supplier
-	Sup.DELETE("/delete-supplier", controllers.DeleteSupplier)
+	// //tanggal-penjualan
+	// tr.GET("/tgl-penjualan", controllers.DateTransaksi)
 
-	//Input_Stock_Masuk
-	stk_m.POST("/input-stock-masuk", controllers.InputStockMasuk)
+	// //penutupan-pembukuan
+	// pmb.GET("/penutupan-pembukuan", controllers.PenutupanPembukuan)
 
-	//Read_Stock_Masuk
-	stk_m.GET("/stock-masuk", controllers.ReadStockMasuk)
+	// //read-pembukuan
+	// pmb.GET("/read-pembukuan", controllers.ReadPembukuan)
 
-	//Read_Detail_Stock_Masuk
-	stk_m.GET("/detail-stock-masuk", controllers.Read_Detail_Stock_Masuk)
+	// //input_retur
+	// rtr.POST("/input-retur", controllers.InputRetur)
 
-	//Input-Transaksi
-	tr.POST("/input-transaksi", controllers.InputTransaksi)
+	// //read-retur
+	// rtr.GET("/read-retur", controllers.ReadRetur)
 
-	//read-transaksi
-	tr.GET("/transaksi", controllers.ReadTransaksi)
+	// //Read-Kode-Nama-Barang
+	// rtr.GET("/read-kode-nama-barang", controllers.ReadKodeNamaBarang)
 
-	//read-detail-transaksi
-	tr.GET("/read-detail-transaksi", controllers.ReadDetailTransaksi)
+	// //Read-Max-Jumlah
+	// rtr.GET("/read-max-jumlah", controllers.ReadMaxJumlah)
 
-	//update-status-transaksi
-	tr.PUT("/update-status", controllers.UpdateStatus)
+	// //filter_transaksi
+	// flt.GET("/fil-transaksi", controllers.FilterTransaksi)
 
-	//tanggal-penjualan
-	tr.GET("/tgl-penjualan", controllers.DateTransaksi)
+	// //filter_stock
+	// flt.GET("/fil-stock", controllers.FilterStock)
 
-	//penutupan-pembukuan
-	pmb.GET("/penutupan-pembukuan", controllers.PenutupanPembukuan)
+	// //filter_stock_masuk
+	// flt.GET("/fil-stock-masuk", controllers.FilterStockMasuk)
 
-	//read-pembukuan
-	pmb.GET("/read-pembukuan", controllers.ReadPembukuan)
+	// //filter_pembukuan
+	// flt.GET("/fil-pembukuan", controllers.FilterReadPembukuan)
 
-	//input_retur
-	rtr.POST("/input-retur", controllers.InputRetur)
-
-	//read-retur
-	rtr.GET("/read-retur", controllers.ReadRetur)
-
-	//Read-Kode-Nama-Barang
-	rtr.GET("/read-kode-nama-barang", controllers.ReadKodeNamaBarang)
-
-	//Read-Max-Jumlah
-	rtr.GET("/read-max-jumlah", controllers.ReadMaxJumlah)
-
-	//filter_transaksi
-	flt.GET("/fil-transaksi", controllers.FilterTransaksi)
-
-	//filter_stock
-	flt.GET("/fil-stock", controllers.FilterStock)
-
-	//filter_stock_masuk
-	flt.GET("/fil-stock-masuk", controllers.FilterStockMasuk)
-
-	//filter_pembukuan
-	flt.GET("/fil-pembukuan", controllers.FilterReadPembukuan)
-
-	//read_filter_stock
-	flt.GET("/read-fil-stock", controllers.ReadFilterStock)
+	// //read_filter_stock
+	// flt.GET("/read-fil-stock", controllers.ReadFilterStock)
 
 	return e
 }

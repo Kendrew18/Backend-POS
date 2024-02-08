@@ -1,8 +1,8 @@
 package main
 
 import (
-	"project-1/db"
-	"project-1/routes"
+	"Bakend-POS/db"
+	"Bakend-POS/routes"
 )
 
 func main() {

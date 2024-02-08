@@ -1,10 +1,13 @@
 package db
 
 import (
+	"Bakend-POS/config"
 	"database/sql"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
-	"project-1/config"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var db *sql.DB
@@ -28,4 +31,12 @@ func Init() {
 
 func CreateCon() *sql.DB {
 	return db
+}
+
+func CreateConGorm() *gorm.DB {
+	gormDB, _ := gorm.Open(mysql.New(mysql.Config{
+		Conn: db,
+	}), &gorm.Config{})
+
+	return gormDB
 }
