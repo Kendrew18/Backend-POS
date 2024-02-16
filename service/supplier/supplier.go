@@ -72,64 +72,64 @@ func Read_Supplier(Request request.Read_Supplier_Request) (response.Response, er
 	return res, nil
 }
 
-//func Delete_Supplier(kode_supplier string) (Response, error) {
-// 	var res Response
-// 	var arrobj []str.Read_Kode_Stock_Masuk
-// 	var obj str.Read_Kode_Stock_Masuk
+func Update_Supplier(Request request.Update_Supplier_Request) (response.Response, error) {
+	var res response.Response
+	con := db.CreateConGorm()
 
-// 	con := db.CreateCon()
+	err := con.Table("supplier").Where("kode_supplier = ?", Request.Kode_supplier).Select("nomor_telepon", "email_supplier").Updates(&Request)
 
-// 	sqlStatement := "SELECT id_stock_masuk,kode_supplier FROM stock_masuk WHERE kode_supplier=? "
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Suksess"
+		res.Data = map[string]int64{
+			"rows": err.RowsAffected,
+		}
+	}
 
-// 	rows, err := con.Query(sqlStatement, kode_supplier)
+	return res, nil
+}
 
-// 	defer rows.Close()
+func Delete_Supplier(Request request.Delete_Supplier_Request) (response.Response, error) {
+	var res response.Response
 
-// 	if err != nil {
-// 		return res, err
-// 	}
+	check := ""
+	con := db.CreateConGorm()
 
-// 	for rows.Next() {
-// 		err = rows.Scan(&obj.Id_stock_masuk, &obj.Kode_supplier)
-// 		if err != nil {
-// 			return res, err
-// 		}
-// 		arrobj = append(arrobj, obj)
-// 	}
+	err := con.Table("barang_supplier").Select("kode_barang_supplier").Where("kode_supplier = ?", Request.Kode_supplier).Limit(1).Scan(&check)
 
-// 	if arrobj == nil {
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Update Error"
+		res.Data = Request
+		return res, err.Error
+	}
 
-// 		sqlstatement := "DELETE FROM supplier WHERE kode_supplier=?"
+	if check == "" {
 
-// 		stmt, err := con.Prepare(sqlstatement)
+		err = con.Table("supplier").Where("kode_supplier = ?", Request.Kode_supplier).Delete("")
 
-// 		if err != nil {
-// 			return res, err
-// 		}
-
-// 		result, err := stmt.Exec(kode_supplier)
-
-// 		if err != nil {
-// 			return res, err
-// 		}
-
-// 		rowsAffected, err := result.RowsAffected()
-
-// 		if err != nil {
-// 			return res, err
-// 		}
-
-// 		res.Status = http.StatusOK
-// 		res.Message = "Suksess"
-// 		res.Data = map[string]int64{
-// 			"rows": rowsAffected,
-// 		}
-
-// 	} else {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Tidak bisa di hapus"
-// 		res.Data = arrobj
-// 	}
-
-// 	return res, nil
-// }
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
+		}
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Barang Tidak dapat di update"
+		res.Data = Request
+		return res, err.Error
+	}
+	return res, nil
+}

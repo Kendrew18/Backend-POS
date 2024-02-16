@@ -39,14 +39,31 @@ func ReadSupplier(c echo.Context) error {
 	return c.JSON(result.Status, result)
 }
 
-// func DeleteSupplier(c echo.Context) error {
-// 	kode_supplier := c.FormValue("kode_supplier")
+func UpdateSupplier(c echo.Context) error {
+	var Request request.Update_Supplier_Request
 
-// 	result, err := models.Delete_Supplier(kode_supplier)
+	Request.Kode_supplier = c.FormValue("kode_supplier")
+	Request.Email_supplier = c.FormValue("email_supplier")
+	Request.Nomor_telepon = c.FormValue("nomor_telepon")
 
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-// 	}
+	result, err := supplier.Update_Supplier(Request)
 
-// 	return c.JSON(http.StatusOK, result)
-// }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}
+
+func DeleteSupplier(c echo.Context) error {
+	var Request request.Delete_Supplier_Request
+	Request.Kode_supplier = c.FormValue("kode_supplier")
+
+	result, err := supplier.Delete_Supplier(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}

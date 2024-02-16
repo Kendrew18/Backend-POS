@@ -21,12 +21,17 @@ func Init() {
 		panic("connection error")
 	}
 
+	//db.SetConnMaxLifetime(time.Hour)
+
 	err := db.Ping()
 
 	if err != nil {
 		fmt.Println(err)
 		panic("DSN error")
 	}
+
+	db.SetMaxIdleConns(100)
+	db.SetMaxOpenConns(1000)
 }
 
 func CreateCon() *sql.DB {

@@ -16,9 +16,7 @@ func Login_User(Request request.Login_Request) (response.Response, error) {
 	var us response.Login_Response
 	con := db.CreateConGorm().Table("user")
 
-	err := con.Select("kode_user", "status").Where("email =? AND password =?", Request.Email, Request.Password).Scan(&us).Error
-
-	fmt.Println(err)
+	err := con.Select("kode_user", "status").Where("username =? AND password =?", Request.Username, Request.Password).Scan(&us).Error
 
 	if err != nil || us.Kode_user == "" {
 		res.Status = http.StatusNotFound
@@ -59,7 +57,7 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 	date, _ := time.Parse("02-01-2006", Request.Birth_date)
 	Request.Birth_date = date.Format("2006-01-02")
 
-	err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "email", "category_bisnis", "nama_bisnis", "alamat_bisnis", "instagram", "facebook", "password").Create(&Request)
+	err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password").Create(&Request)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -83,7 +81,7 @@ func User_Profile(Request request.Profile_User_Request) (response.Response, erro
 
 	con := db.CreateConGorm().Table("user")
 
-	err := con.Select("kode_user", "nama_lengkap", "birth_date", "email", "category_bisnis", "nama_bisnis", "alamat_bisnis", "instagram", "facebook").Where("kode_user = ?", Request.Kode_user).Order("co ASC").Scan(&data).Error
+	err := con.Select("kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook").Where("kode_user = ?", Request.Kode_user).Order("co ASC").Scan(&data).Error
 
 	if err != nil {
 		res.Status = http.StatusNotFound
@@ -101,6 +99,31 @@ func User_Profile(Request request.Profile_User_Request) (response.Response, erro
 		res.Status = http.StatusOK
 		res.Message = "Suksess"
 		res.Data = data
+	}
+
+	return res, nil
+}
+
+func Update_User_Profile(Request request.Update_Profile_User_Request) (response.Response, error) {
+	var res response.Response
+	con := db.CreateConGorm()
+
+	date, _ := time.Parse("02-01-2006", Request.Birth_date)
+	Request.Birth_date = date.Format("2006-01-02")
+
+	err := con.Table("user").Where("kode_user = ?", Request.Kode_user).Select("nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook").Updates(&Request)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Suksess"
+		res.Data = map[string]int64{
+			"rows": err.RowsAffected,
+		}
 	}
 
 	return res, nil

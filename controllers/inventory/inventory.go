@@ -1,24 +1,23 @@
-package stock
+package inventory
 
 import (
 	"Bakend-POS/models/request"
-	"Bakend-POS/service/stock"
+	"Bakend-POS/service/inventory"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-func InputStock(c echo.Context) error {
-	var Request request.Input_Stock_Request
+func InputInventory(c echo.Context) error {
+	var Request request.Input_Inventory_Request
 
 	Request.Nama_barang = c.FormValue("nama_barang")
-	Request.Jumlah_barang, _ = strconv.ParseFloat(c.FormValue("jumlah_barang"), 64)
-	Request.Harga_barang, _ = strconv.ParseInt(c.FormValue("harga"), 10, 64)
+	Request.Harga_jual, _ = strconv.ParseInt(c.FormValue("harga"), 10, 64)
 	Request.Satuan_barang = c.FormValue("satuan_barang")
 	Request.Kode_user = c.FormValue("kode_user")
 
-	result, err := stock.Input_Stock(Request)
+	result, err := inventory.Input_Inventory(Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -27,12 +26,12 @@ func InputStock(c echo.Context) error {
 	return c.JSON(result.Status, result)
 }
 
-func ReadStock(c echo.Context) error {
-	var Request request.Read_Stock_Request
+func ReadInventory(c echo.Context) error {
+	var Request request.Read_Inventory_Request
 
 	Request.Kode_user = c.FormValue("kode_user")
 
-	result, err := stock.Read_Stock(Request)
+	result, err := inventory.Read_Inventory(Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -41,16 +40,15 @@ func ReadStock(c echo.Context) error {
 	return c.JSON(result.Status, result)
 }
 
-func UpdateStock(c echo.Context) error {
-	var Request request.Update_Stock_Request
+func UpdateInventory(c echo.Context) error {
+	var Request request.Update_Inventory_Request
 
-	Request.Kode_stock = c.FormValue("kode_stock")
+	Request.Kode_inventory = c.FormValue("kode_inventory")
 	Request.Nama_barang = c.FormValue("nama_barang")
-	Request.Jumlah_barang, _ = strconv.ParseFloat(c.FormValue("jumlah_barang"), 64)
-	Request.Harga_barang, _ = strconv.ParseInt(c.FormValue("harga_barang"), 10, 64)
+	Request.Harga_jual, _ = strconv.ParseInt(c.FormValue("harga_barang"), 10, 64)
 	Request.Satuan_barang = c.FormValue("satuan_barang")
 
-	result, err := stock.Update_Stock(Request)
+	result, err := inventory.Update_Inventory(Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

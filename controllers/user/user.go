@@ -11,7 +11,7 @@ import (
 func LoginUser(c echo.Context) error {
 	var Request request.Login_Request
 
-	Request.Email = c.FormValue("email")
+	Request.Username = c.FormValue("username")
 	Request.Password = c.FormValue("password")
 
 	result, err := user.Login_User(Request)
@@ -27,14 +27,17 @@ func SignUp(c echo.Context) error {
 	var Request request.Sign_Up_Request
 
 	Request.Nama_lengkap = c.FormValue("nama_lengkap")
-	Request.Email = c.FormValue("email")
-	Request.Password = c.FormValue("password")
 	Request.Birth_date = c.FormValue("birth_date")
+	Request.Gender = c.FormValue("gender")
 	Request.Category_bisnis = c.FormValue("category_bisnis")
 	Request.Nama_bisnis = c.FormValue("nama_bisnis")
 	Request.Alamat_bisnis = c.FormValue("alamat_bisnis")
+	Request.Telepon_bisnis = c.FormValue("telepon_bisnis")
+	Request.Email_bisnis = c.FormValue("email_bisnis")
 	Request.Facebook = c.FormValue("facebook")
 	Request.Instagram = c.FormValue("instagram")
+	Request.Username = c.FormValue("username")
+	Request.Password = c.FormValue("password")
 
 	result, err := user.Sign_Up(Request)
 
@@ -51,6 +54,30 @@ func UserProfile(c echo.Context) error {
 	Request.Kode_user = c.FormValue("kode_user")
 
 	result, err := user.User_Profile(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}
+
+func UpdateUserProfile(c echo.Context) error {
+	var Request request.Update_Profile_User_Request
+
+	Request.Kode_user = c.FormValue("kode_user")
+	Request.Nama_lengkap = c.FormValue("nama_lengkap")
+	Request.Birth_date = c.FormValue("birth_date")
+	Request.Gender = c.FormValue("gender")
+	Request.Category_bisnis = c.FormValue("category_bisnis")
+	Request.Nama_bisnis = c.FormValue("nama_bisnis")
+	Request.Alamat_bisnis = c.FormValue("alamat_bisnis")
+	Request.Telepon_bisnis = c.FormValue("telepon_bisnis")
+	Request.Email_bisnis = c.FormValue("email_bisnis")
+	Request.Facebook = c.FormValue("facebook")
+	Request.Instagram = c.FormValue("instagram")
+
+	result, err := user.Update_User_Profile(Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

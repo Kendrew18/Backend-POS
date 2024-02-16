@@ -1,23 +1,22 @@
-package stock
+package inventory
 
 import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
 	"fmt"
-	"math"
 	"net/http"
 	"strconv"
 )
 
-func Input_Stock(Request request.Input_Stock_Request) (response.Response, error) {
+func Input_Inventory(Request request.Input_Inventory_Request) (response.Response, error) {
 	var res response.Response
 
 	con := db.CreateConGorm()
 
 	nama_barang := ""
 
-	err := con.Table("stock").Select("nama_barang").Where("nama_barang = ? AND kode_user = ?", Request.Nama_barang, Request.Kode_user).Scan(&nama_barang)
+	err := con.Table("inventory").Select("nama_barang").Where("nama_barang = ? AND kode_user = ?", Request.Nama_barang, Request.Kode_user).Scan(&nama_barang)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -30,10 +29,10 @@ func Input_Stock(Request request.Input_Stock_Request) (response.Response, error)
 
 		co := 0
 
-		err := con.Table("stock").Select("co").Order("co DESC").Scan(&co)
+		err := con.Table("inventory").Select("co").Order("co DESC").Scan(&co)
 
 		Request.Co = co + 1
-		Request.Kode_stock = "ST-" + strconv.Itoa(Request.Co)
+		Request.Kode_inventory = "IN-" + strconv.Itoa(Request.Co)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -42,9 +41,7 @@ func Input_Stock(Request request.Input_Stock_Request) (response.Response, error)
 			return res, err.Error
 		}
 
-		Request.Jumlah_barang = math.Round(Request.Jumlah_barang*100) / 100
-
-		err = con.Table("stock").Select("co", "kode_stock", "nama_barang", "jumlah_barang", "harga_barang", "satuan_barang", "kode_user").Create(&Request)
+		err = con.Table("inventory").Select("co", "kode_inventory", "nama_barang", "harga_jual", "satuan_barang", "kode_user").Create(&Request)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -61,7 +58,7 @@ func Input_Stock(Request request.Input_Stock_Request) (response.Response, error)
 
 	} else {
 		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
+		res.Message = "Nama Barang Telah Digunakan"
 		res.Data = Request
 		return res, err.Error
 	}
@@ -69,13 +66,13 @@ func Input_Stock(Request request.Input_Stock_Request) (response.Response, error)
 	return res, nil
 }
 
-func Read_Stock(Request request.Read_Stock_Request) (response.Response, error) {
+func Read_Inventory(Request request.Read_Inventory_Request) (response.Response, error) {
 	var res response.Response
-	var arr_invent []response.Read_Stock_Response
+	var arr_invent []response.Read_Inventory_Response
 
 	con := db.CreateConGorm()
 
-	err := con.Table("stock").Select("kode_stock", "nama_barang", "jumlah_barang", "satuan_barang", "harga_barang").Where("kode_user = ?", Request.Kode_user).Scan(&arr_invent)
+	err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual").Where("kode_user = ?", Request.Kode_user).Scan(&arr_invent)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -97,24 +94,15 @@ func Read_Stock(Request request.Read_Stock_Request) (response.Response, error) {
 	return res, nil
 }
 
-func Update_Stock(Request request.Update_Stock_Request) (response.Response, error) {
+func Update_Inventory(Request request.Update_Inventory_Request) (response.Response, error) {
 	var res response.Response
 	con := db.CreateConGorm()
 
-	kode_stock_masuk := ""
+	kode_inventory := ""
 
-	err := con.Table("barang_stock_masuk").Select("kode_stock_masuk").Where("kode_stock = ?", Request.Kode_stock).Limit(1).Scan(&kode_stock_masuk)
+	fmt.Println(Request)
 
-	if err.Error != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err.Error
-	}
-
-	kode_barang_pembukuan := ""
-
-	err = con.Table("barang_pembukuan").Select("kode_barang_pembukuan").Where("kode_stock = ?", Request.Kode_stock).Limit(1).Scan(&kode_barang_pembukuan)
+	err := con.Table("barang_supplier").Select("kode_inventory").Where("kode_inventory = ?", Request.Kode_inventory).Limit(1).Scan(&kode_inventory)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -123,12 +111,20 @@ func Update_Stock(Request request.Update_Stock_Request) (response.Response, erro
 		return res, err.Error
 	}
 
-	if kode_stock_masuk == "" && kode_barang_pembukuan == "" {
-		Request.Jumlah_barang = math.Round(Request.Jumlah_barang*100) / 100
+	// kode_barang_pembukuan := ""
 
-		fmt.Println(Request)
+	// err = con.Table("barang_pembukuan").Select("kode_barang_pembukuan").Where("kode_stock = ?", Request.Kode_stock).Limit(1).Scan(&kode_barang_pembukuan)
 
-		err := con.Table("stock").Where("kode_stock = ?", Request.Kode_stock).Select("nama_barang", "jumlah_barang", "harga_barang", "satuan_barang").Updates(&Request)
+	// if err.Error != nil {
+	// 	res.Status = http.StatusNotFound
+	// 	res.Message = "Status Not Found"
+	// 	res.Data = Request
+	// 	return res, err.Error
+	// }
+
+	if kode_inventory == "" {
+
+		err := con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("nama_barang", "harga_jual", "satuan_barang").Updates(&Request)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -151,13 +147,13 @@ func Update_Stock(Request request.Update_Stock_Request) (response.Response, erro
 	return res, nil
 }
 
-func Check_Nama_Stock(Request request.Check_Nama_Stock_Request) (response.Response, error) {
+func Check_Nama_Inventory(Request request.Check_Nama_Inventory_Request) (response.Response, error) {
 	var res response.Response
-	var check response.Check_Nama_Stock_Response
+	var check response.Check_Nama_Inventory_Response
 
 	con := db.CreateConGorm()
 
-	err := con.Table("stock").Select("nama_barang").Where("kode_user = ? AND Nama_barang = ? AND kode_stock != ", Request.Kode_user, Request.Nama_barang, Request.Kode_stock).Scan(&check)
+	err := con.Table("inventory").Select("nama_barang").Where("kode_user = ? AND nama_barang = ? AND kode_inventory != ", Request.Kode_user, Request.Nama_barang, Request.Kode_inventory).Scan(&check)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
