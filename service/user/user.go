@@ -4,33 +4,59 @@ import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
-	"fmt"
+	"Bakend-POS/tools/session_checking"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func Login_User(Request request.Login_Request) (response.Response, error) {
 
 	var res response.Response
 	var us response.Login_Response
-	con := db.CreateConGorm().Table("user")
+	con := db.CreateConGorm()
 
-	err := con.Select("kode_user", "status").Where("username =? AND password =?", Request.Username, Request.Password).Scan(&us).Error
+	kode_user := ""
 
-	if err != nil || us.Kode_user == "" {
+	err := con.Table("user").Select("kode_user").Where("username =? AND password =?", Request.Username, Request.Password).Scan(&kode_user).Error
+
+	if err != nil || kode_user == "" {
 		res.Status = http.StatusNotFound
 		res.Message = "Status Not Found"
-		us.Kode_user = ""
 		res.Data = us
 
 	} else {
+		uuid := uuid.NewString()
+
+		date := time.Now()
+		tanggal_awal := date.Format("2006-01-02")
+		date_akhir := date.AddDate(0, 0, 30)
+		tanggal_terakhir := date_akhir.Format("2006-01-02")
+
+		err = con.Table("user").Where("kode_user = ?", kode_user).Update("uuid_session", uuid).Update("date_last_open", tanggal_awal).Update("date_session_invalid", tanggal_terakhir).Error
+
+		if err != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err
+		}
+
+		err = con.Table("user").Select("uuid_session", "status").Where("username =? AND password =?", Request.Username, Request.Password).Scan(&us).Error
+
+		if err != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err
+		}
+
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
 		res.Data = us
 	}
-
-	fmt.Println()
 
 	return res, nil
 }
@@ -79,25 +105,33 @@ func User_Profile(Request request.Profile_User_Request) (response.Response, erro
 	var res response.Response
 	var data response.User_Profile_Response
 
-	con := db.CreateConGorm().Table("user")
+	User, condition := session_checking.Session_Checking(Request.Uuid_session)
 
-	err := con.Select("kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook").Where("kode_user = ?", Request.Kode_user).Order("co ASC").Scan(&data).Error
+	if condition {
+		con := db.CreateConGorm().Table("user")
 
-	if err != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err
-	}
+		err := con.Select("kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook").Where("kode_user = ?", User.Kode_user).Order("co ASC").Scan(&data).Error
 
-	if data.Kode_user == "" {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = data
+		if err != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err
+		}
 
+		if data.Kode_user == "" {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = data
+
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = data
+		}
 	} else {
-		res.Status = http.StatusOK
-		res.Message = "Suksess"
+		res.Status = http.StatusNotFound
+		res.Message = "Session Invalid"
 		res.Data = data
 	}
 

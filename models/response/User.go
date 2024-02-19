@@ -1,8 +1,8 @@
 package response
 
 type Login_Response struct {
-	Kode_user string `json:"kode_user"`
-	Status    int    `json:"status"`
+	Uuid_session string `json:"uuid_session"`
+	Status       int    `json:"status"`
 }
 
 type User_Profile_Response struct {
@@ -18,4 +18,9 @@ type User_Profile_Response struct {
 	Instagram       string `json:"instagram"`
 	Facebook        string `json:"facebook"`
 	Status          int    `json:"status"`
+}
+
+type User_Session_Response struct {
+	Kode_user string `json:"kode_user"`
+	Status    int    `json:"status"`
 }

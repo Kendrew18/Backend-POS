@@ -51,7 +51,7 @@ func SignUp(c echo.Context) error {
 func UserProfile(c echo.Context) error {
 	var Request request.Profile_User_Request
 
-	Request.Kode_user = c.FormValue("kode_user")
+	Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := user.User_Profile(Request)
 

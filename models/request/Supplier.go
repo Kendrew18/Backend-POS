@@ -10,7 +10,7 @@ type Input_Supplier_Request struct {
 }
 
 type Read_Supplier_Request struct {
-	Kode_user string `json:"kode_user"`
+	Uuid_session string `json:"uuid_session"`
 }
 
 type Input_barang_Supplier_Request struct {

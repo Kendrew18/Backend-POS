@@ -4,6 +4,7 @@ import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
+	"Bakend-POS/tools/session_checking"
 	"net/http"
 	"strconv"
 )
@@ -48,24 +49,33 @@ func Read_Supplier(Request request.Read_Supplier_Request) (response.Response, er
 	var res response.Response
 	var data []response.Read_Supplier_Response
 
-	con := db.CreateConGorm().Table("supplier")
+	User, condition := session_checking.Session_Checking(Request.Uuid_session)
 
-	err := con.Select("kode_supplier", "nama_supplier", "email_supplier", "nomor_telepon").Where("kode_user = ?", Request.Kode_user).Order("co ASC").Scan(&data).Error
+	if condition {
 
-	if err != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err
-	}
+		con := db.CreateConGorm().Table("supplier")
 
-	if data == nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Not Found"
-		res.Data = data
+		err := con.Select("kode_supplier", "nama_supplier", "email_supplier", "nomor_telepon").Where("kode_user = ?", User.Kode_user).Order("co ASC").Scan(&data).Error
+
+		if err != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err
+		}
+
+		if data == nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Not Found"
+			res.Data = data
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Sukses"
+			res.Data = data
+		}
 	} else {
-		res.Status = http.StatusOK
-		res.Message = "Sukses"
+		res.Status = http.StatusNotFound
+		res.Message = "Session Invalid"
 		res.Data = data
 	}
 

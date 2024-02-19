@@ -23,7 +23,7 @@ type Sign_Up_Request struct {
 }
 
 type Profile_User_Request struct {
-	Kode_user string `json:"kode_user"`
+	Uuid_session string `json:"uuid_session"`
 }
 
 type Update_Profile_User_Request struct {
