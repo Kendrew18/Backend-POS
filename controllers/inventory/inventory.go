@@ -15,7 +15,7 @@ func InputInventory(c echo.Context) error {
 	Request.Nama_barang = c.FormValue("nama_barang")
 	Request.Harga_jual, _ = strconv.ParseInt(c.FormValue("harga"), 10, 64)
 	Request.Satuan_barang = c.FormValue("satuan_barang")
-	Request.Kode_user = c.FormValue("kode_user")
+	Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := inventory.Input_Inventory(Request)
 
@@ -29,7 +29,7 @@ func InputInventory(c echo.Context) error {
 func ReadInventory(c echo.Context) error {
 	var Request request.Read_Inventory_Request
 
-	Request.Kode_user = c.FormValue("kode_user")
+	Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := inventory.Read_Inventory(Request)
 
@@ -47,6 +47,7 @@ func UpdateInventory(c echo.Context) error {
 	Request.Nama_barang = c.FormValue("nama_barang")
 	Request.Harga_jual, _ = strconv.ParseInt(c.FormValue("harga_barang"), 10, 64)
 	Request.Satuan_barang = c.FormValue("satuan_barang")
+	Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := inventory.Update_Inventory(Request)
 

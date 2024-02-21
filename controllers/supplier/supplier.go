@@ -14,7 +14,7 @@ func InputSupplier(c echo.Context) error {
 	Request.Email_supplier = c.FormValue("email_supplier")
 	Request.Nama_supplier = c.FormValue("nama_supplier")
 	Request.Nomor_telepon = c.FormValue("nomor_telepon")
-	Request.Kode_user = c.FormValue("kode_user")
+	Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := supplier.Input_Supplier(Request)
 
@@ -28,7 +28,7 @@ func InputSupplier(c echo.Context) error {
 func ReadSupplier(c echo.Context) error {
 	var Request request.Read_Supplier_Request
 
-	Request.Kode_user = c.FormValue("kode_user")
+	Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := supplier.Read_Supplier(Request)
 
@@ -45,6 +45,7 @@ func UpdateSupplier(c echo.Context) error {
 	Request.Kode_supplier = c.FormValue("kode_supplier")
 	Request.Email_supplier = c.FormValue("email_supplier")
 	Request.Nomor_telepon = c.FormValue("nomor_telepon")
+	Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := supplier.Update_Supplier(Request)
 

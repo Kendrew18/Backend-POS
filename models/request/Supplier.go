@@ -7,6 +7,7 @@ type Input_Supplier_Request struct {
 	Nomor_telepon  string `json:"nomor_telepon"`
 	Email_supplier string `json:"email_supplier"`
 	Kode_user      string `json:"kode_user"`
+	Uuid_session   string `json:"uuid_session"`
 }
 
 type Read_Supplier_Request struct {
@@ -24,6 +25,7 @@ type Update_Supplier_Request struct {
 	Kode_supplier  string `json:"kode_supplier"`
 	Nomor_telepon  string `json:"nomor_telepon"`
 	Email_supplier string `json:"email_supplier"`
+	Uuid_session   string `json:"uuid_session"`
 }
 
 type Delete_Supplier_Request struct {

@@ -7,16 +7,11 @@ type Input_Inventory_Request struct {
 	Harga_jual     int64  `json:"harga_jual"`
 	Satuan_barang  string `json:"satuan_barang"`
 	Kode_user      string `json:"kode_user"`
+	Uuid_session   string `json:"uuid_session"`
 }
 
 type Read_Inventory_Request struct {
-	Kode_user string `json:"kode_user"`
-}
-
-type Read_Inventory_Filter_Request struct {
-	Status_ASC_DESC int    `json:"status_asc_desc"`
-	Tanggal_awal    string `json:"tanggal_awal"`
-	Tanggal_akhir   string `json:"tanggal_akhir"`
+	Uuid_session string `json:"uuid_session"`
 }
 
 type Update_Inventory_Request struct {
@@ -24,6 +19,7 @@ type Update_Inventory_Request struct {
 	Nama_barang    string `json:"nama_barang"`
 	Harga_jual     int64  `json:"harga_jual"`
 	Satuan_barang  string `json:"satuan_barang"`
+	Uuid_session   string `json:"uuid_session"`
 }
 
 type Check_Nama_Inventory_Request struct {

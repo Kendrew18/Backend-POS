@@ -3,6 +3,7 @@ package session_checking
 import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/response"
+	"fmt"
 	"time"
 )
 
@@ -14,11 +15,17 @@ func Session_Checking(UUID string) (response.User_Session_Response, bool) {
 	date := time.Now()
 	tanggal := date.Format("2006-01-02")
 
-	err := con.Table("user").Select("kode_user", "status").Where("uuid_session = ? AND date_session_invalid > ?", UUID, tanggal).Scan(&res)
+	fmt.Println(tanggal)
+
+	fmt.Println(UUID)
+
+	err := con.Table("user").Select("kode_user", "status").Where("uuid_session = ? AND date_session_invalid > ?", UUID, tanggal).Scan(&res).Error
 
 	if err != nil {
 		return res, false
 	}
+
+	fmt.Println(res)
 
 	if res.Kode_user == "" {
 		return res, false
@@ -29,7 +36,7 @@ func Session_Checking(UUID string) (response.User_Session_Response, bool) {
 		date_akhir := date.AddDate(0, 0, 30)
 		tanggal_terakhir := date_akhir.Format("2006-01-02")
 
-		err = con.Table("user").Where("kode_user = ?", res.Kode_user).Update("date_last_open", tanggal_awal).Update("date_session_invalid", tanggal_terakhir)
+		err = con.Table("user").Where("kode_user = ?", res.Kode_user).Update("date_last_open", tanggal_awal).Update("date_session_invalid", tanggal_terakhir).Error
 
 		if err != nil {
 			return res, false

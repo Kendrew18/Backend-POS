@@ -65,7 +65,7 @@ func UserProfile(c echo.Context) error {
 func UpdateUserProfile(c echo.Context) error {
 	var Request request.Update_Profile_User_Request
 
-	Request.Kode_user = c.FormValue("kode_user")
+	Request.Uuid_session = c.FormValue("uuid_session")
 	Request.Nama_lengkap = c.FormValue("nama_lengkap")
 	Request.Birth_date = c.FormValue("birth_date")
 	Request.Gender = c.FormValue("gender")

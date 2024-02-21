@@ -11,35 +11,45 @@ import (
 
 func Input_Supplier(Request request.Input_Supplier_Request) (response.Response, error) {
 	var res response.Response
-	con := db.CreateConGorm().Table("supplier")
+	User, condition := session_checking.Session_Checking(Request.Uuid_session)
 
-	co := 0
+	if condition {
+		Request.Kode_user = User.Kode_user
 
-	err := con.Select("co").Order("co DESC").Scan(&co)
+		con := db.CreateConGorm().Table("supplier")
 
-	Request.Co = co + 1
-	Request.Kode_supplier = "SP-" + strconv.Itoa(Request.Co)
+		co := 0
 
-	if err.Error != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err.Error
-	}
+		err := con.Select("co").Order("co DESC").Scan(&co)
 
-	err = con.Select("co", "kode_supplier", "nama_supplier", "nomor_telepon", "email_supplier", "kode_user").Create(&Request)
+		Request.Co = co + 1
+		Request.Kode_supplier = "SP-" + strconv.Itoa(Request.Co)
 
-	if err.Error != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err.Error
-	} else {
-		res.Status = http.StatusOK
-		res.Message = "Suksess"
-		res.Data = map[string]int64{
-			"rows": err.RowsAffected,
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
 		}
+
+		err = con.Select("co", "kode_supplier", "nama_supplier", "nomor_telepon", "email_supplier", "kode_user").Create(&Request)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
+		}
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Session Invalid"
+		res.Data = Request
 	}
 
 	return res, nil
@@ -84,21 +94,30 @@ func Read_Supplier(Request request.Read_Supplier_Request) (response.Response, er
 
 func Update_Supplier(Request request.Update_Supplier_Request) (response.Response, error) {
 	var res response.Response
-	con := db.CreateConGorm()
 
-	err := con.Table("supplier").Where("kode_supplier = ?", Request.Kode_supplier).Select("nomor_telepon", "email_supplier").Updates(&Request)
+	_, condition := session_checking.Session_Checking(Request.Uuid_session)
 
-	if err.Error != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err.Error
-	} else {
-		res.Status = http.StatusOK
-		res.Message = "Suksess"
-		res.Data = map[string]int64{
-			"rows": err.RowsAffected,
+	if condition {
+		con := db.CreateConGorm()
+
+		err := con.Table("supplier").Where("kode_supplier = ?", Request.Kode_supplier).Select("nomor_telepon", "email_supplier").Updates(&Request)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
 		}
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Session Invalid"
+		res.Data = Request
 	}
 
 	return res, nil

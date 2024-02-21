@@ -27,7 +27,7 @@ type Profile_User_Request struct {
 }
 
 type Update_Profile_User_Request struct {
-	Kode_user       string `json:"kode_user"`
+	Uuid_session    string `json:"uuid_session"`
 	Nama_lengkap    string `json:"nama_lengkap"`
 	Birth_date      string `json:"birth_date"`
 	Gender          string `json:"gender"`
