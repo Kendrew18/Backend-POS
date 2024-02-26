@@ -12,10 +12,11 @@ import (
 func InputInventory(c echo.Context) error {
 	var Request request.Input_Inventory_Request
 
-	Request.Nama_barang = c.FormValue("nama_barang")
-	Request.Harga_jual, _ = strconv.ParseInt(c.FormValue("harga"), 10, 64)
-	Request.Satuan_barang = c.FormValue("satuan_barang")
-	Request.Uuid_session = c.FormValue("uuid_session")
+	err := c.Bind(&Request)
+
+	if err != nil {
+		panic(err)
+	}
 
 	result, err := inventory.Input_Inventory(Request)
 

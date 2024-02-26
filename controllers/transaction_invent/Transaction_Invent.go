@@ -14,13 +14,11 @@ func InputTransactionInventory(c echo.Context) error {
 	var Request_barang request.Input_Barang_Transaksi_Inventory_Request
 
 	Request.Tanggal = c.FormValue("tanggal")
-	Request.Kode_transaksi = c.FormValue("kode_transaksi")
-	Request.Kode_jenis_pembayaran = c.FormValue("kode_jenis_pembayaran")
+	Request.Kode_nota = c.FormValue("kode_nota")
 	Request.Harga_ongkos_kirim, _ = strconv.ParseInt((c.FormValue("harga_ongkos_kirim")), 10, 64)
 	Request.Ppn, _ = strconv.ParseFloat(c.FormValue("ppn"), 64)
-	Request.Kode_supplier = c.FormValue("kode_supplier")
 	Request.Kode_user = c.FormValue("kode_user")
-	Request.Jenis_transaksi = c.FormValue("jenis_transaksi")
+	Request.Jenis_transaksi, _ = strconv.Atoi(c.FormValue("jenis_transaksi"))
 
 	Request_barang.Kode_inventory = c.FormValue("kode_inventory")
 	Request_barang.Jumlah = c.FormValue("jumlah")

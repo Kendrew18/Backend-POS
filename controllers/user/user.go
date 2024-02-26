@@ -11,8 +11,11 @@ import (
 func LoginUser(c echo.Context) error {
 	var Request request.Login_Request
 
-	Request.Username = c.FormValue("username")
-	Request.Password = c.FormValue("password")
+	err := c.Bind(&Request)
+
+	if err != nil {
+		panic(err)
+	}
 
 	result, err := user.Login_User(Request)
 
@@ -51,7 +54,13 @@ func SignUp(c echo.Context) error {
 func UserProfile(c echo.Context) error {
 	var Request request.Profile_User_Request
 
-	Request.Uuid_session = c.FormValue("uuid_session")
+	err := c.Bind(&Request)
+
+	if err != nil {
+		panic(err)
+	}
+
+	//Request.Uuid_session = c.FormValue("uuid_session")
 
 	result, err := user.User_Profile(Request)
 
