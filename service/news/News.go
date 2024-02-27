@@ -57,39 +57,39 @@ func Input_News(Request request.Input_News_Request) (response.Response, error) {
 	return res, nil
 }
 
-// func Read_Supplier(Request request.Read_Supplier_Request) (response.Response, error) {
-// 	var res response.Response
-// 	var data []response.Read_Supplier_Response
+func Read_Supplier(Request request.Read_News_Request) (response.Response, error) {
+	var res response.Response
+	var data []response.Read_News_Response
 
-// 	User, condition := session_checking.Session_Checking(Request.Uuid_session)
+	_, condition := session_checking.Session_Checking(Request.Uuid_session)
 
-// 	if condition {
+	if condition {
 
-// 		con := db.CreateConGorm().Table("supplier")
+		con := db.CreateConGorm().Table("news")
 
-// 		err := con.Select("kode_supplier", "nama_supplier", "email_supplier", "nomor_telepon").Where("kode_user = ?", User.Kode_user).Order("co ASC").Scan(&data).Error
+		err := con.Select("kode_news", "date", "title", "content", "image_path").Order("co DESC").Scan(&data).Error
 
-// 		if err != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Status Not Found"
-// 			res.Data = Request
-// 			return res, err
-// 		}
+		if err != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err
+		}
 
-// 		if data == nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Not Found"
-// 			res.Data = data
-// 		} else {
-// 			res.Status = http.StatusOK
-// 			res.Message = "Sukses"
-// 			res.Data = data
-// 		}
-// 	} else {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Session Invalid"
-// 		res.Data = data
-// 	}
+		if data == nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Not Found"
+			res.Data = data
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Sukses"
+			res.Data = data
+		}
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Session Invalid"
+		res.Data = data
+	}
 
-// 	return res, nil
-// }
+	return res, nil
+}

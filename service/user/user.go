@@ -68,7 +68,7 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 
 	co := 0
 
-	err := con.Select("co").Order("co DESC").Scan(&co)
+	err := con.Select("co").Order("co DESC").Limit(1).Scan(&co)
 
 	Request.Co = co + 1
 	Request.Kode_user = "US-" + strconv.Itoa(Request.Co)

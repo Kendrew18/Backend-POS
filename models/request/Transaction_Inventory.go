@@ -1,5 +1,10 @@
 package request
 
+type Input_Transaksi_Body_Request struct {
+	Transaksi_inventory        Input_Transaksi_Inventory_Request          `json:"transaksi_inventory"`
+	Barang_transaksi_inventory []Input_Barang_Transaksi_Inventory_Request `json:"barang_transaksi_inventory"`
+}
+
 type Input_Transaksi_Inventory_Request struct {
 	Co                       int     `json:"co"`
 	Kode_transaksi_inventory string  `json:"kode_transaksi_inventory"`
@@ -15,13 +20,6 @@ type Input_Transaksi_Inventory_Request struct {
 }
 
 type Input_Barang_Transaksi_Inventory_Request struct {
-	Kode_inventory string `json:"kode_inventory"`
-	Jumlah         string `json:"jumlah"`
-	Harga          string `json:"harga"`
-	Kode_refund    string `json:"kode_refund"`
-}
-
-type Input_Barang_Transaksi_Inventory_V2_Request struct {
 	Co                              int     `json:"co"`
 	Kode_barang_transaksi_inventory string  `json:"kode_barang_transaksi_inventory"`
 	Kode_transaksi_inventory        string  `json:"kode_transaksi_inventory"`
@@ -30,6 +28,11 @@ type Input_Barang_Transaksi_Inventory_V2_Request struct {
 	Harga                           int64   `json:"harga"`
 	Sub_total                       int64   `json:"sub_total"`
 	Kode_refund                     string  `json:"kode_refund"`
+}
+
+type Body_Read_Transaksi_Inventory_Request struct {
+	Read_transaksi_inventory        Read_Transaksi_Inventory_Request        `json:"read_transaksi_inventory"`
+	Read_transaksi_inventory_filter Read_Transaksi_Inventory_Filter_Request `json:"read_transaksi_inventory_filter"`
 }
 
 type Read_Transaksi_Inventory_Request struct {

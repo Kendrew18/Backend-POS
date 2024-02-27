@@ -8,3 +8,7 @@ type Input_News_Request struct {
 	Content      string `json:"content"`
 	Uuid_session string `json:"uuid_session"`
 }
+
+type Read_News_Request struct {
+	Uuid_session string `json:"uuid_session"`
+}

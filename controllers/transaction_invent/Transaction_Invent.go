@@ -4,27 +4,20 @@ import (
 	"Bakend-POS/models/request"
 	"Bakend-POS/service/transaction_inventory"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 func InputTransactionInventory(c echo.Context) error {
-	var Request request.Input_Transaksi_Inventory_Request
-	var Request_barang request.Input_Barang_Transaksi_Inventory_Request
+	var Request request.Input_Transaksi_Body_Request
 
-	Request.Tanggal = c.FormValue("tanggal")
-	Request.Kode_nota = c.FormValue("kode_nota")
-	Request.Harga_ongkos_kirim, _ = strconv.ParseInt((c.FormValue("harga_ongkos_kirim")), 10, 64)
-	Request.Ppn, _ = strconv.ParseFloat(c.FormValue("ppn"), 64)
-	Request.Kode_user = c.FormValue("kode_user")
-	Request.Jenis_transaksi, _ = strconv.Atoi(c.FormValue("jenis_transaksi"))
+	err := c.Bind(&Request)
 
-	Request_barang.Kode_inventory = c.FormValue("kode_inventory")
-	Request_barang.Jumlah = c.FormValue("jumlah")
-	Request_barang.Harga = c.FormValue("harga")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
 
-	result, err := transaction_inventory.Input_Transaction_Inventory(Request, Request_barang)
+	result, err := transaction_inventory.Input_Transaction_Inventory(Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -33,15 +26,21 @@ func InputTransactionInventory(c echo.Context) error {
 	return c.JSON(result.Status, result)
 }
 
-// func ReadTransactionInventory(c echo.Context) error {
-// 	var Request request.Read_Stock_Masuk_Request
-// 	var Request_filter request.Read_Stock_Masuk_Filter_Request
+func ReadTransactionInventory(c echo.Context) error {
 
-// 	result, err := transaction_inventory.Read_Transaction_Inventory(Request, Request_filter)
+	var Request request.Body_Read_Transaksi_Inventory_Request
 
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-// 	}
+	err := c.Bind(&Request)
 
-// 	return c.JSON(result.Status, result)
-// }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	result, err := transaction_inventory.Read_Transaction_Inventory(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}

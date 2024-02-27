@@ -47,7 +47,7 @@ func Init() *echo.Echo {
 
 	//Transaksi Inventory
 	TI.POST("/transaction-inventory", transaction_invent.InputTransactionInventory)
-	//TI.GET("/transaction-inventory", transaction_invent.ReadTransactionInventory)
+	TI.GET("/transaction-inventory", transaction_invent.ReadTransactionInventory)
 
 	return e
 }

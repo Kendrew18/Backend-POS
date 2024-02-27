@@ -34,7 +34,7 @@ func Input_Inventory(Request request.Input_Inventory_Request) (response.Response
 
 		co := 0
 
-		err := con.Table("inventory").Select("co").Order("co DESC").Scan(&co)
+		err := con.Table("inventory").Select("co").Order("co DESC").Limit(1).Scan(&co)
 
 		Request.Co = co + 1
 		Request.Kode_inventory = "IN-" + strconv.Itoa(Request.Co)
@@ -202,3 +202,39 @@ func Check_Nama_Inventory(Request request.Check_Nama_Inventory_Request) (respons
 
 	return res, nil
 }
+
+// func Dropdown_Inventory_transaksi_inventory(Request request.Dropdown_Inventory_transaksi_inventory_request) (response.Response, error) {
+// 	var res response.Response
+// 	var arr_invent []response.Read_Inventory_Response
+
+// 	_, condition := session_checking.Session_Checking(Request.Uuid_session)
+
+// 	if condition {
+// 		con := db.CreateConGorm()
+
+// 		err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual").Scan(&arr_invent)
+
+// 		if err.Error != nil {
+// 			res.Status = http.StatusNotFound
+// 			res.Message = "Status Not Found"
+// 			res.Data = Request
+// 			return res, err.Error
+// 		}
+
+// 		if arr_invent == nil {
+// 			res.Status = http.StatusNotFound
+// 			res.Message = "Not Found"
+// 			res.Data = arr_invent
+// 		} else {
+// 			res.Status = http.StatusOK
+// 			res.Message = "Sukses"
+// 			res.Data = arr_invent
+// 		}
+// 	} else {
+// 		res.Status = http.StatusNotFound
+// 		res.Message = "Nama Barang Telah Digunakan"
+// 		res.Data = Request
+// 	}
+
+// 	return res, nil
+// }

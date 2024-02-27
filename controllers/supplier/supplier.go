@@ -3,20 +3,29 @@ package supplier
 import (
 	"Bakend-POS/models/request"
 	"Bakend-POS/service/supplier"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
+type BodyStuct struct {
+	Request   request.Input_Supplier_Request `json:"json1"`
+	Request_2 []request.Read_News_Request    `json:"json2"`
+}
+
 func InputSupplier(c echo.Context) error {
-	var Request request.Input_Supplier_Request
+	var Request BodyStuct
 
-	Request.Email_supplier = c.FormValue("email_supplier")
-	Request.Nama_supplier = c.FormValue("nama_supplier")
-	Request.Nomor_telepon = c.FormValue("nomor_telepon")
-	Request.Uuid_session = c.FormValue("uuid_session")
+	err := c.Bind(&Request)
 
-	result, err := supplier.Input_Supplier(Request)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	fmt.Println(Request)
+
+	result, err := supplier.Input_Supplier(Request.Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})

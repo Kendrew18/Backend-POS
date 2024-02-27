@@ -4,7 +4,6 @@ import (
 	"Bakend-POS/models/request"
 	"Bakend-POS/service/inventory"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,7 +14,7 @@ func InputInventory(c echo.Context) error {
 	err := c.Bind(&Request)
 
 	if err != nil {
-		panic(err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
 	result, err := inventory.Input_Inventory(Request)
@@ -30,7 +29,11 @@ func InputInventory(c echo.Context) error {
 func ReadInventory(c echo.Context) error {
 	var Request request.Read_Inventory_Request
 
-	Request.Uuid_session = c.FormValue("uuid_session")
+	err := c.Bind(&Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
 
 	result, err := inventory.Read_Inventory(Request)
 
@@ -44,11 +47,11 @@ func ReadInventory(c echo.Context) error {
 func UpdateInventory(c echo.Context) error {
 	var Request request.Update_Inventory_Request
 
-	Request.Kode_inventory = c.FormValue("kode_inventory")
-	Request.Nama_barang = c.FormValue("nama_barang")
-	Request.Harga_jual, _ = strconv.ParseInt(c.FormValue("harga_barang"), 10, 64)
-	Request.Satuan_barang = c.FormValue("satuan_barang")
-	Request.Uuid_session = c.FormValue("uuid_session")
+	err := c.Bind(&Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
 
 	result, err := inventory.Update_Inventory(Request)
 
