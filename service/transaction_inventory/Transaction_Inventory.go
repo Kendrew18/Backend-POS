@@ -6,6 +6,7 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/tools/session_checking"
 	"database/sql"
+	"fmt"
 	"math"
 	"net/http"
 	"strconv"
@@ -281,13 +282,13 @@ func Read_Transaction_Inventory(Request request.Body_Read_Transaksi_Inventory_Re
 	return res, nil
 }
 
-func Update_Header_Transaction_Inventory(Request request.Update_Header_Transaksi_Inventory_Request, Request_kode request.Update_Header_Transaksi_Inventory_Kode_Request) (response.Response, error) {
+func Update_Header_Transaction_Inventory(Request request.Body_Update_Header_Transaksi_Inventory_Request) (response.Response, error) {
 	var res response.Response
 
 	check := -1
 	con_check := db.CreateConGorm()
 
-	err := con_check.Table("transaksi_inventory").Select("status").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Scan(&check)
+	err := con_check.Table("transaksi_inventory").Select("status").Where("kode_transaksi_inventory = ?", Request.Update_header_transaksi_inventory_kode.Kode_transaksi_inventory).Scan(&check)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -296,9 +297,12 @@ func Update_Header_Transaction_Inventory(Request request.Update_Header_Transaksi
 		return res, err.Error
 	}
 
-	_, condition := session_checking.Session_Checking(Request_kode.Uuid_session)
+	_, condition := session_checking.Session_Checking(Request.Update_header_transaksi_inventory_kode.Uuid_session)
 
 	if (check == 0 || check == 2) && condition {
+
+		Request_kode := Request.Update_header_transaksi_inventory_kode
+		Request := Request.Update_header_transaksi_inventory
 
 		con := db.CreateConGorm()
 
@@ -341,86 +345,91 @@ func Update_Header_Transaction_Inventory(Request request.Update_Header_Transaksi
 	return res, nil
 }
 
-// func Update_Barang_Transaction_Inventory(Request request.Update_Barang_Transaksi_Inventory_Request, Request_kode request.Update_Barang_Transaksi_Inventory_Kode_Request) (response.Response, error) {
-// 	var res response.Response
+func Update_Barang_Transaction_Inventory(Request request.Body_Update_Barang_Transaksi_Inventory) (response.Response, error) {
+	var res response.Response
 
-// 	check := -1
-// 	con_check := db.CreateConGorm()
+	check := -1
+	con_check := db.CreateConGorm()
 
-// 	err := con_check.Table("transaksi_inventory").Select("status").Joins("JOIN barang_transaksi_inventory bti on bti.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request_kode.Kode_barang_transaksi_inventory).Scan(&check)
+	err := con_check.Table("transaksi_inventory").Select("status").Joins("JOIN barang_transaksi_inventory bti on bti.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request.Update_barang_transaksi_inventory_kode.Kode_barang_transaksi_inventory).Scan(&check)
 
-// 	if err.Error != nil {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Update Error"
-// 		res.Data = Request
-// 		return res, err.Error
-// 	}
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Update Error"
+		res.Data = Request
+		return res, err.Error
+	}
 
-// 	_, condition := session_checking.Session_Checking(Request_kode.Uuid_session)
+	_, condition := session_checking.Session_Checking(Request.Update_barang_transaksi_inventory_kode.Uuid_session)
 
-// 	if (check == 0 || check == 2) && condition {
+	if (check == 0 || check == 2) && condition {
 
-// 		var res_update response.Update_Barang_Transaction_Inventory_Response
+		Request_kode := Request.Update_barang_transaksi_inventory_kode
+		Request := Request.Update_barang_transaksi_inventory
 
-// 		con := db.CreateConGorm()
+		var res_update response.Update_Barang_Transaction_Inventory_Response
 
-// 		Request.Sub_total = int64(math.Round(float64(Request.Harga) * Request.Jumlah))
+		con := db.CreateConGorm()
 
-// 		err = con.Table("barang_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request_kode.Kode_barang_transaksi_inventory).Select("kode_inventory", "jumlah", "harga", "sub_total").Updates(&Request)
+		Request.Sub_total = int64(math.Round(float64(Request.Harga) * Request.Jumlah))
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Update Error"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		}
+		err = con.Table("barang_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request_kode.Kode_barang_transaksi_inventory).Select("jumlah", "harga", "sub_total").Updates(&Request)
 
-// 		err := con.Table("transaksi_inventory").Select("kode_transaksi_inventory").Joins("JOIN barang_transaksi_inventory bti on bti.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request_kode.Kode_barang_transaksi_inventory).Scan(&res_update)
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Update Error"
+			res.Data = Request
+			return res, err.Error
+		}
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Update Error"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		}
+		err := con.Table("transaksi_inventory").Select("bti.kode_transaksi_inventory").Joins("JOIN barang_transaksi_inventory bti on bti.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request_kode.Kode_barang_transaksi_inventory).Scan(&res_update)
 
-// 		err = con.Table("barang_transaksi_inventory").Select("SUM(sub_total) AS sub_total", "harga_ongkos_kirim", "ppn", "SUM(jumlah) AS total_barang").Where("kode_transaksi_inventory = ?", res_update.Kode_transaksi_inventory).Scan(&res_update)
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Update Error"
+			res.Data = Request
+			return res, err.Error
+		}
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Update Error"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		}
+		err = con.Table("transaksi_inventory").Select("SUM(sub_total) AS sub_total", "harga_ongkos_kirim", "ppn", "SUM(jumlah) AS total_barang").Joins("JOIN barang_transaksi_inventory bti ON bti.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory").Where("bti.kode_transaksi_inventory = ?", res_update.Kode_transaksi_inventory).Group("bti.kode_transaksi_inventory").Scan(&res_update)
 
-// 		res_update.Total_harga = res_update.Sub_total + res_update.Harga_ongkos_kirim + int64(math.Round(float64(res_update.Sub_total)*res_update.Ppn/100))
+		fmt.Println(res_update)
 
-// 		err = con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", res_update.Kode_transaksi_inventory).Select("total_barang", "total_harga").Updates(&Request)
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Update Error"
+			res.Data = Request
+			return res, err.Error
+		}
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Status Not Found"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		} else {
-// 			res.Status = http.StatusOK
-// 			res.Message = "Suksess"
-// 			res.Data = map[string]int64{
-// 				"rows": err.RowsAffected,
-// 			}
-// 		}
-// 	} else if !condition {
-// 		res.Status = http.StatusGatewayTimeout
-// 		res.Message = "Invalid Session"
-// 		res.Data = Request
-// 	} else {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Barang Tidak dapat di update"
-// 		res.Data = Request
-// 		return res, err.Error
-// 	}
-// 	return res, nil
-// }
+		res_update.Total_harga = res_update.Sub_total + res_update.Harga_ongkos_kirim + int64(math.Round(float64(res_update.Sub_total)*res_update.Ppn/100))
+
+		err = con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", res_update.Kode_transaksi_inventory).Select("total_barang", "total_harga").Updates(&res_update)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
+		}
+	} else if !condition {
+		res.Status = http.StatusGatewayTimeout
+		res.Message = "Invalid Session"
+		res.Data = Request
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Barang Tidak dapat di update"
+		res.Data = Request
+		return res, err.Error
+	}
+	return res, nil
+}
 
 // func Delete_Barang_Transaksi_Inventory(Request request.Update_Barang_Transaksi_Inventory_Kode_Request) (response.Response, error) {
 // 	var res response.Response

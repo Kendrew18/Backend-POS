@@ -45,6 +45,11 @@ type Read_Transaksi_Inventory_Filter_Request struct {
 	Nama_supplier string `json:"nama_supplier"`
 }
 
+type Body_Update_Header_Transaksi_Inventory_Request struct {
+	Update_header_transaksi_inventory_kode Update_Header_Transaksi_Inventory_Kode_Request `json:"update_header_transaksi_inventory_kode"`
+	Update_header_transaksi_inventory      Update_Header_Transaksi_Inventory_Request      `json:"update_header_transaksi_inventory"`
+}
+
 type Update_Header_Transaksi_Inventory_Kode_Request struct {
 	Kode_transaksi_inventory string `json:"kode_transaksi_inventory"`
 	Uuid_session             string `json:"uuid_session"`
@@ -57,6 +62,11 @@ type Update_Header_Transaksi_Inventory_Request struct {
 	Harga_ongkos_kirim    int64   `json:"harga_ongkos_kirim"`
 	Ppn                   float64 `json:"ppn"`
 	Total_harga           int64   `json:"total_harga"`
+}
+
+type Body_Update_Barang_Transaksi_Inventory struct {
+	Update_barang_transaksi_inventory_kode Update_Barang_Transaksi_Inventory_Kode_Request `json:"update_barang_transaksi_inventory_kode"`
+	Update_barang_transaksi_inventory      Update_Barang_Transaksi_Inventory_Request      `json:"update_barang_transaksi_inventory"`
 }
 
 type Update_Barang_Transaksi_Inventory_Kode_Request struct {

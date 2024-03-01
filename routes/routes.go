@@ -48,6 +48,8 @@ func Init() *echo.Echo {
 	//Transaksi Inventory
 	TI.POST("/transaction-inventory", transaction_invent.InputTransactionInventory)
 	TI.GET("/transaction-inventory", transaction_invent.ReadTransactionInventory)
+	TI.PUT("/update-header", transaction_invent.UpdateHeaderTransactionInventory)
+	TI.PUT("/update-barang", transaction_invent.UpdateBarangTransactionInventory)
 
 	return e
 }
