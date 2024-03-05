@@ -84,3 +84,8 @@ type Update_Barang_Transaksi_Inventory_Request struct {
 type Update_Status_Transaksi_Inventory_Request struct {
 	Status int `json:"status"`
 }
+
+type Body_Update_Status_Transaksi_inventory struct {
+	Update_header_transaksi_inventory_kode Update_Header_Transaksi_Inventory_Kode_Request `json:"update_header_transaksi_inventory_kode"`
+	Update_status_transaksi_inventory      Update_Status_Transaksi_Inventory_Request      `json:"update_status_transaksi_inventory"`
+}

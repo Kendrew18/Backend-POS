@@ -1,5 +1,5 @@
 package request
 
 type Read_Kasir_Request struct {
-	Kode_user string `json:"kode_user"`
+	Uuid_session string `json:"uuid_session"`
 }

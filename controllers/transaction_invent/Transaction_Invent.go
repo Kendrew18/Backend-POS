@@ -82,3 +82,40 @@ func UpdateBarangTransactionInventory(c echo.Context) error {
 
 	return c.JSON(result.Status, result)
 }
+
+func DeleteBarangTransaksiInventory(c echo.Context) error {
+	var Request request.Update_Barang_Transaksi_Inventory_Kode_Request
+
+	err := c.Bind(&Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	result, err := transaction_inventory.Delete_Barang_Transaksi_Inventory(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}
+
+func UpdateStatusTransaksiInventory(c echo.Context) error {
+
+	var Request request.Body_Update_Status_Transaksi_inventory
+
+	err := c.Bind(&Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	result, err := transaction_inventory.Update_Status_Transaksi_Inventory(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}

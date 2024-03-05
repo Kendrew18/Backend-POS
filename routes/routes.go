@@ -1,6 +1,7 @@
 package routes
 
 import (
+	kasir "Bakend-POS/controllers/Kasir"
 	"Bakend-POS/controllers/inventory"
 	"Bakend-POS/controllers/transaction_invent"
 
@@ -23,6 +24,7 @@ func Init() *echo.Echo {
 	SUP := e.Group("/SUP")
 	INV := e.Group("/INV")
 	TI := e.Group("/TI")
+	KS := e.Group("/KS")
 	// tr := e.Group("/tr")
 	// pmb := e.Group("/pmb")
 	// rtr := e.Group("/rtr")
@@ -50,6 +52,11 @@ func Init() *echo.Echo {
 	TI.GET("/transaction-inventory", transaction_invent.ReadTransactionInventory)
 	TI.PUT("/update-header", transaction_invent.UpdateHeaderTransactionInventory)
 	TI.PUT("/update-barang", transaction_invent.UpdateBarangTransactionInventory)
+	TI.DELETE("/delete-barang", transaction_invent.DeleteBarangTransaksiInventory)
+	TI.PUT("/update-status", transaction_invent.UpdateStatusTransaksiInventory)
+
+	//Kasir
+	KS.GET("/kasir", kasir.ReadStockKasir)
 
 	return e
 }

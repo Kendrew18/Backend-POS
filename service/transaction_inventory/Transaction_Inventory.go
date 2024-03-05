@@ -431,214 +431,228 @@ func Update_Barang_Transaction_Inventory(Request request.Body_Update_Barang_Tran
 	return res, nil
 }
 
-// func Delete_Barang_Transaksi_Inventory(Request request.Update_Barang_Transaksi_Inventory_Kode_Request) (response.Response, error) {
-// 	var res response.Response
+func Delete_Barang_Transaksi_Inventory(Request request.Update_Barang_Transaksi_Inventory_Kode_Request) (response.Response, error) {
+	var res response.Response
 
-// 	check := -1
-// 	con_check := db.CreateConGorm()
+	check := -1
+	con_check := db.CreateConGorm()
 
-// 	err := con_check.Table("transaksi_inventory").Select("status").Joins("JOIN barang_transaksi_inventory bti on bti.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request.Kode_barang_transaksi_inventory).Scan(&check)
+	err := con_check.Table("transaksi_inventory").Select("status").Joins("JOIN barang_transaksi_inventory bti on bti.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request.Kode_barang_transaksi_inventory).Scan(&check)
 
-// 	if err.Error != nil {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Update Error"
-// 		res.Data = Request
-// 		return res, err.Error
-// 	}
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Update Error"
+		res.Data = Request
+		return res, err.Error
+	}
 
-// 	_, condition := session_checking.Session_Checking(Request.Uuid_session)
+	_, condition := session_checking.Session_Checking(Request.Uuid_session)
 
-// 	if (check == 0 || check == 2) && condition {
+	if (check == 0 || check == 2) && condition {
 
-// 		con := db.CreateConGorm()
+		con := db.CreateConGorm()
 
-// 		data := ""
+		data := ""
 
-// 		err = con.Table("transaksi_inventory").Select("transaksi_inventory.kode_transaksi_inventory").Joins("JOIN barang_transaksi_inventory bpi ON bpi.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory ").Where("kode_barang_transaksi_inventory = ?", Request.Kode_barang_transaksi_inventory).Scan(&data)
+		err = con.Table("transaksi_inventory").Select("transaksi_inventory.kode_transaksi_inventory").Joins("JOIN barang_transaksi_inventory bpi ON bpi.kode_transaksi_inventory = transaksi_inventory.kode_transaksi_inventory ").Where("kode_barang_transaksi_inventory = ?", Request.Kode_barang_transaksi_inventory).Scan(&data)
 
-// 		fmt.Println(data)
+		fmt.Println(data)
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Update Error"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		}
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Update Error"
+			res.Data = Request
+			return res, err.Error
+		}
 
-// 		err = con.Table("barang_transaksi_inventory").Where("kode_barang_pre_order = ?", Request.Kode_barang_transaksi_inventory).Delete("")
+		err = con.Table("barang_transaksi_inventory").Where("kode_barang_transaksi_inventory = ?", Request.Kode_barang_transaksi_inventory).Delete("")
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Update Error"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		}
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Update Error"
+			res.Data = Request
+			return res, err.Error
+		}
 
-// 		kode_barang := ""
+		kode_barang := ""
 
-// 		err = con.Table("barang_transaksi_inventory").Select("kode_barang_pre_order").Where("kode_pre_order=?", data).Limit(1).Scan(&kode_barang)
+		err = con.Table("barang_transaksi_inventory").Select("kode_barang_transaksi_inventory").Where("kode_transaksi_inventory=?", data).Limit(1).Scan(&kode_barang)
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Update Error"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		}
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Update Error"
+			res.Data = Request
+			return res, err.Error
+		}
 
-// 		if kode_barang == "" {
-// 			fmt.Println("masuk")
+		if kode_barang == "" {
+			fmt.Println("masuk")
 
-// 			err = con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", data).Delete("")
+			err = con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", data).Delete("")
 
-// 			if err.Error != nil {
-// 				res.Status = http.StatusNotFound
-// 				res.Message = "Status Not Found"
-// 				res.Data = Request
-// 				return res, err.Error
-// 			}
-// 		}
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
+		}
 
-// 		if err.Error != nil {
-// 			res.Status = http.StatusNotFound
-// 			res.Message = "Status Not Found"
-// 			res.Data = Request
-// 			return res, err.Error
-// 		} else {
-// 			res.Status = http.StatusOK
-// 			res.Message = "Suksess"
-// 			res.Data = map[string]int64{
-// 				"rows": err.RowsAffected,
-// 			}
-// 		}
-// 	} else if !condition {
-// 		res.Status = http.StatusGatewayTimeout
-// 		res.Message = "Invalid Session"
-// 		res.Data = Request
-// 	} else {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Barang Tidak dapat di update"
-// 		res.Data = Request
-// 		return res, err.Error
-// 	}
-// 	return res, nil
-// }
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
+		}
+	} else if !condition {
+		res.Status = http.StatusGatewayTimeout
+		res.Message = "Invalid Session"
+		res.Data = Request
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Barang Tidak dapat di update"
+		res.Data = Request
+		return res, err.Error
+	}
+	return res, nil
+}
 
-// func Update_Status_Transaksi_Inventory(Request request.Update_Status_Transaksi_Inventory_Request, Request_kode request.Update_Header_Transaksi_Inventory_Kode_Request) (response.Response, error) {
-// 	var res response.Response
-// 	var err2 error
-// 	con := db.CreateConGorm()
-// 	status := -1
+func Update_Status_Transaksi_Inventory(Request request.Body_Update_Status_Transaksi_inventory) (response.Response, error) {
+	var res response.Response
+	var err2 error
+	con := db.CreateConGorm()
+	status := -1
 
-// 	err := con.Table("transaksi_inventory").Select("status").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Scan(&status)
+	err := con.Table("transaksi_inventory").Select("status").Where("kode_transaksi_inventory = ?", Request.Update_header_transaksi_inventory_kode.Kode_transaksi_inventory).Scan(&status)
 
-// 	if err.Error != nil {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Status Not Found"
-// 		res.Data = Request
-// 		return res, err.Error
-// 	}
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	}
 
-// 	_, condition := session_checking.Session_Checking(Request_kode.Uuid_session)
+	_, condition := session_checking.Session_Checking(Request.Update_header_transaksi_inventory_kode.Uuid_session)
 
-// 	if status != 1 && condition {
-// 		if Request.Status == 2 || Request.Status == 0 {
+	if status != 1 && condition {
+		if Request.Update_status_transaksi_inventory.Status == 2 || Request.Update_status_transaksi_inventory.Status == 0 {
+			Request_kode := Request.Update_header_transaksi_inventory_kode
+			Request := Request.Update_status_transaksi_inventory
 
-// 			con := db.CreateConGorm()
+			con := db.CreateConGorm()
 
-// 			err := con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Select("status").Updates(&Request)
+			err := con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Select("status").Updates(&Request)
 
-// 			if err.Error != nil {
-// 				res.Status = http.StatusNotFound
-// 				res.Message = "Status Not Found"
-// 				res.Data = Request
-// 				return res, err.Error
-// 			} else {
-// 				res.Status = http.StatusOK
-// 				res.Message = "Suksess"
-// 				res.Data = map[string]int64{
-// 					"rows": err.RowsAffected,
-// 				}
-// 			}
-// 		} else if Request.Status == 1 {
-// 			con := db.CreateConGorm()
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			} else {
+				res.Status = http.StatusOK
+				res.Message = "Suksess"
+				res.Data = map[string]int64{
+					"rows": err.RowsAffected,
+				}
+			}
+		} else if Request.Update_status_transaksi_inventory.Status == 1 {
+			Request_kode := Request.Update_header_transaksi_inventory_kode
+			Request := Request.Update_status_transaksi_inventory
 
-// 			err := con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Select("status").Updates(&Request)
+			con := db.CreateConGorm()
 
-// 			if err.Error != nil {
-// 				res.Status = http.StatusNotFound
-// 				res.Message = "Status Not Found"
-// 				res.Data = Request
-// 				return res, err.Error
-// 			}
+			err := con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Select("status").Updates(&Request)
 
-// 			jenis_transaksi := -1
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
 
-// 			err = con.Table("transaksi_inventory").Select("jenis_transaksi").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Scan(&jenis_transaksi)
+			jenis_transaksi := -1
 
-// 			if err.Error != nil {
-// 				res.Status = http.StatusNotFound
-// 				res.Message = "Status Not Found"
-// 				res.Data = Request
-// 				return res, err.Error
-// 			}
+			err = con.Table("transaksi_inventory").Select("jenis_transaksi").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Scan(&jenis_transaksi)
 
-// 			if jenis_transaksi == 0 {
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
 
-// 				var arr_data []request.Input_Barang_Transaksi_Inventory_Request
+			if jenis_transaksi == 0 {
 
-// 				err = con.Table("barang_transaksi_inventory").Select("co", "kode_barang_transaksi_inventory", "kode_transaksi_inventory", "kode_inventory", "jumlah", "harga", "sub_total").Scan(&arr_data)
+				var arr_data []request.Input_Barang_Transaksi_Inventory_Request
 
-// 				if err.Error != nil {
-// 					res.Status = http.StatusNotFound
-// 					res.Message = "Status Not Found"
-// 					res.Data = Request
-// 					return res, err.Error
-// 				}
+				err = con.Table("barang_transaksi_inventory").Select("co", "kode_barang_transaksi_inventory", "kode_transaksi_inventory", "kode_inventory", "jumlah", "harga", "sub_total").Scan(&arr_data)
 
-// 				err = con.Table("barang_transaksi_inventory").Select("co", "kode_barang_transaksi_inventory", "kode_transaksi_inventory", "kode_inventory", "jumlah", "harga", "sub_total").Create(&arr_data)
+				if err.Error != nil {
+					res.Status = http.StatusNotFound
+					res.Message = "Status Not Found"
+					res.Data = Request
+					return res, err.Error
+				}
 
-// 				if err.Error != nil {
-// 					res.Status = http.StatusNotFound
-// 					res.Message = "Status Not Found"
-// 					res.Data = Request
-// 					return res, err.Error
-// 				}
+				err = con.Table("detail_inventory").Select("co", "kode_barang_transaksi_inventory", "kode_transaksi_inventory", "kode_inventory", "jumlah", "harga", "sub_total").Create(&arr_data)
 
-// 			} else if jenis_transaksi == 1 {
+				if err.Error != nil {
+					res.Status = http.StatusNotFound
+					res.Message = "Status Not Found"
+					res.Data = Request
+					return res, err.Error
+				}
 
-// 				err = con.Exec("UPDATE `detail_inventory` JOIN barang_transaksi_inventory bti ON bti.kode_refund = detail_inventory.kode_barang_transaksi_inventory SET detail_inventory.jumlah = detail_inventory.jumlah - bti.jumlah WHERE bti.kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory)
+				err = con.Exec("UPDATE `inventory` JOIN barang_transaksi_inventory bsm ON bsm.kode_inventory = inventory.kode_inventory SET `jumlah_barang`=jumlah_barang + jumlah WHERE bsm.kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory)
 
-// 				if err.Error != nil {
-// 					res.Status = http.StatusNotFound
-// 					res.Message = "Status Not Found"
-// 					res.Data = Request
-// 					return res, err.Error
-// 				}
+				if err.Error != nil {
+					res.Status = http.StatusNotFound
+					res.Message = "Status Not Found"
+					res.Data = Request
+					return res, err.Error
+				}
 
-// 			}
+			} else if jenis_transaksi == 1 {
 
-// 			if err2 != nil {
-// 				res.Status = http.StatusNotFound
-// 				res.Message = "Status Not Found"
-// 				res.Data = Request
-// 				return res, err.Error
-// 			} else {
-// 				res.Status = http.StatusOK
-// 				res.Message = "Suksess"
-// 				res.Data = map[string]int64{
-// 					"rows": err.RowsAffected,
-// 				}
-// 			}
+				err = con.Exec("UPDATE `detail_inventory` JOIN barang_transaksi_inventory bti ON bti.kode_refund = detail_inventory.kode_barang_transaksi_inventory SET detail_inventory.jumlah = detail_inventory.jumlah - bti.jumlah WHERE bti.kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory)
 
-// 		}
-// 	} else if !condition {
-// 		res.Status = http.StatusGatewayTimeout
-// 		res.Message = "Invalid Session"
-// 		res.Data = Request
-// 	} else {
-// 		res.Status = http.StatusNotFound
-// 		res.Message = "Tidah dapat di edit diakrenakan sudah sukses"
-// 		res.Data = Request
-// 	}
-// 	return res, nil
-// }
+				if err.Error != nil {
+					res.Status = http.StatusNotFound
+					res.Message = "Status Not Found"
+					res.Data = Request
+					return res, err.Error
+				}
+
+			}
+
+			if err2 != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			} else {
+				res.Status = http.StatusOK
+				res.Message = "Suksess"
+				res.Data = map[string]int64{
+					"rows": err.RowsAffected,
+				}
+			}
+
+		}
+	} else if !condition {
+		res.Status = http.StatusGatewayTimeout
+		res.Message = "Invalid Session"
+		res.Data = Request
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Tidah dapat di edit diakrenakan sudah sukses"
+		res.Data = Request
+	}
+	return res, nil
+}
