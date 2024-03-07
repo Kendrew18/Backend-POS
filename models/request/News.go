@@ -6,6 +6,7 @@ type Input_News_Request struct {
 	Date         string `json:"date"`
 	Title        string `json:"title"`
 	Content      string `json:"content"`
+	Image_path   string `json:"image_path"`
 	Uuid_session string `json:"uuid_session"`
 }
 

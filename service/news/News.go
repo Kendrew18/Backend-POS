@@ -5,12 +5,16 @@ import (
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
 	"Bakend-POS/tools/session_checking"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
-func Input_News(Request request.Input_News_Request) (response.Response, error) {
+func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, request *http.Request) (response.Response, error) {
 	var res response.Response
 	_, condition := session_checking.Session_Checking(Request.Uuid_session)
 
@@ -34,7 +38,66 @@ func Input_News(Request request.Input_News_Request) (response.Response, error) {
 		date, _ := time.Parse("02-01-2006", Request.Date)
 		Request.Date = date.Format("2006-01-02")
 
-		err = con.Select("co", "kode_news", "date", "title", "content").Create(&Request)
+		request.ParseMultipartForm(10 * 1024 * 1024)
+		file, handler, err2 := request.FormFile("photo")
+		if err2 != nil {
+			fmt.Println(err2)
+			return res, err2
+		}
+
+		defer file.Close()
+
+		fmt.Println("File Info")
+		fmt.Println("File Name : ", handler.Filename)
+		fmt.Println("File Size : ", handler.Size)
+		fmt.Println("File Type : ", handler.Header.Get("Content-Type"))
+
+		var tempFile *os.File
+		path := ""
+
+		if strings.Contains(handler.Filename, "jpg") {
+			path = "uploads/foto_laporan_vendor/" + Request.Kode_news + ".jpg"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_laporan_vendor/", "Read"+"*.jpg")
+		}
+		if strings.Contains(handler.Filename, "jpeg") {
+			path = "uploads/foto_laporan_vendor/" + Request.Kode_news + ".jpeg"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_laporan_vendor/", "Read"+"*.jpeg")
+		}
+		if strings.Contains(handler.Filename, "png") {
+			path = "uploads/foto_laporan_vendor/" + Request.Kode_news + ".png"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_laporan_vendor/", "Read"+"*.png")
+		}
+
+		if err2 != nil {
+			return res, err2
+		}
+
+		fileBytes, err2 := ioutil.ReadAll(file)
+		if err2 != nil {
+			return res, err2
+		}
+
+		_, err2 = tempFile.Write(fileBytes)
+		if err2 != nil {
+			return res, err2
+		}
+
+		fmt.Println("Success!!")
+		fmt.Println(tempFile.Name())
+		tempFile.Close()
+
+		err2 = os.Rename(tempFile.Name(), path)
+		if err2 != nil {
+			fmt.Println(err)
+		}
+
+		defer tempFile.Close()
+
+		fmt.Println("new path:", tempFile.Name())
+
+		Request.Image_path = path
+
+		err = con.Select("co", "kode_news", "date", "title", "content", "image_path").Create(&Request)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -57,7 +120,7 @@ func Input_News(Request request.Input_News_Request) (response.Response, error) {
 	return res, nil
 }
 
-func Read_Supplier(Request request.Read_News_Request) (response.Response, error) {
+func Read_News(Request request.Read_News_Request) (response.Response, error) {
 	var res response.Response
 	var data []response.Read_News_Response
 
