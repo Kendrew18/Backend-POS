@@ -93,6 +93,17 @@ func Read_Inventory(Request request.Read_Inventory_Request) (response.Response, 
 			return res, err.Error
 		}
 
+		for i := 0; i < len(arr_invent); i++ {
+			err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_transaksi_inventory", "jumlah", "harga").Where("kode_inventory = ?", arr_invent[i].Kode_inventory).Scan(&arr_invent[i].Detail_inventory)
+
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
+		}
+
 		if arr_invent == nil {
 			res.Status = http.StatusNotFound
 			res.Message = "Not Found"
