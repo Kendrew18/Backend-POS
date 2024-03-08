@@ -58,7 +58,7 @@ func Input_Transaksi(Request request.Body_Input_Transaksi_Request) (response.Res
 		Request.Kode_nota = Request.Kode_nota + strconv.Itoa(co_pembayaran)
 		Request.Jumlah_total = 0.0
 
-		err = con.Table("transaksi").Select("co", "kode_transaksi", "kode_nota", "tanggal", "kode_jenis_pembayaran", "jumlah_total", "total_harga", "diskon", "kode_user").Create(&Request)
+		err = con.Table("transaksi").Select("co", "kode_transaksi", "kode_nota", "tanggal", "kode_jenis_pembayaran", "jumlah_total", "total_harga", "diskon", "kode_user", "nama_customer", "nomor_telp_customer", "alamat_customer").Create(&Request)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -121,8 +121,82 @@ func Input_Transaksi(Request request.Body_Input_Transaksi_Request) (response.Res
 	return res, nil
 }
 
-func Read_Pembayaran() (response.Response, error) {
+func Read_Pembayaran(Request request.Body_Read_Transaksi_Request) (response.Response, error) {
+
 	var res response.Response
+	User, condition := session_checking.Session_Checking(Request.Read_transaksi.Uuid_session)
+
+	if condition {
+
+		var arr_data []response.Read_Transaksi_Response
+
+		con := db.CreateConGorm()
+
+		statement := "transaksi.kode_user = '" + User.Kode_user + "'"
+
+		if Request.Read_transaksi_filter.Nama_customer != "" {
+			statement += " && transaksi.nama_customer = '" + Request.Read_transaksi_filter.Nama_customer + "'"
+		}
+
+		if Request.Read_transaksi_filter.Tanggal_awal != "" && Request.Read_transaksi_filter.Tanggal_akhir != "" {
+
+			date, _ := time.Parse("02-01-2006", Request.Read_transaksi_filter.Tanggal_awal)
+			Request.Read_transaksi_filter.Tanggal_awal = date.Format("2006-01-02")
+
+			date2, _ := time.Parse("02-01-2006", Request.Read_transaksi_filter.Tanggal_akhir)
+			Request.Read_transaksi_filter.Tanggal_akhir = date2.Format("2006-01-02")
+
+			statement += " AND (tanggal >= '" + Request.Read_transaksi_filter.Tanggal_awal + "' && tanggal <= '" + Request.Read_transaksi_filter.Tanggal_akhir + "' )"
+
+		} else if Request.Read_transaksi_filter.Tanggal_awal != "" {
+
+			date, _ := time.Parse("02-01-2006", Request.Read_transaksi_filter.Tanggal_awal)
+			Request.Read_transaksi_filter.Tanggal_awal = date.Format("2006-01-02")
+
+			statement += " && tanggal = '" + Request.Read_transaksi_filter.Tanggal_awal + "'"
+
+		}
+
+		err := con.Table("transaksi").Select("kode_transaksi", "DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal", "kode_nota", "nama_customer", "nomer_telp_customer", "alamat_customer", "kode_jenis_pembayaran", "nama_jenis_pembayaran", "jumlah_total", "total_harga", "diskon").Where(statement).Order("transaksi.co DESC").Scan(&arr_data)
+		if err != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = arr_data
+			return res, err.Error
+		}
+
+		for i := 0; i < len(arr_data); i++ {
+
+			var arr_barang []response.Read_Barang_Transaksi_Response
+
+			err = con.Table("barang_transaksi").Select("kode_barang_transaksi", "barang_transaksi.kode_inventory", "nama_barang", "barang_transaksi.jumlah", "barang_transaksi.harga", "barang_transaksi.sub_total").Joins("join inventory s on s.kode_inventory = barang_transaksi.kode_inventory").Where("kode_transaksi = ?", arr_data[i].Kode_transaksi).Scan(&arr_barang)
+
+			if err != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
+
+			arr_data[i].Barang_transaksi = arr_barang
+
+		}
+
+		if arr_data == nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = arr_data
+
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = arr_data
+		}
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Session Invalid"
+		res.Data = Request
+	}
 
 	return res, nil
 }

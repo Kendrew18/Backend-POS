@@ -9,6 +9,9 @@ type Input_Transaksi_Request struct {
 	Jumlah_total          float64 `json:"jumlah_total"`
 	Total_harga           int64   `json:"total_harga"`
 	Diskon                int64   `json:"diskon"`
+	Nama_customer         string  `json:"nama_customer"`
+	Alamat_customer       string  `json:"alamat_customer"`
+	Nomor_telp_customer   string  `json:"nomor_telp_customer"`
 	Kode_user             string  `json:"kode_user"`
 	Uuid_session          string  `json:"uuid_session"`
 }
@@ -27,4 +30,19 @@ type Input_Barang_Transaksi_Request struct {
 type Body_Input_Transaksi_Request struct {
 	Input_transaksi        Input_Transaksi_Request          `json:"input_transaksi"`
 	Input_barang_transaksi []Input_Barang_Transaksi_Request `json:"input_barang_transaksi"`
+}
+
+type Body_Read_Transaksi_Request struct {
+	Read_transaksi        Read_Transaksi_Request        `json:"read_transaksi"`
+	Read_transaksi_filter Read_Transaksi_Filter_Request `json:"read_transaksi_filter"`
+}
+
+type Read_Transaksi_Request struct {
+	Uuid_session string `json:"uuid_session"`
+}
+
+type Read_Transaksi_Filter_Request struct {
+	Tanggal_awal  string `json:"tanggal_awal"`
+	Tanggal_akhir string `json:"tanggal_akhir"`
+	Nama_customer string `json:"nama_customer"`
 }
