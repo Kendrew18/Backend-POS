@@ -32,7 +32,7 @@ func Init() *echo.Echo {
 
 	//User
 	US.POST("/sign-up", user.SignUp)
-	US.GET("/login", user.LoginUser)
+	US.POST("/login", user.LoginUser)
 	US.GET("/user-profile", user.UserProfile)
 	US.PUT("/user-profile", user.UpdateUserProfile)
 

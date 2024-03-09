@@ -47,13 +47,9 @@ func SignUp(c echo.Context) error {
 func UserProfile(c echo.Context) error {
 	var Request request.Profile_User_Request
 
-	err := c.Bind(&Request)
+	Request.Uuid_session = c.Request().Header.Get("uuid_session")
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	//Request.Uuid_session = c.FormValue("uuid_session")
+	c.Response().Header().Set("X-Custom-Header", "Hello, World!")
 
 	result, err := user.User_Profile(Request)
 
