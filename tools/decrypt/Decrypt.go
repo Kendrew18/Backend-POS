@@ -19,7 +19,7 @@ func decryptStruct(c echo.Context) error {
 
 	// Decode the encrypted data from hexadecimal format
 
-	decode,_:=string(io.ReadAll(body))
+	decode, _ := string(io.ReadAll(body))
 
 	encryptedData, err := hex.DecodeString(strings.TrimSpace(decode))
 	if err != nil {
