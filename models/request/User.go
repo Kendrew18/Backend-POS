@@ -20,14 +20,15 @@ type Sign_Up_Request struct {
 	Facebook        string `json:"facebook"`
 	Username        string `json:"username"`
 	Password        string `json:"password"`
+	Key             string `json:"key"`
 }
 
 type Profile_User_Request struct {
-	Uuid_session string `json:"uuid_session"`
+	Kode_user string `json:"kode_user"`
 }
 
 type Update_Profile_User_Request struct {
-	Uuid_session    string `json:"uuid_session"`
+	Kode_user       string `json:"kode_user"`
 	Nama_lengkap    string `json:"nama_lengkap"`
 	Birth_date      string `json:"birth_date"`
 	Gender          string `json:"gender"`

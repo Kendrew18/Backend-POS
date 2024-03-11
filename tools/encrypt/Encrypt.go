@@ -6,13 +6,16 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"io"
 )
 
-func encrypt(keyString string, stringToEncrypt string) (encryptedString string) {
+func Encrypt(keyString string, stringToEncrypt string) (encryptedString string) {
 	// convert key to bytes
 	key, _ := hex.DecodeString(keyString)
 	plaintext := []byte(stringToEncrypt)
+
+	fmt.Println(key)
 
 	//Create a new Cipher Block from the key
 	block, err := aes.NewCipher(key)

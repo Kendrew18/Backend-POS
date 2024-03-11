@@ -2,7 +2,9 @@ package user
 
 import (
 	"Bakend-POS/models/request"
+	"Bakend-POS/models/response"
 	"Bakend-POS/service/user"
+	"Bakend-POS/tools/session_checking"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -46,15 +48,30 @@ func SignUp(c echo.Context) error {
 
 func UserProfile(c echo.Context) error {
 	var Request request.Profile_User_Request
+	var Request_session request.Session_Request
+	var result response.Response
+	var err error
 
-	Request.Uuid_session = c.Request().Header.Get("uuid_session")
+	Request_session.Uuid_session = c.Request().Header.Get("uuid_session")
 
-	c.Response().Header().Set("X-Custom-Header", "Hello, World!")
+	//c.Response().Header().Set("X-Custom-Header", "Hello, World!")
 
-	result, err := user.User_Profile(Request)
+	User, condition := session_checking.Session_Checking(Request_session.Uuid_session)
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	Request.Kode_user = User.Kode_user
+
+	if condition {
+
+		result, err = user.User_Profile(Request)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+		}
+
+	} else {
+		result.Status = http.StatusNotFound
+		result.Message = "Session Invalid"
+		result.Data = Request
 	}
 
 	return c.JSON(result.Status, result)
@@ -62,17 +79,33 @@ func UserProfile(c echo.Context) error {
 
 func UpdateUserProfile(c echo.Context) error {
 	var Request request.Update_Profile_User_Request
+	var Request_session request.Session_Request
+	var result response.Response
+	var err error
 
-	err := c.Bind(&Request)
+	Request_session.Uuid_session = c.Request().Header.Get("uuid_session")
+
+	err = c.Bind(&Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
-	result, err := user.Update_User_Profile(Request)
+	User, condition := session_checking.Session_Checking(Request_session.Uuid_session)
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	Request.Kode_user = User.Kode_user
+
+	if condition {
+		result, err = user.Update_User_Profile(Request)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+		}
+
+	} else {
+		result.Status = http.StatusNotFound
+		result.Message = "Session Invalid"
+		result.Data = Request
 	}
 
 	return c.JSON(result.Status, result)
