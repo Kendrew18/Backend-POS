@@ -3,60 +3,32 @@ package decrypt
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"encoding/base64"
 	"encoding/hex"
-	"encoding/json"
-	"io"
-	"net/http"
-	"strings"
-
-	"github.com/labstack/echo/v4"
+	"fmt"
 )
 
-func decryptStruct(c echo.Context) error {
-	// Get the encrypted data from the request body
-	body := c.Request().Body
-	defer body.Close()
+func decrypt(keyString string, stringToDecrypt string) string {
+	key, _ := hex.DecodeString(keyString)
+	ciphertext, _ := base64.URLEncoding.DecodeString(stringToDecrypt)
 
-	// Decode the encrypted data from hexadecimal format
-
-	decode, _ := string(io.ReadAll(body))
-
-	encryptedData, err := hex.DecodeString(strings.TrimSpace(decode))
-	if err != nil {
-		return err
-	}
-
-	// Create a new Cipher Block from the key
-	key := []byte("mysecretkey")
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-	// Create a new GCM
-	gcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return err
+	// The IV needs to be unique, but not secure. Therefore it's common to
+	// include it at the beginning of the ciphertext.
+	if len(ciphertext) < aes.BlockSize {
+		panic("ciphertext too short")
 	}
+	iv := ciphertext[:aes.BlockSize]
+	ciphertext = ciphertext[aes.BlockSize:]
 
-	// Get the nonce and ciphertext
-	nonceSize := gcm.NonceSize()
-	nonce := encryptedData[:nonceSize]
-	ciphertext := encryptedData[nonceSize:]
+	stream := cipher.NewCFBDecrypter(block, iv)
 
-	// Decrypt the JSON data
-	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
-	if err != nil {
-		return err
-	}
+	// XORKeyStream can work in-place if the two arguments are the same.
+	stream.XORKeyStream(ciphertext, ciphertext)
 
-	// Convert the JSON data to a struct
-	var dataInterface interface{}
-	err = json.Unmarshal(plaintext, &dataInterface)
-	if err != nil {
-		return err
-	}
-
-	// Return the decrypted struct
-	return c.JSON(http.StatusOK, dataInterface)
+	return fmt.Sprintf("%s", ciphertext)
 }
