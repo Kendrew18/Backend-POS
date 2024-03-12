@@ -1,8 +1,8 @@
 package response
 
 type Login_Response struct {
-	Uuid_session string `json:"uuid_session"`
-	Status       int    `json:"status"`
+	Token  string `json:"token"`
+	Status int    `json:"status"`
 }
 
 type User_Profile_Response struct {

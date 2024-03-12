@@ -6,7 +6,6 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/tools/encrypt"
 	"bytes"
-	"crypto/rand"
 	"encoding/gob"
 	"encoding/hex"
 	"fmt"
@@ -34,35 +33,24 @@ func Login_User(Request request.Login_Request) (response.Response, error) {
 
 	} else {
 
-		key := ""
-
-		err = con.Table("user").Select("`key`").Where("kode_user = ?", token.Kode_user).Scan(&key).Error
+		key_byte := []byte("S0ft1nd0PUtr4PErk4s4 s3cr3t K3ys")
 
 		if err != nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Status Not Found"
-			res.Data = Request
-			return res, err
-		}
-
-		key_byte := []byte(key)
-
-		if _, err := rand.Read(key_byte); err != nil {
 			panic(err.Error())
 		}
 
-		key = hex.EncodeToString(key_byte)
+		key := hex.EncodeToString(key_byte)
+
+		fmt.Println(key)
 
 		uuid := uuid.NewString()
 
-		fmt.Println(key)
+		token.Uuid_session = uuid
 
 		date := time.Now()
 		tanggal_awal := date.Format("2006-01-02")
 		date_akhir := date.AddDate(0, 0, 30)
 		tanggal_terakhir := date_akhir.Format("2006-01-02")
-
-		token.Uuid_session = uuid
 
 		var network bytes.Buffer        // Stand-in for a network connection
 		enc := gob.NewEncoder(&network) // Will write to network.
@@ -90,7 +78,7 @@ func Login_User(Request request.Login_Request) (response.Response, error) {
 			return res, err
 		}
 
-		err = con.Table("user").Select("uuid_session", "status").Where("username =? AND password =?", Request.Username, Request.Password).Scan(&us).Error
+		err = con.Table("user").Select("token", "status").Where("username =? AND password =?", Request.Username, Request.Password).Scan(&us).Error
 
 		if err != nil {
 			res.Status = http.StatusNotFound

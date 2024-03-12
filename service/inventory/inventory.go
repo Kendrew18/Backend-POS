@@ -4,11 +4,12 @@ import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
-	"Bakend-POS/tools/session_checking"
 	"fmt"
 	"net/http"
 	"strconv"
 )
+
+//kurang update
 
 func Input_Inventory(Request request.Input_Inventory_Request) (response.Response, error) {
 	var res response.Response
@@ -26,11 +27,7 @@ func Input_Inventory(Request request.Input_Inventory_Request) (response.Response
 		return res, err.Error
 	}
 
-	User, condition := session_checking.Session_Checking(Request.Uuid_session)
-
-	if nama_barang == "" && condition {
-
-		Request.Kode_user = User.Kode_user
+	if nama_barang == "" {
 
 		co := 0
 
@@ -61,10 +58,6 @@ func Input_Inventory(Request request.Input_Inventory_Request) (response.Response
 			}
 		}
 
-	} else if !condition {
-		res.Status = http.StatusNotFound
-		res.Message = "Session Invalid"
-		res.Data = Request
 	} else {
 		res.Status = http.StatusNotFound
 		res.Message = "Nama Barang Telah Digunakan"
@@ -79,12 +72,19 @@ func Read_Inventory(Request request.Read_Inventory_Request) (response.Response, 
 	var res response.Response
 	var arr_invent []response.Read_Inventory_Response
 
-	User, condition := session_checking.Session_Checking(Request.Uuid_session)
+	con := db.CreateConGorm()
 
-	if condition {
-		con := db.CreateConGorm()
+	err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual").Where("kode_user = ?", Request.Kode_user).Scan(&arr_invent)
 
-		err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual").Where("kode_user = ?", User.Kode_user).Scan(&arr_invent)
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	}
+
+	for i := 0; i < len(arr_invent); i++ {
+		err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_transaksi_inventory", "jumlah", "harga").Where("kode_inventory = ?", arr_invent[i].Kode_inventory).Scan(&arr_invent[i].Detail_inventory)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -92,31 +92,16 @@ func Read_Inventory(Request request.Read_Inventory_Request) (response.Response, 
 			res.Data = Request
 			return res, err.Error
 		}
+	}
 
-		for i := 0; i < len(arr_invent); i++ {
-			err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_transaksi_inventory", "jumlah", "harga").Where("kode_inventory = ?", arr_invent[i].Kode_inventory).Scan(&arr_invent[i].Detail_inventory)
-
-			if err.Error != nil {
-				res.Status = http.StatusNotFound
-				res.Message = "Status Not Found"
-				res.Data = Request
-				return res, err.Error
-			}
-		}
-
-		if arr_invent == nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Not Found"
-			res.Data = arr_invent
-		} else {
-			res.Status = http.StatusOK
-			res.Message = "Sukses"
-			res.Data = arr_invent
-		}
-	} else {
+	if arr_invent == nil {
 		res.Status = http.StatusNotFound
-		res.Message = "Nama Barang Telah Digunakan"
-		res.Data = Request
+		res.Message = "Not Found"
+		res.Data = arr_invent
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arr_invent
 	}
 
 	return res, nil
@@ -131,7 +116,7 @@ func Update_Inventory(Request request.Update_Inventory_Request) (response.Respon
 
 	fmt.Println(Request)
 
-	err := con.Table("barang_supplier").Select("kode_inventory").Where("kode_inventory = ?", Request.Kode_inventory).Limit(1).Scan(&kode_inventory)
+	err := con.Table("barang_transaksi_inventory").Select("kode_inventory").Where("kode_inventory = ?", Request.Kode_inventory).Limit(1).Scan(&kode_inventory)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -151,9 +136,7 @@ func Update_Inventory(Request request.Update_Inventory_Request) (response.Respon
 	// 	return res, err.Error
 	// }
 
-	_, condition := session_checking.Session_Checking(Request.Uuid_session)
-
-	if kode_inventory == "" && condition {
+	if kode_inventory == "" {
 
 		err := con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("nama_barang", "harga_jual", "satuan_barang").Updates(&Request)
 
@@ -169,11 +152,17 @@ func Update_Inventory(Request request.Update_Inventory_Request) (response.Respon
 				"rows": err.RowsAffected,
 			}
 		}
-	} else if !condition {
-		res.Status = http.StatusNotFound
-		res.Message = "Session Invalid"
-		res.Data = Request
 	} else {
+
+		err := con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("harga_jual").Updates(&Request)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
 		res.Status = http.StatusNotFound
 		res.Message = "data tidak dapat di update karena data telah terpakai"
 		res.Data = Request

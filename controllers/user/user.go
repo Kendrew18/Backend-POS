@@ -48,15 +48,15 @@ func SignUp(c echo.Context) error {
 
 func UserProfile(c echo.Context) error {
 	var Request request.Profile_User_Request
-	var Request_session request.Session_Request
+	var Request_session request.Token_Request
 	var result response.Response
 	var err error
 
-	Request_session.Uuid_session = c.Request().Header.Get("uuid_session")
+	Request_session.Token = c.Request().Header.Get("token")
 
 	//c.Response().Header().Set("X-Custom-Header", "Hello, World!")
 
-	User, condition := session_checking.Session_Checking(Request_session.Uuid_session)
+	User, condition := session_checking.Session_Checking(Request_session.Token)
 
 	Request.Kode_user = User.Kode_user
 
@@ -79,11 +79,11 @@ func UserProfile(c echo.Context) error {
 
 func UpdateUserProfile(c echo.Context) error {
 	var Request request.Update_Profile_User_Request
-	var Request_session request.Session_Request
+	var Request_session request.Token_Request
 	var result response.Response
 	var err error
 
-	Request_session.Uuid_session = c.Request().Header.Get("uuid_session")
+	Request_session.Token = c.Request().Header.Get("token")
 
 	err = c.Bind(&Request)
 
@@ -91,7 +91,7 @@ func UpdateUserProfile(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
-	User, condition := session_checking.Session_Checking(Request_session.Uuid_session)
+	User, condition := session_checking.Session_Checking(Request_session.Token)
 
 	Request.Kode_user = User.Kode_user
 

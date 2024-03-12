@@ -5,10 +5,9 @@ import (
 	"crypto/cipher"
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"
 )
 
-func decrypt(keyString string, stringToDecrypt string) string {
+func Decrypt(keyString string, stringToDecrypt string) string {
 	key, _ := hex.DecodeString(keyString)
 	ciphertext, _ := base64.URLEncoding.DecodeString(stringToDecrypt)
 
@@ -30,5 +29,7 @@ func decrypt(keyString string, stringToDecrypt string) string {
 	// XORKeyStream can work in-place if the two arguments are the same.
 	stream.XORKeyStream(ciphertext, ciphertext)
 
-	return fmt.Sprintf("%s", ciphertext)
+	str1 := string(ciphertext[:])
+
+	return str1
 }
