@@ -17,7 +17,7 @@ func Init() *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+		return c.String(http.StatusOK, "POS-V1")
 	})
 
 	US := e.Group("/US")

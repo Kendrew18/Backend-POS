@@ -8,5 +8,5 @@ import (
 func main() {
 	db.Init()
 	e := routes.Init()
-	e.Logger.Fatal(e.Start(":3333"))
+	e.Logger.Fatal(e.Start(":38600"))
 }
