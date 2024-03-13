@@ -5,6 +5,9 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/service/inventory"
 	"Bakend-POS/tools/session_checking"
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -16,9 +19,22 @@ func InputInventory(c echo.Context) error {
 	var result response.Response
 	var err error
 
+	data := c.FormValue("data")
+
+	fmt.Println(data)
+
+	jsonData := []byte(data)
+
+	err = json.Unmarshal(jsonData, &Request)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	Request_session.Token = c.Request().Header.Get("token")
 
-	err = c.Bind(&Request)
+	fmt.Println(Request)
+
+	//err = c.Bind(&Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -30,7 +46,7 @@ func InputInventory(c echo.Context) error {
 
 	if condition {
 
-		result, err = inventory.Input_Inventory(Request)
+		result, err = inventory.Input_Inventory(Request, c.Response(), c.Request())
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -51,12 +67,6 @@ func ReadInventory(c echo.Context) error {
 	var err error
 
 	Request_session.Token = c.Request().Header.Get("token")
-
-	err = c.Bind(&Request)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
 
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 

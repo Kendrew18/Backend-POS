@@ -4,7 +4,6 @@ import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
-	"Bakend-POS/tools/session_checking"
 	"net/http"
 )
 
@@ -13,45 +12,36 @@ func Read_Stock_Kasir(Request request.Read_Kasir_Request) (response.Response, er
 	var arr_invent []response.Read_Kasir_Response
 	var arr_detail_invent []response.Read_Detail_Inventory_Response
 
-	User, condition := session_checking.Session_Checking(Request.Uuid_session)
+	con := db.CreateConGorm()
 
-	if condition {
+	err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual").Where("kode_user = ? && jumlah_barang > 0", Request.Kode_user).Order("co DESC").Scan(&arr_invent)
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	}
 
-		con := db.CreateConGorm()
+	for i := 0; i < len(arr_invent); i++ {
+		err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_inventory", "jumlah", "DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal").Joins("join transaksi_inventory ti on ti.kode_transaksi_inventory = detail_inventory.kode_transaksi_inventory").Where("kode_inventory = ? && jumlah > 0", arr_invent[i].Kode_inventory).Order("detail_inventory.co ASC").Scan(&arr_detail_invent)
 
-		err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual").Where("kode_user = ? && jumlah_barang > 0", User.Kode_user).Order("co DESC").Scan(&arr_invent)
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
 			res.Message = "Status Not Found"
 			res.Data = Request
 			return res, err.Error
 		}
+		arr_invent[i].Detail_inventory = arr_detail_invent
+	}
 
-		for i := 0; i < len(arr_invent); i++ {
-			err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_inventory", "jumlah", "DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal").Joins("join transaksi_inventory ti on ti.kode_transaksi_inventory = detail_inventory.kode_transaksi_inventory").Where("kode_inventory = ? && jumlah > 0", arr_invent[i].Kode_inventory).Order("detail_inventory.co ASC").Scan(&arr_detail_invent)
-
-			if err.Error != nil {
-				res.Status = http.StatusNotFound
-				res.Message = "Status Not Found"
-				res.Data = Request
-				return res, err.Error
-			}
-			arr_invent[i].Detail_inventory = arr_detail_invent
-		}
-
-		if arr_invent == nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Not Found"
-			res.Data = arr_invent
-		} else {
-			res.Status = http.StatusOK
-			res.Message = "Sukses"
-			res.Data = arr_invent
-		}
-	} else {
+	if arr_invent == nil {
 		res.Status = http.StatusNotFound
-		res.Message = "Session Invalid"
-		res.Data = Request
+		res.Message = "Not Found"
+		res.Data = arr_invent
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arr_invent
 	}
 
 	return res, nil

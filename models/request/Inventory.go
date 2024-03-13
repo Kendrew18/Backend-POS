@@ -7,6 +7,7 @@ type Input_Inventory_Request struct {
 	Harga_jual     int64  `json:"harga_jual"`
 	Satuan_barang  string `json:"satuan_barang"`
 	Kode_user      string `json:"kode_user"`
+	Path_photo     string `json:"path_photo"`
 }
 
 type Read_Inventory_Request struct {

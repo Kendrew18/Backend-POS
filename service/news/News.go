@@ -56,16 +56,16 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 		path := ""
 
 		if strings.Contains(handler.Filename, "jpg") {
-			path = "uploads/foto_laporan_vendor/" + Request.Kode_news + ".jpg"
-			tempFile, err2 = ioutil.TempFile("uploads/foto_laporan_vendor/", "Read"+"*.jpg")
+			path = "uploads/foto_news/" + Request.Kode_news + ".jpg"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_news/", "Read"+"*.jpg")
 		}
 		if strings.Contains(handler.Filename, "jpeg") {
-			path = "uploads/foto_laporan_vendor/" + Request.Kode_news + ".jpeg"
-			tempFile, err2 = ioutil.TempFile("uploads/foto_laporan_vendor/", "Read"+"*.jpeg")
+			path = "uploads/foto_news/" + Request.Kode_news + ".jpeg"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_news/", "Read"+"*.jpeg")
 		}
 		if strings.Contains(handler.Filename, "png") {
-			path = "uploads/foto_laporan_vendor/" + Request.Kode_news + ".png"
-			tempFile, err2 = ioutil.TempFile("uploads/foto_laporan_vendor/", "Read"+"*.png")
+			path = "uploads/foto_news/" + Request.Kode_news + ".png"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_news/", "Read"+"*.png")
 		}
 
 		if err2 != nil {
