@@ -5,6 +5,7 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/service/user"
 	"Bakend-POS/tools/session_checking"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -32,6 +33,8 @@ func SignUp(c echo.Context) error {
 	var Request request.Sign_Up_Request
 
 	err := c.Bind(&Request)
+
+	fmt.Println(Request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
