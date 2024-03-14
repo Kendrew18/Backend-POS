@@ -138,7 +138,6 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 	} else {
 		res.Status = http.StatusNotFound
 		res.Message = "Username Telah ada"
-		res.Data = Request
 		return res, err
 	}
 
