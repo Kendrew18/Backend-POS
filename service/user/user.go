@@ -94,40 +94,52 @@ func Login_User(Request request.Login_Request) (response.Response, error) {
 func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 	var res response.Response
 
+	username := ""
+
 	con := db.CreateConGorm().Table("user")
 
-	co := 0
+	err := con.Select("username").Where("username = ?", Request.Username).Order("co ASC").Scan(&username).Error
 
-	err := con.Select("co").Order("co DESC").Limit(1).Scan(&co)
+	if username == "" {
 
-	Request.Co = co + 1
-	Request.Kode_user = "US-" + strconv.Itoa(Request.Co)
+		co := 0
 
-	if err.Error != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err.Error
-	}
+		err := con.Select("co").Order("co DESC").Limit(1).Scan(&co)
 
-	date, _ := time.Parse("02-01-2006", Request.Birth_date)
-	Request.Birth_date = date.Format("2006-01-02")
+		Request.Co = co + 1
+		Request.Kode_user = "US-" + strconv.Itoa(Request.Co)
 
-	Request.Key = uuid.NewString()
-
-	err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password").Create(&Request)
-
-	if err.Error != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err.Error
-	} else {
-		res.Status = http.StatusOK
-		res.Message = "Suksess"
-		res.Data = map[string]int64{
-			"rows": err.RowsAffected,
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
 		}
+
+		date, _ := time.Parse("02-01-2006", Request.Birth_date)
+		Request.Birth_date = date.Format("2006-01-02")
+
+		Request.Key = uuid.NewString()
+
+		err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password").Create(&Request)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
+		}
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Username Telah ada"
+		res.Data = Request
+		return res, err
 	}
 
 	return res, nil
