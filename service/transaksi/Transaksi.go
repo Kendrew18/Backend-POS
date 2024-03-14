@@ -49,7 +49,7 @@ func Input_Transaksi(Request request.Input_Transaksi_Request, Request_barang []r
 	Request.Kode_nota = Request.Kode_nota + strconv.Itoa(co_pembayaran)
 	Request.Jumlah_total = 0.0
 
-	err = con.Table("transaksi").Select("co", "kode_transaksi", "kode_nota", "tanggal", "kode_jenis_pembayaran", "jumlah_total", "total_harga", "diskon", "kode_user", "nama_customer", "nomor_telp_customer", "alamat_customer").Create(&Request)
+	err = con.Table("transaksi").Select("co", "kode_transaksi", "kode_nota", "tanggal", "kode_jenis_pembayaran", "jumlah_total", "total_harga", "diskon", "kode_user", "nama_customer", "nomer_telp_customer", "alamat_customer").Create(&Request)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -84,7 +84,7 @@ func Input_Transaksi(Request request.Input_Transaksi_Request, Request_barang []r
 
 	total_harga = total_harga - Request.Diskon
 
-	err = con.Table("barang_transaksi").Select("co", "kode_barang_transaksi", "kode_transaksi", "kode_inventory", "jumlah_barang", "harga", "sub_total").Create(&Request_barang)
+	err = con.Table("barang_transaksi").Select("co", "kode_barang_transaksi", "kode_transaksi", "kode_barang_transaksi_inventory", "kode_inventory", "jumlah_barang", "harga", "nama_satuan", "sub_total").Create(&Request_barang)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -94,6 +94,15 @@ func Input_Transaksi(Request request.Input_Transaksi_Request, Request_barang []r
 	}
 
 	err = con.Table("transaksi").Where("kode_transaksi = ?", Request.Kode_transaksi).Update("total_harga", total_harga).Update("jumlah_total", total_jumlah)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	}
+
+	err = con.Exec("UPDATE `detail_inventory` JOIN barang_transaksi bsm ON bsm.kode_barang_transaksi_inventory = detail_inventory.kode_barang_transaksi_inventory SET `jumlah`= jumlah - jumlah_barang  WHERE bsm.kode_transaksi = ?", Request.Kode_transaksi)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
