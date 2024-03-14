@@ -5,6 +5,7 @@ import (
 	"Bakend-POS/controllers/foto"
 	"Bakend-POS/controllers/inventory"
 	"Bakend-POS/controllers/transaction_invent"
+	"Bakend-POS/controllers/transaksi"
 
 	"Bakend-POS/controllers/supplier"
 	"Bakend-POS/controllers/user"
@@ -27,6 +28,7 @@ func Init() *echo.Echo {
 	TI := e.Group("/TI")
 	KS := e.Group("/KS")
 	FT := e.Group("/FT")
+	TR := e.Group("/TR")
 	// pmb := e.Group("/pmb")
 	// rtr := e.Group("/rtr")
 	// flt := e.Group("/flt")
@@ -61,6 +63,10 @@ func Init() *echo.Echo {
 
 	//Kasir
 	KS.GET("/kasir", kasir.ReadStockKasir)
+
+	//Transksi
+	TR.POST("/transaksi", transaksi.InputTransaksi)
+	TR.GET("/transaksi", transaksi.ReadTransaksi)
 
 	return e
 }

@@ -11,9 +11,8 @@ type Input_Transaksi_Request struct {
 	Diskon                int64   `json:"diskon"`
 	Nama_customer         string  `json:"nama_customer"`
 	Alamat_customer       string  `json:"alamat_customer"`
-	Nomor_telp_customer   string  `json:"nomor_telp_customer"`
+	Nomer_telp_customer   string  `json:"nomer_telp_customer"`
 	Kode_user             string  `json:"kode_user"`
-	Uuid_session          string  `json:"uuid_session"`
 }
 
 type Input_Barang_Transaksi_Request struct {
@@ -38,7 +37,7 @@ type Body_Read_Transaksi_Request struct {
 }
 
 type Read_Transaksi_Request struct {
-	Uuid_session string `json:"uuid_session"`
+	Kode_user string `json:"kode_user"`
 }
 
 type Read_Transaksi_Filter_Request struct {
