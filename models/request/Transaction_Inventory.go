@@ -16,7 +16,6 @@ type Input_Transaksi_Inventory_Request struct {
 	Ppn                      float64 `json:"ppn"`
 	Kode_user                string  `json:"kode_user"`
 	Jenis_transaksi          int     `json:"jenis_transaksi"`
-	Uuid_session             string  `json:"uuid_session"`
 }
 
 type Input_Barang_Transaksi_Inventory_Request struct {
@@ -36,7 +35,7 @@ type Body_Read_Transaksi_Inventory_Request struct {
 }
 
 type Read_Transaksi_Inventory_Request struct {
-	Uuid_session string `json:"uuid_session"`
+	Kode_user string `json:"kode_user"`
 }
 
 type Read_Transaksi_Inventory_Filter_Request struct {
@@ -52,7 +51,7 @@ type Body_Update_Header_Transaksi_Inventory_Request struct {
 
 type Update_Header_Transaksi_Inventory_Kode_Request struct {
 	Kode_transaksi_inventory string `json:"kode_transaksi_inventory"`
-	Uuid_session             string `json:"uuid_session"`
+	Kode_user                string `json:"kode_user"`
 }
 
 type Update_Header_Transaksi_Inventory_Request struct {
@@ -71,7 +70,7 @@ type Body_Update_Barang_Transaksi_Inventory struct {
 
 type Update_Barang_Transaksi_Inventory_Kode_Request struct {
 	Kode_barang_transaksi_inventory string `json:"kode_barang_transaksi_inventory"`
-	Uuid_session                    string `json:"uuid_session"`
+	Kode_user                       string `json:"kode_user"`
 }
 
 type Update_Barang_Transaksi_Inventory_Request struct {

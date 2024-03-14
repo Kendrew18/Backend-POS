@@ -2,6 +2,7 @@ package routes
 
 import (
 	kasir "Bakend-POS/controllers/Kasir"
+	"Bakend-POS/controllers/foto"
 	"Bakend-POS/controllers/inventory"
 	"Bakend-POS/controllers/transaction_invent"
 
@@ -25,7 +26,7 @@ func Init() *echo.Echo {
 	INV := e.Group("/INV")
 	TI := e.Group("/TI")
 	KS := e.Group("/KS")
-	// tr := e.Group("/tr")
+	FT := e.Group("/FT")
 	// pmb := e.Group("/pmb")
 	// rtr := e.Group("/rtr")
 	// flt := e.Group("/flt")
@@ -46,6 +47,9 @@ func Init() *echo.Echo {
 	INV.POST("/inventory", inventory.InputInventory)
 	INV.GET("/inventory", inventory.ReadInventory)
 	INV.PUT("/inventory", inventory.UpdateInventory)
+
+	//Foto
+	FT.GET("/foto", foto.ReadFoto)
 
 	//Transaksi Inventory
 	TI.POST("/transaction-inventory", transaction_invent.InputTransactionInventory)

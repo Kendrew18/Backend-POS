@@ -35,10 +35,6 @@ func Login_User(Request request.Login_Request) (response.Response, error) {
 
 		key_byte := []byte("S0ft1nd0PUtr4PErk4s4 s3cr3t K3ys")
 
-		if err != nil {
-			panic(err.Error())
-		}
-
 		key := hex.EncodeToString(key_byte)
 
 		fmt.Println(key)
@@ -119,7 +115,7 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 
 	Request.Key = uuid.NewString()
 
-	err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password", "key").Create(&Request)
+	err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password").Create(&Request)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
