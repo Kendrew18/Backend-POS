@@ -102,6 +102,8 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 
 	if username == "" {
 
+		con := db.CreateConGorm().Table("user")
+
 		co := 0
 
 		err := con.Select("co").Order("co DESC").Limit(1).Scan(&co)
