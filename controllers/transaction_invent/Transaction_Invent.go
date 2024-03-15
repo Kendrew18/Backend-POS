@@ -96,16 +96,16 @@ func UpdateHeaderTransactionInventory(c echo.Context) error {
 
 	err = c.Bind(&Request_body)
 
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
 	Request = Request_body.Update_header_transaksi_inventory
 	Request_kode = Request_body.Update_header_transaksi_inventory_kode
 
 	Request_kode.Kode_user = User.Kode_user
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
 
 	if condition {
 		result, err = transaction_inventory.Update_Header_Transaction_Inventory(Request, Request_kode)
@@ -135,16 +135,16 @@ func UpdateBarangTransactionInventory(c echo.Context) error {
 
 	err = c.Bind(&Request_body)
 
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
 	Request = Request_body.Update_barang_transaksi_inventory
 	Request_kode = Request_body.Update_barang_transaksi_inventory_kode
 
 	Request_kode.Kode_user = User.Kode_user
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
 
 	if condition {
 
