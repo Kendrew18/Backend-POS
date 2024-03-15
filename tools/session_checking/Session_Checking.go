@@ -42,7 +42,7 @@ func Session_Checking(Token string) (response.User_Session_Response, bool) {
 
 	fmt.Println(token_data)
 
-	err := con.Table("user").Select("kode_user", "status").Where(" date_session_invalid > ? AND kode_user = ?", tanggal, token_data.Kode_user).Scan(&res).Error
+	err := con.Table("user").Select("kode_user", "status").Where(" date_session_invalid > ? AND kode_user = ? AND token = ?", tanggal, token_data.Kode_user, Token).Scan(&res).Error
 
 	if err != nil {
 		return res, false

@@ -28,12 +28,12 @@ func InputTransactionInventory(c echo.Context) error {
 
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
-	Request.Kode_user = User.Kode_user
-
 	if condition {
 
 		Request = Request_body.Transaksi_inventory
 		Request_barang = Request_body.Barang_transaksi_inventory
+
+		Request.Kode_user = User.Kode_user
 
 		result, err = transaction_inventory.Input_Transaction_Inventory(Request, Request_barang)
 
