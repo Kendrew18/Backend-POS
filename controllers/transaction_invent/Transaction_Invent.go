@@ -59,10 +59,12 @@ func ReadTransactionInventory(c echo.Context) error {
 	var result response.Response
 	var err error
 
-	Request_session.Token = c.Request().Header.Get("token")
-	Request_filter.Tanggal_awal = c.Request().Header.Get("tanggal_awal")
-	Request_filter.Tanggal_akhir = c.Request().Header.Get("tanggal_akhir")
-	Request_filter.Nama_supplier = c.Request().Header.Get("nama_supplier")
+	arr := [4]string{"session", "tanggal_awal", "tanggal_akhir", "nama_supplier"}
+
+	for i := 0; i < len(arr); i++ {
+		Request_session.Token = c.Request().Header.Get(arr[i])
+		fmt.Println(Request_session.Token)
+	}
 
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
