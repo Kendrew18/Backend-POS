@@ -170,7 +170,7 @@ func DeleteBarangTransaksiInventory(c echo.Context) error {
 	var err error
 
 	Request_session.Token = c.Request().Header.Get("token")
-	kode_barang := c.Request().Header.Get("kode_barang_transaksi_inventory")
+	kode_barang := c.Request().Header.Get("kode_barang")
 
 	fmt.Println(kode_barang)
 
