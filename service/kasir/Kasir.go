@@ -11,7 +11,6 @@ import (
 func Read_Stock_Kasir(Request request.Read_Kasir_Request) (response.Response, error) {
 	var res response.Response
 	var arr_invent []response.Read_Kasir_Response
-	var arr_detail_invent []response.Read_Detail_Inventory_Response
 
 	con := db.CreateConGorm()
 
@@ -24,6 +23,7 @@ func Read_Stock_Kasir(Request request.Read_Kasir_Request) (response.Response, er
 	}
 
 	for i := 0; i < len(arr_invent); i++ {
+		var arr_detail_invent []response.Read_Detail_Inventory_Response
 		err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_inventory", "jumlah", "DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal").Joins("join transaksi_inventory ti on ti.kode_transaksi_inventory = detail_inventory.kode_transaksi_inventory").Where("kode_inventory = ? && jumlah > 0", arr_invent[i].Kode_inventory).Order("detail_inventory.co ASC").Scan(&arr_detail_invent)
 
 		fmt.Println(arr_invent[i].Kode_inventory)
