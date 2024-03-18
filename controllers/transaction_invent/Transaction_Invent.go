@@ -211,6 +211,8 @@ func UpdateStatusTransaksiInventory(c echo.Context) error {
 	var result response.Response
 	var err error
 
+	Request_session.Token = c.Request().Header.Get("token")
+
 	err = c.Bind(&Request)
 
 	if err != nil {
