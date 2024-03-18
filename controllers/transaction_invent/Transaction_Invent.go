@@ -64,6 +64,7 @@ func ReadTransactionInventory(c echo.Context) error {
 
 	//TOKEN,TANGGAL_AWAL,TANGGAL_AKHIR,NAMA_SUPPLIER
 	Request_session.Token = c.Request().Header.Get("token")
+	fmt.Println(Request_session.Token)
 	split = strings.Split(Request_session.Token, ",")
 	Request_session.Token = split[0]
 	Request_filter.Tanggal_awal = split[1]
