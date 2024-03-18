@@ -5,7 +5,6 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/service/transaction_inventory"
 	"Bakend-POS/tools/session_checking"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -64,7 +63,7 @@ func ReadTransactionInventory(c echo.Context) error {
 
 	//TOKEN,TANGGAL_AWAL,TANGGAL_AKHIR,NAMA_SUPPLIER
 	Request_session.Token = c.Request().Header.Get("token")
-	fmt.Println(Request_session.Token)
+	//fmt.Println(Request_session.Token)
 	split = strings.Split(Request_session.Token, ",")
 	Request_session.Token = split[0]
 	Request_filter.Tanggal_awal = split[1]
@@ -177,12 +176,13 @@ func DeleteBarangTransaksiInventory(c echo.Context) error {
 	var err error
 
 	Request_session.Token = c.Request().Header.Get("token")
-	kode_barang := c.Request().Header.Get("kode_barang")
 
-	fmt.Println(kode_barang)
+	split := strings.Split(Request_session.Token, ",")
 
-	Request.Kode_barang_transaksi_inventory = kode_barang
-	fmt.Println(Request.Kode_barang_transaksi_inventory)
+	Request_session.Token = split[0]
+	Request.Kode_barang_transaksi_inventory = split[1]
+
+	//fmt.Println(Request.Kode_barang_transaksi_inventory)
 
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
