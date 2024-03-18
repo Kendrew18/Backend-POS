@@ -612,6 +612,12 @@ func Update_Status_Transaksi_Inventory(Request request.Body_Update_Status_Transa
 					res.Message = "Update Gagal"
 					res.Data = Request
 					return res, err.Error
+				} else {
+					res.Status = http.StatusOK
+					res.Message = "Suksess"
+					res.Data = map[string]int64{
+						"rows": 1,
+					}
 				}
 
 			} else if jenis_transaksi == 1 {
@@ -623,25 +629,15 @@ func Update_Status_Transaksi_Inventory(Request request.Body_Update_Status_Transa
 					res.Message = "Status Not Found"
 					res.Data = Request
 					return res, err.Error
+				} else {
+					res.Status = http.StatusOK
+					res.Message = "Suksess"
+					res.Data = map[string]int64{
+						"rows": 1,
+					}
 				}
 
 			}
-
-			fmt.Println(err)
-
-			if err != nil {
-				res.Status = http.StatusNotFound
-				res.Message = "Status Not Found"
-				res.Data = Request
-				return res, err.Error
-			} else {
-				res.Status = http.StatusOK
-				res.Message = "Suksess"
-				res.Data = map[string]int64{
-					"rows": 1,
-				}
-			}
-
 		}
 	} else {
 		res.Status = http.StatusNotFound
