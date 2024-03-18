@@ -609,7 +609,7 @@ func Update_Status_Transaksi_Inventory(Request request.Body_Update_Status_Transa
 
 				if err.Error != nil {
 					res.Status = http.StatusNotFound
-					res.Message = "Status Not Found"
+					res.Message = "Update Gagal"
 					res.Data = Request
 					return res, err.Error
 				}
