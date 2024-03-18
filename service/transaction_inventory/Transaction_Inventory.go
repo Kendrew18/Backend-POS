@@ -453,6 +453,52 @@ func Delete_Barang_Transaksi_Inventory(Request request.Update_Barang_Transaksi_I
 				res.Data = Request
 				return res, err.Error
 			}
+		} else {
+
+			total_harga := int64(0)
+
+			err = con.Table("barang_transaksi_inventory").Select("SUM(sub_total)").Where("kode_transaksi_inventory=?", data).Scan(&total_harga)
+
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
+
+			total_jumlah := float64(0)
+
+			err = con.Table("barang_transaksi_inventory").Select("SUM(jumlah)").Where("kode_transaksi_inventory=?", data).Scan(&total_jumlah)
+
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
+
+			var temp request.Input_Transaksi_Inventory_Request
+
+			err = con.Table("transaksi_inventory").Select("harga_ongkos_kirim", "ppn").Where("kode_transaksi_inventory=?", data).Scan(&temp)
+
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
+
+			total_harga = total_harga + temp.Harga_ongkos_kirim + int64(math.Round(float64(total_harga)*temp.Ppn/100))
+
+			err = con.Table("transaksi_inventory").Where("kode_transaksi_inventory = ?", data).Update("total_harga", total_harga).Update("total_barang", total_jumlah)
+
+			if err.Error != nil {
+				res.Status = http.StatusNotFound
+				res.Message = "Status Not Found"
+				res.Data = Request
+				return res, err.Error
+			}
+
 		}
 
 		if err.Error != nil {
