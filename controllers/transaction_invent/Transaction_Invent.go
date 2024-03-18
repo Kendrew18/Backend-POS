@@ -7,6 +7,7 @@ import (
 	"Bakend-POS/tools/session_checking"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -59,10 +60,15 @@ func ReadTransactionInventory(c echo.Context) error {
 	var result response.Response
 	var err error
 
+	var split []string
+
+	//TOKEN,TANGGAL_AWAL,TANGGAL_AKHIR,NAMA_SUPPLIER
 	Request_session.Token = c.Request().Header.Get("token")
-	Request_filter.Tanggal_awal = c.Request().Header.Get("tanggal_awal")
-	Request_filter.Tanggal_akhir = c.Request().Header.Get("tanggal_akhir")
-	Request_filter.Nama_supplier = c.Request().Header.Get("nama_supplier")
+	split = strings.Split(Request_session.Token, ",")
+	Request_session.Token = split[0]
+	Request_filter.Tanggal_awal = split[1]
+	Request_filter.Tanggal_akhir = split[2]
+	Request_filter.Nama_supplier = split[3]
 
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
