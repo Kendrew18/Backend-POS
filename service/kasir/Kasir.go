@@ -4,6 +4,7 @@ import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
+	"fmt"
 	"net/http"
 )
 
@@ -24,6 +25,10 @@ func Read_Stock_Kasir(Request request.Read_Kasir_Request) (response.Response, er
 
 	for i := 0; i < len(arr_invent); i++ {
 		err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_inventory", "jumlah", "DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal").Joins("join transaksi_inventory ti on ti.kode_transaksi_inventory = detail_inventory.kode_transaksi_inventory").Where("kode_inventory = ? && jumlah > 0", arr_invent[i].Kode_inventory).Order("detail_inventory.co ASC").Scan(&arr_detail_invent)
+
+		fmt.Println(arr_invent[i].Kode_inventory)
+
+		fmt.Println(arr_detail_invent)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
