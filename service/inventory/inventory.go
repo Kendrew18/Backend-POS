@@ -145,7 +145,7 @@ func Read_Inventory(Request request.Read_Inventory_Request) (response.Response, 
 	}
 
 	for i := 0; i < len(arr_invent); i++ {
-		err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_transaksi_inventory", "jumlah", "harga").Where("kode_inventory = ?", arr_invent[i].Kode_inventory).Scan(&arr_invent[i].Detail_inventory)
+		err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "kode_transaksi_inventory", "nama_supplier", "jumlah", "harga").Joins("JOIN transaksi_inventory ti on ti.kode_transaksi_inventory=detail_inventory.kode_transaksi_inventory").Where("kode_inventory = ?", arr_invent[i].Kode_inventory).Scan(&arr_invent[i].Detail_inventory)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound

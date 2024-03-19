@@ -12,6 +12,7 @@ type Read_Inventory_Response struct {
 type Detail_Iventory_Response struct {
 	Kode_barang_transaksi_inventory string  `json:"kode_barang_transaksi_inventory"`
 	Kode_transaksi_inventory        string  `json:"kode_transaksi_inventory"`
+	Nama_supplier                   string  `json:"nama_supplier"`
 	Jumlah                          float64 `json:"jumlah"`
 	Harga                           int64   `json:"harga"`
 }
