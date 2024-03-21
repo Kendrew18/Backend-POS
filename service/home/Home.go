@@ -6,6 +6,7 @@ import (
 	"Bakend-POS/models/response"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -48,17 +49,38 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 		return res, err.Error
 	}
 
-	err = con.Table("transaksi_inventory").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pengeluaran").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y') = ? && status = 1", Request.Kode_user, year).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&arr_invent.Chart_Pengeluaran)
+	for i := 1; i <= 12; i++ {
+		var chart_pengeluaran response.Chart_Pengeluaran
+		var chart_pemasukan response.Chart_Pemasukan
+		year_month := ""
 
-	if err.Error != nil {
-		res.Status = http.StatusNotFound
-		res.Message = "Status Not Found"
-		res.Data = Request
-		return res, err.Error
+		if i < 10 {
+			year_month = "2024-" + "0" + strconv.Itoa(i)
+		} else {
+			year_month = "2024-" + strconv.Itoa(i)
+		}
+
+		err = con.Table("transaksi_inventory").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pengeluaran").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ? && status = 1", Request.Kode_user, year_month).Scan(&chart_pengeluaran)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
+		err = con.Table("transaksi").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pemasukan").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ?", Request.Kode_user, year_month).Scan(&chart_pemasukan)
+
+		if err.Error == nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Not Found"
+			res.Data = arr_invent
+		}
+
+		arr_invent.Chart_Pemasukan = append(arr_invent.Chart_Pemasukan, chart_pemasukan)
+		arr_invent.Chart_Pengeluaran = append(arr_invent.Chart_Pengeluaran, chart_pengeluaran)
+
 	}
-
-	err = con.Table("transaksi").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pemasukan").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y') = ?", Request.Kode_user, year).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&arr_invent.Chart_Pemasukan)
-
 	if err.Error == nil {
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
