@@ -4,6 +4,7 @@ import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -17,6 +18,8 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 	tm := time.Now()
 	//tanggal := tm.Format("2006-01-02")
 	year := tm.Format("2006")
+
+	fmt.Println(year)
 
 	err := con.Table("transaksi_inventory").Select("SUM(total_harga) as total_pengeluaran").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y') = ? && status = 1", Request.Kode_user, year).Scan(&arr_invent.Total_pengeluaran)
 
