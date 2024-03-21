@@ -153,7 +153,7 @@ func Read_Transaksi(Request request.Read_Transaksi_Request, Request_filter reque
 
 	}
 
-	err := con.Table("transaksi").Select("kode_transaksi", "DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal", "kode_nota", "nama_customer", "nomer_telp_customer", "alamat_customer", "kode_jenis_pembayaran", "nama_jenis_pembayaran", "jumlah_total", "total_harga", "diskon").Where(statement).Order("transaksi.co DESC").Scan(&arr_data)
+	err := con.Table("transaksi").Select("kode_transaksi", "DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal", "kode_nota", "nama_customer", "nomer_telp_customer", "alamat_customer", "kode_jenis_pembayaran", "nama_jenis_pembayaran", "jumlah_total", "total_harga", "diskon").Joins("join jenis_pembayaran jp on jp.kode_jenis_pembayaran = transaksi.kode_jenis_pembayaran").Where(statement).Order("transaksi.co DESC").Scan(&arr_data)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
