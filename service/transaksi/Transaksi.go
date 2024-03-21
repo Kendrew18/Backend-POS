@@ -173,6 +173,8 @@ func Read_Transaksi(Request request.Read_Transaksi_Request, Request_filter reque
 
 		err = con.Table("barang_transaksi").Select("kode_barang_transaksi", "barang_transaksi.kode_inventory", "nama_barang", "barang_transaksi.jumlah_barang", "barang_transaksi.harga", "barang_transaksi.sub_total").Joins("join inventory s on s.kode_inventory = barang_transaksi.kode_inventory").Where("kode_transaksi = ?", arr_data[i].Kode_transaksi).Scan(&arr_data[i].Barang_transaksi)
 
+		fmt.Println(arr_data)
+
 		if err != nil {
 			res.Status = http.StatusNotFound
 			res.Message = "Status Not Found"
