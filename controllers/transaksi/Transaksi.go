@@ -6,6 +6,7 @@ import (
 	"Bakend-POS/service/transaksi"
 	"Bakend-POS/tools/session_checking"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -56,10 +57,14 @@ func ReadTransaksi(c echo.Context) error {
 	var result response.Response
 	var err error
 
+	//TOKEN,TANGGAL_AWAL,TANGGAL_AKHIR,NAMA_CUSTOMER
 	Request_session.Token = c.Request().Header.Get("token")
-	Request_filter.Tanggal_awal = c.Request().Header.Get("tanggal_awal")
-	Request_filter.Tanggal_akhir = c.Request().Header.Get("tanggal_akhir")
-	Request_filter.Nama_customer = c.Request().Header.Get("nama_customer")
+	//fmt.Println(Request_session.Token)
+	split := strings.Split(Request_session.Token, ",")
+	Request_session.Token = split[0]
+	Request_filter.Tanggal_awal = split[1]
+	Request_filter.Tanggal_akhir = split[2]
+	Request_filter.Nama_customer = split[3]
 
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
