@@ -60,7 +60,7 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 			year_month = "2024-" + strconv.Itoa(i)
 		}
 
-		err = con.Table("transaksi_inventory").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pengeluaran").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ? && status = 1", Request.Kode_user, year_month).Scan(&chart_pengeluaran)
+		err = con.Table("transaksi_inventory").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pengeluaran").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ? && status = 1", Request.Kode_user, year_month).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&chart_pengeluaran)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -69,7 +69,7 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 			return res, err.Error
 		}
 
-		err = con.Table("transaksi").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pemasukan").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ?", Request.Kode_user, year_month).Scan(&chart_pemasukan)
+		err = con.Table("transaksi").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pemasukan").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ?", Request.Kode_user, year_month).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&chart_pemasukan)
 
 		if err.Error == nil {
 			res.Status = http.StatusNotFound
