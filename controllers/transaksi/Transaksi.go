@@ -5,6 +5,7 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/service/transaksi"
 	"Bakend-POS/tools/session_checking"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -59,12 +60,15 @@ func ReadTransaksi(c echo.Context) error {
 
 	//TOKEN,TANGGAL_AWAL,TANGGAL_AKHIR,NAMA_CUSTOMER
 	Request_session.Token = c.Request().Header.Get("token")
+	fmt.Println(Request_session.Token)
 	//fmt.Println(Request_session.Token)
 	split := strings.Split(Request_session.Token, ",")
 	Request_session.Token = split[0]
 	Request_filter.Tanggal_awal = split[1]
 	Request_filter.Tanggal_akhir = split[2]
 	Request_filter.Nama_customer = split[3]
+
+	fmt.Println(Request_session.Token)
 
 	User, condition := session_checking.Session_Checking(Request_session.Token)
 
