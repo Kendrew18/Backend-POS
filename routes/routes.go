@@ -64,7 +64,7 @@ func Init() *echo.Echo {
 	TI.PUT("/update-barang", transaction_invent.UpdateBarangTransactionInventory)
 	TI.DELETE("/delete-barang", transaction_invent.DeleteBarangTransaksiInventory)
 	TI.PUT("/update-status", transaction_invent.UpdateStatusTransaksiInventory)
-	TI.PUT("/dropdown-barang", transaction_invent.DropdownTransaksiInventory)
+	TI.GET("/dropdown-barang", transaction_invent.DropdownTransaksiInventory)
 
 	//Kasir
 	KS.GET("/kasir", kasir.ReadStockKasir)
