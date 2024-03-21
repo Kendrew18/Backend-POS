@@ -6,7 +6,7 @@ type Read_Transaksi_Response struct {
 	Tanggal               string                           `json:"tanggal"`
 	Nama_customer         string                           `json:"nama_customer"`
 	Alamat_customer       string                           `json:"alamat_customer"`
-	Nomor_telp_customer   string                           `json:"nomor_telp_customer"`
+	Nomer_telp_customer   string                           `json:"nomer_telp_customer"`
 	Kode_jenis_pembayaran string                           `json:"kode_jenis_pembayaran"`
 	Nama_jenis_pembayaran string                           `json:"nama_jenis_pembayaran"`
 	Jumlah_total          float64                          `json:"jumlah_total"`
