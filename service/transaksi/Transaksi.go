@@ -124,7 +124,6 @@ func Input_Transaksi(Request request.Input_Transaksi_Request, Request_barang []r
 func Read_Transaksi(Request request.Read_Transaksi_Request, Request_filter request.Read_Transaksi_Filter_Request) (response.Response, error) {
 
 	var res response.Response
-
 	var arr_data []response.Read_Transaksi_Response
 
 	con := db.CreateConGorm()
@@ -179,6 +178,7 @@ func Read_Transaksi(Request request.Read_Transaksi_Request, Request_filter reque
 			res.Status = http.StatusNotFound
 			res.Message = "Status Not Found"
 			res.Data = Request
+			fmt.Println(err.Error)
 			return res, err.Error
 		}
 
