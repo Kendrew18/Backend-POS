@@ -236,3 +236,39 @@ func UpdateStatusTransaksiInventory(c echo.Context) error {
 
 	return c.JSON(result.Status, result)
 }
+
+func DropdownTransaksiInventory(c echo.Context) error {
+
+	var Request request.Dropdown_Inventory_transaksi_inventory_request
+	var Request_session request.Token_Request
+	var result response.Response
+	var err error
+
+	var split []string
+
+	//TOKEN,TANGGAL_AWAL,TANGGAL_AKHIR,NAMA_SUPPLIER
+	Request_session.Token = c.Request().Header.Get("token")
+	//fmt.Println(Request_session.Token)
+	split = strings.Split(Request_session.Token, ",")
+	Request_session.Token = split[0]
+	Request.Kode_nota = split[1]
+
+	User, condition := session_checking.Session_Checking(Request_session.Token)
+
+	Request.Kode_user = User.Kode_user
+
+	if condition {
+
+		result, err = transaction_inventory.Dropdown_Transaksi_Inventory(Request)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+		}
+	} else {
+		result.Status = http.StatusNotFound
+		result.Message = "Session Invalid"
+		result.Data = Request
+	}
+
+	return c.JSON(result.Status, result)
+}

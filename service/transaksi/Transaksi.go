@@ -4,6 +4,7 @@ import (
 	"Bakend-POS/db"
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
+	"fmt"
 	"math"
 	"net/http"
 	"strconv"
@@ -130,6 +131,8 @@ func Read_Transaksi(Request request.Read_Transaksi_Request, Request_filter reque
 
 	statement := "transaksi.kode_user = '" + Request.Kode_user + "'"
 
+	fmt.Println(Request.Kode_user)
+
 	if Request_filter.Nama_customer != "" {
 		statement += " && transaksi.nama_customer = '" + Request_filter.Nama_customer + "'"
 	}
@@ -166,7 +169,7 @@ func Read_Transaksi(Request request.Read_Transaksi_Request, Request_filter reque
 
 		var arr_barang []response.Read_Barang_Transaksi_Response
 
-		err = con.Table("barang_transaksi").Select("kode_barang_transaksi", "barang_transaksi.kode_inventory", "nama_barang", "barang_transaksi.jumlah", "barang_transaksi.harga", "barang_transaksi.sub_total").Joins("join inventory s on s.kode_inventory = barang_transaksi.kode_inventory").Where("kode_transaksi = ?", arr_data[i].Kode_transaksi).Scan(&arr_barang)
+		err = con.Table("barang_transaksi").Select("kode_barang_transaksi", "barang_transaksi.kode_inventory", "nama_barang", "barang_transaksi.jumlah_barang", "barang_transaksi.harga", "barang_transaksi.sub_total").Joins("join inventory s on s.kode_inventory = barang_transaksi.kode_inventory").Where("kode_transaksi = ?", arr_data[i].Kode_transaksi).Scan(&arr_barang)
 
 		if err != nil {
 			res.Status = http.StatusNotFound

@@ -29,6 +29,6 @@ type Check_Nama_Inventory_Request struct {
 }
 
 type Dropdown_Inventory_transaksi_inventory_request struct {
-	Uuid_session string `json:"uuid_session"`
-	Kode_nota    string `json:"kode_nota"`
+	Kode_user string `json:"kode_user"`
+	Kode_nota string `json:"kode_nota"`
 }

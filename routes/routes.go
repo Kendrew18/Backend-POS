@@ -3,6 +3,7 @@ package routes
 import (
 	kasir "Bakend-POS/controllers/Kasir"
 	"Bakend-POS/controllers/foto"
+	"Bakend-POS/controllers/home"
 	"Bakend-POS/controllers/inventory"
 	"Bakend-POS/controllers/transaction_invent"
 	"Bakend-POS/controllers/transaksi"
@@ -29,10 +30,13 @@ func Init() *echo.Echo {
 	KS := e.Group("/KS")
 	FT := e.Group("/FT")
 	TR := e.Group("/TR")
+	HM := e.Group("/HM")
 	// pmb := e.Group("/pmb")
 	// rtr := e.Group("/rtr")
 	// flt := e.Group("/flt")
 
+	//Home
+	HM.GET("/home", home.ReadHome)
 	//User
 	US.POST("/sign-up", user.SignUp)
 	US.POST("/login", user.LoginUser)
@@ -60,6 +64,7 @@ func Init() *echo.Echo {
 	TI.PUT("/update-barang", transaction_invent.UpdateBarangTransactionInventory)
 	TI.DELETE("/delete-barang", transaction_invent.DeleteBarangTransaksiInventory)
 	TI.PUT("/update-status", transaction_invent.UpdateStatusTransaksiInventory)
+	TI.PUT("/dropdown-barang", transaction_invent.DropdownTransaksiInventory)
 
 	//Kasir
 	KS.GET("/kasir", kasir.ReadStockKasir)

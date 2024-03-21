@@ -32,3 +32,12 @@ type Update_Barang_Transaction_Inventory_Response struct {
 	Total_barang             float64 `json:"total_barang"`
 	Total_harga              int64   `json:"total_harga"`
 }
+
+type Dropdown_Transaction_Inventory_Response struct {
+	Kode_barang_transaksi_inventory string  `json:"kode_barang_transaksi_inventory"`
+	Kode_transaksi_inventory        string  `json:"kode_transaksi_inventory"`
+	Kode_inventory                  string  `json:"kode_inventory"`
+	Nama_barang                     string  `json:"nama_barang"`
+	Jumlah                          float64 `json:"jumlah"`
+	Harga                           int64   `json:"harga"`
+}

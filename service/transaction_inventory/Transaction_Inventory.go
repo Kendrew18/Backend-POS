@@ -50,7 +50,21 @@ func Input_Transaction_Inventory(Request request.Input_Transaksi_Inventory_Reque
 	date, _ := time.Parse("02-01-2006", Request.Tanggal)
 	Request.Tanggal = date.Format("2006-01-02")
 
-	err = con.Table("transaksi_inventory").Select("co", "kode_transaksi_inventory", "nama_supplier", "nomor_telpon_supplier", "tanggal", "kode_nota", "kode_jenis_pembayaran", "harga_ongkos_kirim", "ppn", "kode_user", "jenis_transaksi").Create(&Request)
+	if Request.Jenis_transaksi == 1 {
+		err = con.Table("transaksi_inventory").Select("nama_supplier", "nomor_telpon_supplier").Where("kode_nota = ?", Request.Kode_nota).Scan(&Request)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
+		Request.Harga_ongkos_kirim = 0
+		Request.Ppn = 0
+	}
+
+	err = con.Table("transaksi_inventory").Select("co", "kode_transaksi_inventory", "nama_supplier", "nomor_telpon_supplier", "tanggal", "kode_nota", "harga_ongkos_kirim", "ppn", "kode_user", "jenis_transaksi").Create(&Request)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -643,6 +657,47 @@ func Update_Status_Transaksi_Inventory(Request request.Body_Update_Status_Transa
 		res.Status = http.StatusNotFound
 		res.Message = "Tidah dapat di edit diakrenakan sudah sukses"
 		res.Data = Request
+	}
+	return res, nil
+}
+
+func Dropdown_Transaksi_Inventory(Request request.Dropdown_Inventory_transaksi_inventory_request) (response.Response, error) {
+	var res response.Response
+	var arr_invent []response.Dropdown_Transaction_Inventory_Response
+
+	con := db.CreateConGorm()
+
+	if Request.Kode_nota != "" {
+
+		err := con.Table("detail_inventory").Select("kode_barang_transaksi_inventory", "detail_inventory.kode_transaksi_inventory", "detail_inventory.kode_inventory", "nama_barang", "jumlah", "harga").Joins("JOIN inventory i on i.kode_inventory = detail_inventory.kode_inventory").Joins("JOIN transaksi_inventory ti on ti.kode_transaksi_inventory=detail_inventory.kode_transaksi_inventory").Where("kode_nota = ?", Request.Kode_nota).Scan(&arr_invent)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
+	} else {
+		err := con.Table("inventory").Select("kode_inventory", "nama_barang").Where("kode_user = ?", Request.Kode_user).Scan(&arr_invent)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
+	}
+
+	if arr_invent == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arr_invent
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arr_invent
 	}
 	return res, nil
 }
