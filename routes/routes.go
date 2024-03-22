@@ -7,6 +7,7 @@ import (
 	"Bakend-POS/controllers/home"
 	"Bakend-POS/controllers/inventory"
 	"Bakend-POS/controllers/jenis_pembayaran"
+	"Bakend-POS/controllers/news"
 	"Bakend-POS/controllers/transaction_invent"
 	"Bakend-POS/controllers/transaksi"
 
@@ -35,9 +36,7 @@ func Init() *echo.Echo {
 	HM := e.Group("/HM")
 	JP := e.Group("/JP")
 	CT := e.Group("/CT")
-	// pmb := e.Group("/pmb")
-	// rtr := e.Group("/rtr")
-	// flt := e.Group("/flt")
+	NW := e.Group("/NW")
 
 	//Jenis Pembayaran
 	CT.GET("/category", category.ReadCategory)
@@ -83,6 +82,10 @@ func Init() *echo.Echo {
 
 	//Home
 	HM.GET("/home", home.ReadHome)
+
+	//News
+	NW.POST("/news", news.InputNews)
+	NW.GET("/news", news.ReadNews)
 
 	return e
 }

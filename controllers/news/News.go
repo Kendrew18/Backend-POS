@@ -13,7 +13,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func InputSupplier(c echo.Context) error {
+func InputNews(c echo.Context) error {
 	var Request request.Input_News_Request
 	var Request_session request.Token_Request
 	var result response.Response
@@ -47,6 +47,34 @@ func InputSupplier(c echo.Context) error {
 	if condition {
 
 		result, err = news.Input_News(Request, c.Response(), c.Request())
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+		}
+	} else {
+		result.Status = http.StatusNotFound
+		result.Message = "Session Invalid"
+		result.Data = Request
+	}
+
+	return c.JSON(result.Status, result)
+}
+
+func ReadNews(c echo.Context) error {
+	var Request request.Read_News_Request
+	var Request_session request.Token_Request
+	var result response.Response
+	var err error
+
+	Request_session.Token = c.Request().Header.Get("token")
+
+	User, condition := session_checking.Session_Checking(Request_session.Token)
+
+	Request.Kode_user = User.Kode_user
+
+	if condition {
+
+		result, err = news.Read_News(Request)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
