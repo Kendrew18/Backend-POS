@@ -56,12 +56,12 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 		month_year := ""
 
 		if i < 10 {
-			year_month = "2024-" + "0" + strconv.Itoa(i)
-			month_year = "0" + strconv.Itoa(i) + "-2024"
+			year_month = year + "-" + "0" + strconv.Itoa(i)
+			month_year = "0" + strconv.Itoa(i) + "-" + year
 		} else {
-			year_month = "2024-" + strconv.Itoa(i)
+			year_month = year + "-" + strconv.Itoa(i)
 
-			month_year = strconv.Itoa(i) + "-2024"
+			month_year = strconv.Itoa(i) + "-" + year
 		}
 
 		err = con.Table("transaksi_inventory").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as total_pengeluaran").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ? && status = 1", Request.Kode_user, year_month).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&chart_pengeluaran)

@@ -168,7 +168,7 @@ func Read_Inventory(Request request.Read_Inventory_Request) (response.Response, 
 	return res, nil
 }
 
-func Update_Inventory(Request request.Update_Inventory_Request) (response.Response, error) {
+func Update_Inventory(Request request.Update_Inventory_Request, writer http.ResponseWriter, request *http.Request) (response.Response, error) {
 	var res response.Response
 
 	con := db.CreateConGorm()
@@ -199,7 +199,7 @@ func Update_Inventory(Request request.Update_Inventory_Request) (response.Respon
 
 	if kode_inventory == "" {
 
-		err := con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("nama_barang", "harga_jual", "satuan_barang").Updates(&Request)
+		err := con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("nama_barang", "satuan_barang").Updates(&Request)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -213,22 +213,96 @@ func Update_Inventory(Request request.Update_Inventory_Request) (response.Respon
 				"rows": err.RowsAffected,
 			}
 		}
-	} else {
+	}
 
-		err := con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("harga_jual").Updates(&Request)
+	path := ""
 
-		if err.Error != nil {
-			res.Status = http.StatusNotFound
-			res.Message = "Status Not Found"
-			res.Data = Request
-			return res, err.Error
+	err = con.Table("inventory").Select("path_foto").Where("kode_inventory=?", Request.Kode_inventory).Scan(&path)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	}
+
+	request.ParseMultipartForm(10 * 1024 * 1024)
+	file, handler, err2 := request.FormFile("photo")
+
+	if file != nil {
+
+		if path != "uploads/foto_inventory/box.jpg" {
+			path = "./" + path
+			_ = os.Remove(path)
+
 		}
 
-		res.Status = http.StatusNotFound
-		res.Message = "data tidak dapat di update karena data telah terpakai"
-		res.Data = Request
+		defer file.Close()
 
+		fmt.Println("File Info")
+		fmt.Println("File Name : ", handler.Filename)
+		fmt.Println("File Size : ", handler.Size)
+		fmt.Println("File Type : ", handler.Header.Get("Content-Type"))
+
+		var tempFile *os.File
+		path := ""
+
+		if strings.Contains(handler.Filename, "jpg") {
+			path = "uploads/foto_inventory/" + Request.Kode_inventory + "-" + Request.Kode_user + ".jpg"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_news/", "Read"+"*.jpg")
+		}
+		if strings.Contains(handler.Filename, "jpeg") {
+			path = "uploads/foto_inventory/" + Request.Kode_inventory + "-" + Request.Kode_user + ".jpeg"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_inventory/", "Read"+"*.jpeg")
+		}
+		if strings.Contains(handler.Filename, "png") {
+			path = "uploads/foto_inventory/" + Request.Kode_inventory + "-" + Request.Kode_user + ".png"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_inventory/", "Read"+"*.png")
+		}
+
+		if err2 != nil {
+			return res, err2
+		}
+
+		fileBytes, err2 := ioutil.ReadAll(file)
+		if err2 != nil {
+			return res, err2
+		}
+
+		_, err2 = tempFile.Write(fileBytes)
+		if err2 != nil {
+			return res, err2
+		}
+
+		fmt.Println("Success!!")
+		fmt.Println(tempFile.Name())
+		tempFile.Close()
+
+		err2 = os.Rename(tempFile.Name(), path)
+		if err2 != nil {
+			fmt.Println(err)
+		}
+
+		defer tempFile.Close()
+
+		fmt.Println("new path:", tempFile.Name())
+
+		Request.Path_photo = path
+	}
+
+	err = con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("harga_jual", "path_photo").Updates(&Request)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
 		return res, err.Error
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Suksess"
+		res.Data = map[string]int64{
+			"rows": err.RowsAffected,
+		}
 	}
 
 	return res, nil

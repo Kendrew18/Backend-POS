@@ -93,6 +93,17 @@ func UpdateInventory(c echo.Context) error {
 	var result response.Response
 	var err error
 
+	data := c.FormValue("data")
+
+	fmt.Println(data)
+
+	jsonData := []byte(data)
+
+	err = json.Unmarshal(jsonData, &Request)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	Request_session.Token = c.Request().Header.Get("token")
 
 	err = c.Bind(&Request)
@@ -107,7 +118,7 @@ func UpdateInventory(c echo.Context) error {
 
 	if condition {
 
-		result, err = inventory.Update_Inventory(Request)
+		result, err = inventory.Update_Inventory(Request, c.Response(), c.Request())
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
