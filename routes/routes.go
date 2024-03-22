@@ -2,9 +2,11 @@ package routes
 
 import (
 	kasir "Bakend-POS/controllers/Kasir"
+	"Bakend-POS/controllers/category"
 	"Bakend-POS/controllers/foto"
 	"Bakend-POS/controllers/home"
 	"Bakend-POS/controllers/inventory"
+	"Bakend-POS/controllers/jenis_pembayaran"
 	"Bakend-POS/controllers/transaction_invent"
 	"Bakend-POS/controllers/transaksi"
 
@@ -31,12 +33,15 @@ func Init() *echo.Echo {
 	FT := e.Group("/FT")
 	TR := e.Group("/TR")
 	HM := e.Group("/HM")
+	JP := e.Group("/JP")
+	CT := e.Group("/CT")
 	// pmb := e.Group("/pmb")
 	// rtr := e.Group("/rtr")
 	// flt := e.Group("/flt")
 
-	//Home
-	HM.GET("/home", home.ReadHome)
+	//Jenis Pembayaran
+	CT.GET("/category", category.ReadCategory)
+
 	//User
 	US.POST("/sign-up", user.SignUp)
 	US.POST("/login", user.LoginUser)
@@ -69,9 +74,15 @@ func Init() *echo.Echo {
 	//Kasir
 	KS.GET("/kasir", kasir.ReadStockKasir)
 
+	//Jenis Pembayaran
+	JP.GET("/jenis-pembayaran", jenis_pembayaran.ReadJenisPembayaran)
+
 	//Transksi
 	TR.POST("/transaksi", transaksi.InputTransaksi)
 	TR.GET("/transaksi", transaksi.ReadTransaksi)
+
+	//Home
+	HM.GET("/home", home.ReadHome)
 
 	return e
 }
