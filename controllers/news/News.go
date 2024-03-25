@@ -25,6 +25,8 @@ func InputNews(c echo.Context) error {
 
 	jsonData := []byte(data)
 
+	fmt.Println(jsonData)
+
 	err = json.Unmarshal(jsonData, &Request)
 	if err != nil {
 		log.Fatal(err)
