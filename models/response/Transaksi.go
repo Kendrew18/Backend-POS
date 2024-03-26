@@ -25,3 +25,8 @@ type Read_Barang_Transaksi_Response struct {
 	Harga                           int64   `json:"harga"`
 	Sub_total                       int64   `json:"sub_total"`
 }
+
+type Read_Jumlah_Invent_Response struct {
+	Kode_inventory string  `json:"kode_inventory"`
+	Jumlah_barang  float64 `json:"jumlah_barang"`
+}

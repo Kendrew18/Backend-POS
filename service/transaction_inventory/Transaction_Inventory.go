@@ -636,6 +636,15 @@ func Update_Status_Transaksi_Inventory(Request request.Body_Update_Status_Transa
 
 			} else if jenis_transaksi == 1 {
 
+				err = con.Exec("UPDATE `inventory` JOIN barang_transaksi_inventory bsm ON bsm.kode_inventory = inventory.kode_inventory SET `jumlah_barang`=jumlah_barang - jumlah WHERE bsm.kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory)
+
+				if err.Error != nil {
+					res.Status = http.StatusNotFound
+					res.Message = "Update Gagal"
+					res.Data = Request
+					return res, err.Error
+				}
+
 				err = con.Exec("UPDATE `detail_inventory` JOIN barang_transaksi_inventory bti ON bti.kode_refund = detail_inventory.kode_barang_transaksi_inventory SET detail_inventory.jumlah = detail_inventory.jumlah - bti.jumlah WHERE bti.kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory)
 
 				if err.Error != nil {

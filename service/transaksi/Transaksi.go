@@ -110,6 +110,15 @@ func Input_Transaksi(Request request.Input_Transaksi_Request, Request_barang []r
 		res.Message = "Status Not Found"
 		res.Data = Request
 		return res, err.Error
+	}
+
+	err = con.Exec("UPDATE `inventory` JOIN barang_transaksi bsm ON bsm.kode_inventory = inventory.kode_inventory SET inventory.`jumlah_barang`=inventory.jumlah_barang - bsm.jumlah_barang WHERE bsm.kode_transaksi= ?", Request.Kode_transaksi)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
 	} else {
 		res.Status = http.StatusOK
 		res.Message = "Suksess"
