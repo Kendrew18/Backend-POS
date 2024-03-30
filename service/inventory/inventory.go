@@ -288,9 +288,19 @@ func Update_Inventory(Request request.Update_Inventory_Request, writer http.Resp
 		fmt.Println("new path:", tempFile.Name())
 
 		Request.Path_photo = path
+
+		err = con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("path_photo").Updates(&Request)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
 	}
 
-	err = con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("harga_jual", "path_photo").Updates(&Request)
+	err = con.Table("inventory").Where("kode_inventory = ?", Request.Kode_inventory).Select("harga_jual").Updates(&Request)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
