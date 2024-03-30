@@ -217,7 +217,7 @@ func Update_Inventory(Request request.Update_Inventory_Request, writer http.Resp
 
 	path := ""
 
-	err = con.Table("inventory").Select("path_foto").Where("kode_inventory=?", Request.Kode_inventory).Scan(&path)
+	err = con.Table("inventory").Select("path_photo").Where("kode_inventory=?", Request.Kode_inventory).Scan(&path)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
