@@ -7,6 +7,7 @@ import (
 	"Bakend-POS/tools/session_checking"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -29,7 +30,7 @@ func InputNews(c echo.Context) error {
 	fmt.Println(len(str))
 
 	for i := 0; i < len(str); i++ {
-		fmt.Println(str[i])
+		fmt.Println("Index ", strconv.Itoa(i), ":", str[i])
 	}
 
 	str2 := strings.Split(str[2], "\n")
