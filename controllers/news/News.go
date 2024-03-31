@@ -7,6 +7,7 @@ import (
 	"Bakend-POS/tools/session_checking"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -35,10 +36,11 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(jsonData)
 
-	_ = json.Unmarshal(jsonData, &Request)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	err := json.Unmarshal(jsonData, &Request)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Request_session.Token = c.Request().Header.Get("token")
 
