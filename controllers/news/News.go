@@ -26,6 +26,10 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(str)
 
+	str2 := strings.Split(str[2], "\n")
+
+	fmt.Println(str2)
+
 	jsonData := []byte(data)
 
 	fmt.Println(jsonData)
