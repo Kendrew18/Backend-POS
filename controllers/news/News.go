@@ -5,6 +5,7 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/service/news"
 	"Bakend-POS/tools/session_checking"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -13,7 +14,7 @@ import (
 )
 
 func InputNews(c echo.Context) error {
-	//var Request request.Input_News_Request
+	var Request request.Input_News_Request
 	//var Request_session request.Token_Request
 	var result response.Response
 	//var err error
@@ -34,7 +35,7 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(jsonData)
 
-	// err = json.Unmarshal(jsonData, &Request)
+	_ = json.Unmarshal(jsonData, &Request)
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
