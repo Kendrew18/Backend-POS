@@ -26,9 +26,9 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(str)
 
-	// jsonData := []byte(data)
+	jsonData := []byte(data)
 
-	// fmt.Println(jsonData)
+	fmt.Println(jsonData)
 
 	// err = json.Unmarshal(jsonData, &Request)
 	// if err != nil {
