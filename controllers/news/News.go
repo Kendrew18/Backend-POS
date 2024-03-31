@@ -28,6 +28,10 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(len(str))
 
+	for i := 0; i < len(str); i++ {
+		fmt.Println(str[i])
+	}
+
 	str2 := strings.Split(str[2], "\n")
 
 	fmt.Println(str2)
