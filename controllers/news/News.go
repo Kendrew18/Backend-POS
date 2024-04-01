@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -22,11 +21,9 @@ func InputNews(c echo.Context) error {
 
 	data := c.FormValue("data")
 
-	fmt.Println(strings.ReplaceAll(data, "\\n", "\n"))
+	fmt.Println(data)
 
-	jsonData := []byte(`
-	` + strings.ReplaceAll(data, "\\n", "\n") + `
-	`)
+	jsonData := []byte(data)
 
 	fmt.Println(jsonData)
 
