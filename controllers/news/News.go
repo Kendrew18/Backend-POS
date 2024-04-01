@@ -20,13 +20,17 @@ func InputNews(c echo.Context) error {
 	var result response.Response
 	//var err error
 
-	data := c.FormValue("data")
+	data := "`"
+
+	data += c.FormValue("data")
 
 	fmt.Println(data)
 
 	str := strings.Trim(data, "\n")
 
 	//str := strings.Split(data, "\n")
+
+	data += "`"
 
 	fmt.Println(str)
 
