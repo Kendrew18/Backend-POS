@@ -8,6 +8,7 @@ type Input_Transaksi_Request struct {
 	Kode_jenis_pembayaran string  `json:"kode_jenis_pembayaran"`
 	Jumlah_total          float64 `json:"jumlah_total"`
 	Total_harga           int64   `json:"total_harga"`
+	Tax                   float64 `json:"tax"`
 	Diskon                int64   `json:"diskon"`
 	Nama_customer         string  `json:"nama_customer"`
 	Alamat_customer       string  `json:"alamat_customer"`

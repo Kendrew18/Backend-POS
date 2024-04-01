@@ -50,7 +50,7 @@ func Input_Transaksi(Request request.Input_Transaksi_Request, Request_barang []r
 	Request.Kode_nota = Request.Kode_nota + strconv.Itoa(co_pembayaran)
 	Request.Jumlah_total = 0.0
 
-	err = con.Table("transaksi").Select("co", "kode_transaksi", "kode_nota", "tanggal", "kode_jenis_pembayaran", "jumlah_total", "total_harga", "diskon", "kode_user", "nama_customer", "nomer_telp_customer", "alamat_customer").Create(&Request)
+	err = con.Table("transaksi").Select("co", "kode_transaksi", "kode_nota", "tanggal", "kode_jenis_pembayaran", "jumlah_total", "total_harga", "diskon", "tax", "kode_user", "nama_customer", "nomer_telp_customer", "alamat_customer").Create(&Request)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -84,6 +84,8 @@ func Input_Transaksi(Request request.Input_Transaksi_Request, Request_barang []r
 	}
 
 	total_harga = total_harga - Request.Diskon
+
+	total_harga = total_harga + int64(math.Round(float64(total_harga)*Request.Tax/100))
 
 	err = con.Table("barang_transaksi").Select("co", "kode_barang_transaksi", "kode_transaksi", "kode_barang_transaksi_inventory", "kode_inventory", "jumlah_barang", "harga", "nama_satuan", "sub_total").Create(&Request_barang)
 
