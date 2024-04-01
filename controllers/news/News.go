@@ -22,7 +22,9 @@ func InputNews(c echo.Context) error {
 
 	data := c.FormValue("data")
 
-	jsonData := []byte(strings.ReplaceAll(strings.ReplaceAll(data, "\\n", "\\n"), "\\\\", "\\"))
+	fmt.Println(strings.ReplaceAll(data, "\\n", "\n"))
+
+	jsonData := []byte(strings.ReplaceAll(data, "\\n", "\n"))
 
 	fmt.Println(jsonData)
 
