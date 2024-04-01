@@ -21,7 +21,14 @@ func InputNews(c echo.Context) error {
 
 	data := c.FormValue("data")
 
-	fmt.Println(data)
+	fmt.Println(`
+	` + data + `
+	`)
+
+	data2 := `abcdef
+	abc`
+
+	fmt.Println(data2)
 
 	jsonData := []byte(`
 	` + data + `
