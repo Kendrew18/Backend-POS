@@ -33,6 +33,8 @@ func InputNews(c echo.Context) error {
 		log.Fatal(err)
 	}
 
+	fmt.Println(Request)
+
 	// Request_session.Token = c.Request().Header.Get("token")
 
 	// fmt.Println(Request)
