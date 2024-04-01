@@ -30,7 +30,7 @@ func InputNews(c echo.Context) error {
 
 	//str := strings.Split(data, "\n")
 
-	data += "`"
+	data = data + "`"
 
 	fmt.Println(str)
 
