@@ -22,7 +22,7 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(data)
 
-	str := strings.TrimSuffix(data, "\n")
+	str := strings.Trim(data, "\n")
 
 	//str := strings.Split(data, "\n")
 
