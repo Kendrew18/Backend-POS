@@ -24,20 +24,13 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(strings.ReplaceAll(data, "\\n", "\n"))
 
-	// Create a new reader from the JSON data
-	jsonReader := strings.NewReader(strings.ReplaceAll(strings.ReplaceAll(data, "\\n", "\\n"), "\\\\", "\\"))
+	jsonData := []byte(`
+	` + strings.ReplaceAll(data, "\\n", "\n") + `
+	`)
 
-	// Create a new JSON decoder
-	dec := json.NewDecoder(jsonReader)
+	fmt.Println(jsonData)
 
-	// Decode the JSON data into the Request variable
-	err := dec.Decode(&Request)
-
-	// jsonData := []byte(strings.ReplaceAll(data, "\\n", "\n"))
-
-	// fmt.Println(jsonData)
-
-	// err := json.Unmarshal(jsonData, &Request)
+	err := json.Unmarshal(jsonData, &Request)
 
 	if err != nil {
 		log.Fatal(err)
