@@ -11,6 +11,7 @@ type Read_Transaksi_Response struct {
 	Nama_jenis_pembayaran string                           `json:"nama_jenis_pembayaran"`
 	Jumlah_total          float64                          `json:"jumlah_total"`
 	Total_harga           int64                            `json:"total_harga"`
+	Tax                   float64                          `json:"tax"`
 	Diskon                int64                            `json:"diskon"`
 	Barang_transaksi      []Read_Barang_Transaksi_Response `json:"barang_transaksi" gorm:"-"`
 }

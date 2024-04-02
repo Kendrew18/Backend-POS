@@ -6,6 +6,7 @@ type Read_Kasir_Response struct {
 	Jumlah_barang    float64                          `json:"jumlah_barang"`
 	Satuan_barang    string                           `json:"satuan_barang"`
 	Harga_jual       int64                            `json:"harga_jual"`
+	Path_photo       string                           `json:"path_photo"`
 	Detail_inventory []Read_Detail_Inventory_Response `json:"detail_inventory" gorm:"-"`
 }
 

@@ -14,7 +14,7 @@ func Read_Stock_Kasir(Request request.Read_Kasir_Request) (response.Response, er
 
 	con := db.CreateConGorm()
 
-	err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual").Where("kode_user = ? && jumlah_barang > 0", Request.Kode_user).Order("co DESC").Scan(&arr_invent)
+	err := con.Table("inventory").Select("kode_inventory", "nama_barang", "jumlah_barang", "satuan_barang", "harga_jual", "path_photo").Where("kode_user = ? && jumlah_barang > 0", Request.Kode_user).Order("co DESC").Scan(&arr_invent)
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
 		res.Message = "Status Not Found"
