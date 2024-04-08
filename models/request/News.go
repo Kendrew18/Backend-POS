@@ -15,5 +15,8 @@ type Read_News_Request struct {
 }
 
 type Content struct {
-	Content string `json:"content"`
+	Co           int    `json:"co"`
+	Kode_content string `json:"kode_content"`
+	Kode_news    string `json:"kode_news"`
+	Content      string `json:"content"`
 }
