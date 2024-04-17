@@ -601,7 +601,7 @@ func Update_Status_Transaksi_Inventory(Request request.Body_Update_Status_Transa
 
 				var arr_data []request.Input_Barang_Transaksi_Inventory_Request
 
-				err = con.Table("barang_transaksi_inventory").Select("co", "kode_barang_transaksi_inventory", "kode_transaksi_inventory", "kode_inventory", "jumlah", "harga", "sub_total").Where("kode_transaksi_innventory = ?", Request_kode.Kode_transaksi_inventory).Scan(&arr_data)
+				err = con.Table("barang_transaksi_inventory").Select("co", "kode_barang_transaksi_inventory", "kode_transaksi_inventory", "kode_inventory", "jumlah", "harga", "sub_total").Where("kode_transaksi_inventory = ?", Request_kode.Kode_transaksi_inventory).Scan(&arr_data)
 
 				if err.Error != nil {
 					res.Status = http.StatusNotFound
