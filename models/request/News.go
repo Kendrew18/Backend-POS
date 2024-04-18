@@ -5,9 +5,8 @@ type Input_News_Request struct {
 	Kode_news  string    `json:"kode_news"`
 	Date       string    `json:"date"`
 	Title      string    `json:"title"`
-	Content    []Content `json:"content"`
+	Content    []Content `json:"content" gorm:"-"`
 	Image_path string    `json:"image_path"`
-	Kode_user  string    `json:"kode_user"`
 }
 
 type Read_News_Request struct {

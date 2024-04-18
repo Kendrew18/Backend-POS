@@ -35,32 +35,11 @@ func InputNews(c echo.Context) error {
 
 	fmt.Println(Request)
 
-	// Request_session.Token = c.Request().Header.Get("token")
+	result, err = news.Input_News(Request, c.Response(), c.Request())
 
-	// fmt.Println(Request)
-
-	// //err = c.Bind(&Request)
-
-	// if err != nil {
-	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	// }
-
-	// User, condition := session_checking.Session_Checking(Request_session.Token)
-
-	// Request.Kode_user = User.Kode_user
-
-	// if condition {
-
-	// 	result, err = news.Input_News(Request, c.Response(), c.Request())
-
-	// 	if err != nil {
-	// 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	// 	}
-	// } else {
-	// 	result.Status = http.StatusNotFound
-	// 	result.Message = "Session Invalid"
-	// 	result.Data = Request
-	// }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
 
 	return c.JSON(result.Status, result)
 }

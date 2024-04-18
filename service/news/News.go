@@ -19,7 +19,7 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 	con := db.CreateConGorm()
 	co := 0
 
-	err := con.Table("news").Select("co").Order("co DESC").Scan(&co)
+	err := con.Table("news").Select("co").Order("co DESC").Limit(1).Scan(&co)
 
 	Request.Co = co + 1
 	Request.Kode_news = "NW-" + strconv.Itoa(Request.Co)
@@ -94,7 +94,31 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 		Request.Image_path = "uploads/foto_news/box.jpg"
 	}
 
-	err = con.Select("co", "kode_news", "date", "title", "content", "image_path").Create(&Request)
+	err = con.Select("co", "kode_news", "date", "title", "image_path").Create(&Request)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	}
+
+	err = con.Table("content").Select("co").Limit(1).Order("co DESC").Scan(&co)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = Request
+		return res, err.Error
+	}
+
+	for i := 0; i < len(Request.Content); i++ {
+		Request.Content[i].Co = co + 1 + i
+		Request.Content[i].Kode_content = "CT-" + strconv.Itoa(Request.Content[i].Co)
+		Request.Content[i].Kode_news = Request.Kode_news
+	}
+
+	err = con.Select("co", "kode_news", "kode_content", "content").Create(&Request.Content)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -114,27 +138,41 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 
 func Read_News(Request request.Read_News_Request) (response.Response, error) {
 	var res response.Response
-	var data []response.Read_News_Response
+	var arr_invent []response.Read_News_Response
 
-	con := db.CreateConGorm().Table("news")
+	con := db.CreateConGorm()
 
-	err := con.Select("kode_news", "date", "title", "content", "image_path").Order("co DESC").Scan(&data).Error
+	tanggal := time.Now()
+	tanggal_sql := tanggal.Format("2006-01-02")
 
-	if err != nil {
+	err := con.Table("news").Select("kode_news", "DATE_FORMAT(date, '%d-%m-%Y') AS date", "image_path", "title").Where("date <= ?", tanggal_sql).Scan(&arr_invent)
+
+	if err.Error != nil {
 		res.Status = http.StatusNotFound
 		res.Message = "Status Not Found"
 		res.Data = Request
-		return res, err
+		return res, err.Error
 	}
 
-	if data == nil {
+	for i := 0; i < len(arr_invent); i++ {
+		err := con.Table("content").Select("kode_content", "content").Where("kode_news = ?", arr_invent[i].Kode_news).Order("co ASC").Scan(&arr_invent[i].Content)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+	}
+
+	if arr_invent == nil {
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
-		res.Data = data
+		res.Data = arr_invent
 	} else {
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
-		res.Data = data
+		res.Data = arr_invent
 	}
 
 	return res, nil
