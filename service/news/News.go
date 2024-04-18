@@ -94,7 +94,7 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 		Request.Image_path = "uploads/foto_news/box.jpg"
 	}
 
-	err = con.Select("co", "kode_news", "date", "title", "image_path").Create(&Request)
+	err = con.Table("news").Select("co", "kode_news", "date", "title", "image_path").Create(&Request)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -118,7 +118,7 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 		Request.Content[i].Kode_news = Request.Kode_news
 	}
 
-	err = con.Select("co", "kode_news", "kode_content", "content").Create(&Request.Content)
+	err = con.Table("content").Select("co", "kode_news", "kode_content", "content").Create(&Request.Content)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
