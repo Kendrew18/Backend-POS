@@ -168,9 +168,9 @@ func Read_News(Request request.Read_News_Request) (response.Response, error) {
 			}
 		}
 
-		fmt.Println(content)
-
 		arr_invent[i].Content = content
+
+		fmt.Println(arr_invent[i].Content)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
