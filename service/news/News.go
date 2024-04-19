@@ -164,9 +164,11 @@ func Read_News(Request request.Read_News_Request) (response.Response, error) {
 			content += temp[i].Content
 
 			if i < len(temp)-1 {
-				content += `\n`
+				content += "\n"
 			}
 		}
+
+		fmt.Println(content)
 
 		arr_invent[i].Content = content
 
