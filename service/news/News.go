@@ -273,6 +273,15 @@ func Delete_News(Request request.Delete_News_Request) (response.Response, error)
 			_ = os.Remove(path_photo)
 		}
 
+		err = con.Table("content").Where("kode_news = ?", Request.Kode_news).Delete("")
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
 		err = con.Table("news").Where("kode_news = ?", Request.Kode_news).Delete("")
 
 		if err.Error != nil {
