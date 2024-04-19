@@ -155,7 +155,20 @@ func Read_News(Request request.Read_News_Request) (response.Response, error) {
 	}
 
 	for i := 0; i < len(arr_invent); i++ {
-		err := con.Table("content").Select("kode_content", "content").Where("kode_news = ?", arr_invent[i].Kode_news).Order("co ASC").Scan(&arr_invent[i].Content)
+		var temp []response.Read_Content_Response
+		err := con.Table("content").Select("kode_content", "content").Where("kode_news = ?", arr_invent[i].Kode_news).Order("co ASC").Scan(&temp)
+
+		content := ""
+
+		for i := 0; i < len(temp); i++ {
+			content += temp[i].Content
+
+			if i < len(temp)-1 {
+				content += "\n"
+			}
+		}
+
+		arr_invent[i].Content = content
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
