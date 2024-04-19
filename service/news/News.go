@@ -50,16 +50,16 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 		path := ""
 
 		if strings.Contains(handler.Filename, "jpg") {
-			path = "uploads/foto_inventory/" + Request.Kode_news + ".jpg"
+			path = "uploads/foto_news/" + Request.Kode_news + ".jpg"
 			tempFile, err2 = ioutil.TempFile("uploads/foto_news/", "Read"+"*.jpg")
 		}
 		if strings.Contains(handler.Filename, "jpeg") {
-			path = "uploads/foto_inventory/" + Request.Kode_news + ".jpeg"
-			tempFile, err2 = ioutil.TempFile("uploads/foto_inventory/", "Read"+"*.jpeg")
+			path = "uploads/foto_news/" + Request.Kode_news + ".jpeg"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_news/", "Read"+"*.jpeg")
 		}
 		if strings.Contains(handler.Filename, "png") {
-			path = "uploads/foto_inventory/" + Request.Kode_news + ".png"
-			tempFile, err2 = ioutil.TempFile("uploads/foto_inventory/", "Read"+"*.png")
+			path = "uploads/foto_news/" + Request.Kode_news + ".png"
+			tempFile, err2 = ioutil.TempFile("uploads/foto_news/", "Read"+"*.png")
 		}
 
 		if err2 != nil {
@@ -238,9 +238,20 @@ func Delete_News(Request request.Delete_News_Request) (response.Response, error)
 
 	con := db.CreateConGorm()
 
+	path_photo := ""
+
 	date_news := ""
 
-	err := con.Table("news").Select("date").Where("kode_news = ?", Request.Kode_news).Scan(&date_news)
+	err := con.Table("news").Select("image_path").Where("kode_news = ?", Request.Kode_news).Scan(&path_photo)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Update Error"
+		res.Data = Request
+		return res, err.Error
+	}
+
+	err = con.Table("news").Select("date").Where("kode_news = ?", Request.Kode_news).Scan(&date_news)
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -256,6 +267,11 @@ func Delete_News(Request request.Delete_News_Request) (response.Response, error)
 	time_news, _ := time.Parse("2006-01-02", date_news)
 
 	if time_news.After(time_batas) {
+
+		if path_photo != "uploads/foto_news/box.jpg" {
+			path_photo = "./" + path_photo
+			_ = os.Remove(path_photo)
+		}
 
 		err = con.Table("news").Where("kode_news = ?", Request.Kode_news).Delete("")
 

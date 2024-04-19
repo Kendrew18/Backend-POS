@@ -234,7 +234,6 @@ func Update_Inventory(Request request.Update_Inventory_Request, writer http.Resp
 		if path != "uploads/foto_inventory/box.jpg" {
 			path = "./" + path
 			_ = os.Remove(path)
-
 		}
 
 		defer file.Close()
