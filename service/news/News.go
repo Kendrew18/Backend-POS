@@ -255,7 +255,7 @@ func Delete_News(Request request.Delete_News_Request) (response.Response, error)
 	time_batas, _ := time.Parse("2006-01-02", date_now_format)
 	time_news, _ := time.Parse("2006-01-02", date_news)
 
-	if time_news.Before(time_batas) {
+	if time_news.After(time_batas) {
 
 		err = con.Table("news").Where("kode_news = ?", Request.Kode_news).Delete("")
 
