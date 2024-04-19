@@ -44,7 +44,7 @@ func InputNews(c echo.Context) error {
 	return c.JSON(result.Status, result)
 }
 
-func ReadNews(c echo.Context) error {
+func ReadNewsUser(c echo.Context) error {
 	var Request request.Read_News_Request
 	var Request_session request.Token_Request
 	var result response.Response
@@ -58,7 +58,7 @@ func ReadNews(c echo.Context) error {
 
 	if condition {
 
-		result, err = news.Read_News(Request)
+		result, err = news.Read_News_User(Request)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -67,6 +67,35 @@ func ReadNews(c echo.Context) error {
 		result.Status = http.StatusNotFound
 		result.Message = "Session Invalid"
 		result.Data = Request
+	}
+
+	return c.JSON(result.Status, result)
+}
+
+func ReadNewsAdmin(c echo.Context) error {
+	result, err := news.Read_News_Admin()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}
+
+func DeleteNews(c echo.Context) error {
+	var Request_body request.Delete_News_Request
+	var err error
+
+	err = c.Bind(&Request_body)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	result, err := news.Delete_News(Request_body)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
 	return c.JSON(result.Status, result)

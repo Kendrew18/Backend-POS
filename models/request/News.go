@@ -19,3 +19,7 @@ type Content struct {
 	Kode_news    string `json:"kode_news"`
 	Content      string `json:"content"`
 }
+
+type Delete_News_Request struct {
+	Kode_news string `json:"kode_news"`
+}

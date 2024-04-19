@@ -85,7 +85,9 @@ func Init() *echo.Echo {
 
 	//News
 	NW.POST("/news", news.InputNews)
-	NW.GET("/news", news.ReadNews)
+	NW.GET("/news", news.ReadNewsAdmin)
+	NW.GET("/news-user", news.ReadNewsUser)
+	NW.DELETE("/news", news.DeleteNews)
 
 	return e
 }

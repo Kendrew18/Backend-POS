@@ -136,9 +136,9 @@ func Input_News(Request request.Input_News_Request, writer http.ResponseWriter, 
 	return res, nil
 }
 
-func Read_News(Request request.Read_News_Request) (response.Response, error) {
+func Read_News_User(Request request.Read_News_Request) (response.Response, error) {
 	var res response.Response
-	var arr_invent []response.Read_News_Response
+	var arr_invent []response.Read_News_User_Response
 
 	con := db.CreateConGorm()
 
@@ -188,6 +188,95 @@ func Read_News(Request request.Read_News_Request) (response.Response, error) {
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
 		res.Data = arr_invent
+	}
+
+	return res, nil
+}
+
+func Read_News_Admin() (response.Response, error) {
+	var res response.Response
+	var arr_invent []response.Read_News_Admin_Response
+
+	con := db.CreateConGorm()
+
+	err := con.Table("news").Select("kode_news", "DATE_FORMAT(date, '%d-%m-%Y') AS date", "image_path", "title").Scan(&arr_invent)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Status Not Found"
+		res.Data = nil
+		return res, err.Error
+	}
+
+	for i := 0; i < len(arr_invent); i++ {
+
+		err := con.Table("content").Select("kode_content", "content").Where("kode_news = ?", arr_invent[i].Kode_news).Order("co ASC").Scan(&arr_invent[i].Content)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = nil
+			return res, err.Error
+		}
+	}
+
+	if arr_invent == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arr_invent
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arr_invent
+	}
+
+	return res, nil
+}
+
+func Delete_News(Request request.Delete_News_Request) (response.Response, error) {
+	var res response.Response
+
+	con := db.CreateConGorm()
+
+	date_news := ""
+
+	err := con.Table("news").Select("date").Where("kode_news = ?", Request.Kode_news).Scan(&date_news)
+
+	if err.Error != nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Update Error"
+		res.Data = Request
+		return res, err.Error
+	}
+
+	date_now := time.Now()
+	date_now_format := date_now.Format("2006-01-02")
+
+	time_batas, _ := time.Parse("2006-01-02", date_now_format)
+	time_news, _ := time.Parse("2006-01-02", date_news)
+
+	if time_news.Before(time_batas) {
+
+		err = con.Table("news").Where("kode_news = ?", Request.Kode_news).Delete("")
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
+		}
+
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Data Tidak dapat di delete"
+		res.Data = Request
+		return res, err.Error
 	}
 
 	return res, nil
