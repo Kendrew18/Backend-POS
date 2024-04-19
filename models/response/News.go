@@ -12,7 +12,7 @@ type Read_News_Admin_Response struct {
 	Kode_news  string                  `json:"kode_news"`
 	Date       string                  `json:"date"`
 	Title      string                  `json:"title"`
-	Content    []Read_Content_Response `json:"content"`
+	Content    []Read_Content_Response `json:"content" gorm:"-"`
 	Image_path string                  `json:"image_path"`
 }
 
