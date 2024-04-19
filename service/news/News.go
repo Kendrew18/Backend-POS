@@ -158,13 +158,13 @@ func Read_News(Request request.Read_News_Request) (response.Response, error) {
 		var temp []response.Read_Content_Response
 		err := con.Table("content").Select("kode_content", "content").Where("kode_news = ?", arr_invent[i].Kode_news).Order("co ASC").Scan(&temp)
 
-		content := ""
+		content := ``
 
 		for i := 0; i < len(temp); i++ {
 			content += temp[i].Content
 
 			if i < len(temp)-1 {
-				content += "\n"
+				content += `\n`
 			}
 		}
 
