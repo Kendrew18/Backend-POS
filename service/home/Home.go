@@ -89,6 +89,7 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 		arr_invent.Chart_Pengeluaran = append(arr_invent.Chart_Pengeluaran, chart_pengeluaran)
 
 	}
+	fmt.Println(err.Error)
 	if err.Error == nil {
 		res.Status = http.StatusNotFound
 		res.Message = "Not Found"
