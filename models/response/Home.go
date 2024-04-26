@@ -8,11 +8,11 @@ type Home_Response struct {
 	Chart_Pengeluaran        []Chart_Pengeluaran `json:"chart_pengeluaran" gorm:"-"`
 }
 type Chart_Pengeluaran struct {
-	Tanggal           string `json:"tanggal"`
-	Total_pengeluaran int64  `json:"total_pengeluaran"`
+	Tanggal string `json:"tanggal"`
+	Value   int64  `json:"Value"`
 }
 
 type Chart_Pemasukan struct {
-	Tanggal         string `json:"tanggal"`
-	Total_pemasukan int64  `json:"total_pemasukan"`
+	Tanggal string `json:"tanggal"`
+	Value   int64  `json:"Value"`
 }
