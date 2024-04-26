@@ -10,11 +10,11 @@ type Home_Response struct {
 type Chart_Pengeluaran struct {
 	Tanggal       string `json:"tanggal"`
 	Tanggal_tahun string `json:"tanggal_tahun"`
-	Value         int64  `json:"Value"`
+	Value         int64  `json:"value"`
 }
 
 type Chart_Pemasukan struct {
 	Tanggal       string `json:"tanggal"`
 	Tanggal_tahun string `json:"tanggal_tahun"`
-	Value         int64  `json:"Value"`
+	Value         int64  `json:"value"`
 }
