@@ -64,7 +64,7 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 			month_year = strconv.Itoa(i) + "-" + year
 		}
 
-		err = con.Table("transaksi_inventory").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "DATE_FORMAT(tanggal, '%Y-%m') AS tanggal_tahun", "IFNULL(SUM(total_harga),0) as value").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ? && status = 1", Request.Kode_user, year_month).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&chart_pengeluaran)
+		err = con.Table("transaksi_inventory").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as value").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ? && status = 1", Request.Kode_user, year_month).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&chart_pengeluaran)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
@@ -73,9 +73,13 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 			return res, err.Error
 		}
 
-		chart_pengeluaran.Tanggal = month_year
+		tgl_bulan, _ := time.Parse("01-2006", month_year)
 
-		err = con.Table("transaksi").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "DATE_FORMAT(tanggal, '%Y-%m') AS tanggal_tahun", "IFNULL(SUM(total_harga),0) as value").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ?", Request.Kode_user, year_month).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&chart_pemasukan)
+		bulan := tgl_bulan.Format("jan")
+
+		chart_pengeluaran.Tanggal = bulan
+
+		err = con.Table("transaksi").Select("DATE_FORMAT(tanggal, '%Y-%m') AS tanggal", "IFNULL(SUM(total_harga),0) as value").Where("kode_user = ? && DATE_FORMAT(tanggal, '%Y-%m') = ?", Request.Kode_user, year_month).Group("DATE_FORMAT(tanggal, '%Y-%m')").Scan(&chart_pemasukan)
 
 		if err.Error == nil {
 			res.Status = http.StatusNotFound
@@ -83,7 +87,7 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 			res.Data = arr_invent
 		}
 
-		chart_pemasukan.Tanggal = month_year
+		chart_pemasukan.Tanggal = bulan
 
 		arr_invent.Chart_Pemasukan = append(arr_invent.Chart_Pemasukan, chart_pemasukan)
 		arr_invent.Chart_Pengeluaran = append(arr_invent.Chart_Pengeluaran, chart_pengeluaran)
