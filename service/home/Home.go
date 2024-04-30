@@ -75,7 +75,7 @@ func Read_Home(Request request.Home_Request) (response.Response, error) {
 
 		tgl_bulan, _ := time.Parse("01-2006", month_year)
 
-		bulan := tgl_bulan.Format("jan")
+		bulan := tgl_bulan.Format("Jan")
 
 		chart_pengeluaran.Tanggal = bulan
 
