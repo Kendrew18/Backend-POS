@@ -113,3 +113,43 @@ func UpdateUserProfile(c echo.Context) error {
 
 	return c.JSON(result.Status, result)
 }
+
+func ResendOTP(c echo.Context) error {
+	var Request request.Resend_OTP_Request
+
+	err := c.Bind(&Request)
+
+	fmt.Println(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	result, err := user.Resend_OTP(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}
+
+func ActivateAccount(c echo.Context) error {
+	var Request request.Activate_Account_Request
+
+	err := c.Bind(&Request)
+
+	fmt.Println(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	result, err := user.Activate_Account(Request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(result.Status, result)
+}
