@@ -65,3 +65,8 @@ type Activate_Account_Request struct {
 	Email    string `json:"email"`
 	Kode_otp string `json:"kode_otp"`
 }
+
+type Sign_Up_Google struct {
+	Authtoken string `json:"authtoken"`
+	Aud       string `json:"aud"`
+}

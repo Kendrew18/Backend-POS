@@ -5,6 +5,7 @@ import (
 	"Bakend-POS/models/request"
 	"Bakend-POS/models/response"
 	"Bakend-POS/tools/encrypt"
+	"Bakend-POS/tools/googleverifid"
 	"bytes"
 	"crypto/rand"
 	"encoding/gob"
@@ -157,6 +158,22 @@ func Login_User(Request request.Login_Request) (response.Response, error) {
 		res.Message = "Sukses"
 		res.Data = us
 	}
+
+	return res, nil
+}
+
+func Sign_Up_With_Google(Request request.Sign_Up_Google) (response.Response, error) {
+	var res response.Response
+	var data response.Sign_Up_Google_Response
+
+	token_info := googleverifid.VerifyGoogle(Request)
+
+	data.Email = token_info.Email
+	data.Name = token_info.Name
+
+	res.Status = http.StatusOK
+	res.Message = "Token Terverif"
+	res.Data = data
 
 	return res, nil
 }

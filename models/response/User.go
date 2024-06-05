@@ -24,3 +24,8 @@ type User_Session_Response struct {
 	Kode_user string `json:"kode_user"`
 	Status    int    `json:"status"`
 }
+
+type Sign_Up_Google_Response struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
