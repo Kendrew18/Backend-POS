@@ -26,6 +26,7 @@ type User_Session_Response struct {
 }
 
 type Sign_Up_Google_Response struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Client_id string `json:"client_id"`
 }

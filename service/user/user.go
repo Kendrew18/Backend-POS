@@ -168,12 +168,57 @@ func Sign_Up_With_Google(Request request.Sign_Up_Google) (response.Response, err
 
 	token_info := googleverifid.VerifyGoogle(Request)
 
+	var Request_Sign_UP request.Sign_Up_Request
+
 	data.Email = token_info.Email
 	data.Name = token_info.Name
+	data.Client_id = token_info.Aud
 
-	res.Status = http.StatusOK
-	res.Message = "Token Terverif"
-	res.Data = data
+	username := ""
+
+	con := db.CreateConGorm().Table("user")
+
+	err := con.Select("username").Where("username = ?", data.Name).Order("co ASC").Scan(&username).Error
+
+	if username == "" {
+
+		con := db.CreateConGorm().Table("user")
+
+		co := 0
+
+		err := con.Select("co").Order("co DESC").Limit(1).Scan(&co)
+
+		Request_Sign_UP.Co = co + 1
+		Request_Sign_UP.Kode_user = "US-" + strconv.Itoa(Request_Sign_UP.Co)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		}
+
+		Request_Sign_UP.Status = 0
+
+		err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password", "status").Create(&Request)
+
+		if err.Error != nil {
+			res.Status = http.StatusNotFound
+			res.Message = "Status Not Found"
+			res.Data = Request
+			return res, err.Error
+		} else {
+			res.Status = http.StatusOK
+			res.Message = "Suksess"
+			res.Data = map[string]int64{
+				"rows": err.RowsAffected,
+			}
+		}
+	} else {
+		res.Status = http.StatusNotFound
+		res.Message = "Username Telah ada"
+		return res, err
+	}
 
 	return res, nil
 }
