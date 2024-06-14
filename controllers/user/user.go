@@ -199,11 +199,11 @@ func SignUpWithGoogle(c echo.Context) error {
 
 	fmt.Println(Request_func.Aud)
 
-	// result, err = user.Sign_Up_With_Google(Request)
+	result, err = user.Sign_Up_With_Google(Request_func)
 
-	// if err != nil {
-	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	// }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
 
 	return c.JSON(result.Status, result)
 }
