@@ -48,6 +48,7 @@ func Init() *echo.Echo {
 	US.PUT("/user-profile", user.UpdateUserProfile)
 	US.PUT("/resend-otp", user.ResendOTP)
 	US.PUT("/activate-acc", user.ActivateAccount)
+	US.POST("/sign-up-google", user.SignUpWithGoogle)
 
 	//Supplier
 	SUP.POST("/supplier", supplier.InputSupplier)

@@ -5,7 +5,10 @@ import (
 	"Bakend-POS/models/response"
 	"Bakend-POS/service/user"
 	"Bakend-POS/tools/session_checking"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -150,6 +153,55 @@ func ActivateAccount(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
+
+	return c.JSON(result.Status, result)
+}
+
+func SignUpWithGoogle(c echo.Context) error {
+	var result response.Response
+	var Request_func request.Sign_Up_Google
+	var err error
+
+	data_json := c.FormValue("data")
+
+	fmt.Println(data_json)
+
+	jsonData := []byte(data_json)
+
+	err = json.Unmarshal(jsonData, &Request_func)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	data, err := ioutil.ReadAll(src)
+	if err != nil {
+		return err
+	}
+
+	var Request request.Configuration
+	err = json.Unmarshal(data, &Request)
+	if err != nil {
+		return err
+	}
+
+	Request_func.Aud = Request.Client[0].OAuthClient[0].ClientID
+
+	// result, err = user.Sign_Up_With_Google(Request)
+
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	// }
 
 	return c.JSON(result.Status, result)
 }

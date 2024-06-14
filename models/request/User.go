@@ -70,3 +70,50 @@ type Sign_Up_Google struct {
 	Authtoken string `json:"authtoken"`
 	Aud       string `json:"aud"`
 }
+
+type ProjectInfo struct {
+	ProjectNumber string `json:"project_number"`
+	ProjectID     string `json:"project_id"`
+	StorageBucket string `json:"storage_bucket"`
+}
+
+type ClientInfo struct {
+	MobileSDKAppID    string `json:"mobilesdk_app_id"`
+	AndroidClientInfo struct {
+		PackageName string `json:"package_name"`
+	} `json:"android_client_info"`
+}
+
+type OAuthClient struct {
+	ClientID    string `json:"client_id"`
+	ClientType  int    `json:"client_type"`
+	AndroidInfo struct {
+		PackageName     string `json:"package_name"`
+		CertificateHash string `json:"certificate_hash"`
+	} `json:"android_info,omitempty"`
+}
+
+type APIKey struct {
+	CurrentKey string `json:"current_key"`
+}
+
+type AppInviteService struct {
+	OtherPlatformOAuthClient []OAuthClient `json:"other_platform_oauth_client"`
+}
+
+type Services struct {
+	AppInviteService AppInviteService `json:"appinvite_service"`
+}
+
+type Client struct {
+	ClientInfo  ClientInfo    `json:"client_info"`
+	OAuthClient []OAuthClient `json:"oauth_client"`
+	APIKey      []APIKey      `json:"api_key"`
+	Services    Services      `json:"services"`
+}
+
+type Configuration struct {
+	ProjectInfo          ProjectInfo `json:"project_info"`
+	Client               []Client    `json:"client"`
+	ConfigurationVersion string      `json:"configuration_version"`
+}
