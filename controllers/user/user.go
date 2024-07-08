@@ -197,6 +197,9 @@ func SignUpWithGoogle(c echo.Context) error {
 
 	Request_func.Aud = Request.Client[0].OAuthClient[0].ClientID
 
+	fmt.Println(Request_func.Aud)
+	fmt.Println(Request_func.Authtoken)
+
 	result, err = user.Sign_Up_With_Google(Request_func)
 
 	if err != nil {
