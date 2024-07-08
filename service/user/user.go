@@ -398,9 +398,9 @@ func Resend_OTP(Request request.Resend_OTP_Request) (response.Response, error) {
 
 	dur := time_now.Sub(date_resent_time)
 
-	fmt.Print(dur.Minutes())
+	fmt.Print(int(dur.Minutes()))
 
-	if dur.Minutes() >= 1 {
+	if int(dur.Minutes()) >= 1 {
 
 		var Resent request.Update_OTP_Request
 
