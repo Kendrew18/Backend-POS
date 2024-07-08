@@ -230,9 +230,11 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 
 	con := db.CreateConGorm().Table("user")
 
-	err := con.Select("username").Where("username = ?", Request.Username).Order("co ASC").Scan(&username).Error
+	err := con.Select("username").Where("username = ? && email_bisnis = ? && status = 0", Request.Username, Request.Email_bisnis).Order("co ASC").Scan(&username).Error
 
 	if username == "" {
+
+		fmt.Println(Request)
 
 		con := db.CreateConGorm().Table("user")
 
@@ -475,4 +477,9 @@ func Activate_Account(Request request.Activate_Account_Request) (response.Respon
 	}
 
 	return res, nil
+}
+
+// login with google
+func Login_With_Google() {
+
 }

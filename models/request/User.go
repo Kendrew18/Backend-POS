@@ -117,3 +117,9 @@ type Configuration struct {
 	Client               []Client    `json:"client"`
 	ConfigurationVersion string      `json:"configuration_version"`
 }
+
+type Condition struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Status   int    `json:"status"`
+}
