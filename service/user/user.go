@@ -400,7 +400,7 @@ func Resend_OTP(Request request.Resend_OTP_Request) (response.Response, error) {
 
 	fmt.Print(int(dur.Minutes()))
 
-	if int(dur.Minutes()) >= 1 {
+	if int(dur.Minutes())*-1 >= 1 {
 
 		var Resent request.Update_OTP_Request
 
