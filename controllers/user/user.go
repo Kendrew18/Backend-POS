@@ -175,23 +175,27 @@ func SignUpWithGoogle(c echo.Context) error {
 
 	file, err := c.FormFile("file")
 	if err != nil {
+		fmt.Println("masuk1")
 		return err
 	}
 
 	src, err := file.Open()
 	if err != nil {
+		fmt.Println("masuk2")
 		return err
 	}
 	defer src.Close()
 
 	data, err := ioutil.ReadAll(src)
 	if err != nil {
+		fmt.Println("masuk3")
 		return err
 	}
 
 	var Request request.Configuration
 	err = json.Unmarshal(data, &Request)
 	if err != nil {
+		fmt.Println("masuk4")
 		return err
 	}
 
