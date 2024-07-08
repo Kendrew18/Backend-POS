@@ -173,11 +173,12 @@ func SignUpWithGoogle(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	file, err := c.FormFile("file")
-	if err != nil {
-		fmt.Println("masuk1")
-		return err
-	}
+	file, _ := c.FormFile("file")
+
+	// if err != nil {
+	// 	fmt.Println("masuk1")
+	// 	return err
+	// }
 
 	src, err := file.Open()
 	if err != nil {
