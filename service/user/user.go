@@ -374,14 +374,16 @@ func Update_User_Profile(Request request.Update_Profile_User_Request) (response.
 
 func Resend_OTP(Request request.Resend_OTP_Request) (response.Response, error) {
 	var res response.Response
+	var temp request.Resend_OTP_Request
 
 	layoutFormat := "2006-01-02 15:04:05"
 
 	con := db.CreateConGorm()
 
-	time_sent := ""
+	err := con.Table("otp").Select("time_sent", "nama_lengkap").Where("email = ?", Request.Email).Scan(&temp)
 
-	err := con.Table("otp").Select("time_sent", "nama_lengkap").Where("email = ?", Request.Email).Scan(&time_sent)
+	Request.Nama_lengkap = temp.Nama_lengkap
+	Request.Time_sent = temp.Time_sent
 
 	if err.Error != nil {
 		res.Status = http.StatusNotFound
@@ -390,7 +392,7 @@ func Resend_OTP(Request request.Resend_OTP_Request) (response.Response, error) {
 		return res, err.Error
 	}
 
-	date_resent_time, _ := time.Parse(layoutFormat, time_sent)
+	date_resent_time, _ := time.Parse(layoutFormat, Request.Time_sent)
 
 	time_now := time.Now()
 
@@ -425,7 +427,7 @@ func Resend_OTP(Request request.Resend_OTP_Request) (response.Response, error) {
 
 	} else {
 		res.Status = http.StatusNotFound
-		res.Message = "WAktu Belum 1 menit"
+		res.Message = "Waktu Belum 1 menit"
 		return res, nil
 	}
 
