@@ -166,6 +166,8 @@ func Sign_Up_With_Google(Request request.Sign_Up_Google) (response.Response, err
 	var res response.Response
 	var data response.Sign_Up_Google_Response
 
+	fmt.Println(Request)
+
 	token_info := googleverifid.VerifyGoogle(Request)
 
 	var Request_Sign_UP request.Sign_Up_Request
