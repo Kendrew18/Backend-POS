@@ -261,6 +261,7 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 		err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password", "status").Create(&Request)
 
 		if err.Error != nil {
+			fmt.Println("masuk")
 			res.Status = http.StatusNotFound
 			res.Message = "Status Not Found"
 			res.Data = Request
