@@ -291,7 +291,7 @@ func Sign_Up(Request request.Sign_Up_Request) (response.Response, error) {
 		Request_OTP.Nama_lengkap = Request.Nama_lengkap
 		//Request_OTP.Time_resent = date_resent
 
-		err = con.Select("kode_user", "nama_lengkap", "email", "kode_otp", "time_sent").Scan(&Request_OTP)
+		err = con.Table("otp").Select("kode_user", "nama_lengkap", "email_bisnis", "kode_otp", "time_sent").Create(&Request_OTP)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
