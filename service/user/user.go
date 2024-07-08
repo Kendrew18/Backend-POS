@@ -170,9 +170,7 @@ func Sign_Up_With_Google(Request request.Sign_Up_Google) (response.Response, err
 
 	var Request_Sign_UP request.Sign_Up_Request
 
-	data.Email = token_info.Email
 	data.Name = token_info.Name
-	data.Client_id = token_info.Aud
 
 	username := ""
 
@@ -200,7 +198,7 @@ func Sign_Up_With_Google(Request request.Sign_Up_Google) (response.Response, err
 
 		Request_Sign_UP.Status = 0
 
-		err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password", "status").Create(&Request)
+		err = con.Select("co", "kode_user", "nama_lengkap", "birth_date", "gender", "category_bisnis", "nama_bisnis", "alamat_bisnis", "telepon_bisnis", "email_bisnis", "instagram", "facebook", "username", "password", "status").Create(&Request_Sign_UP)
 
 		if err.Error != nil {
 			res.Status = http.StatusNotFound
